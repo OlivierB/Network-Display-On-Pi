@@ -1,3 +1,6 @@
+#ifndef WEBSOCKET_HPP
+#define WEBSOCKET_HPP
+
 /**
  * Websocket
  * 
@@ -29,3 +32,6 @@ private:
 
 // websocket thread
 void* th_websocket(void* data);
+
+
+#endif

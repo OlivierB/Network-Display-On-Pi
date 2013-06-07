@@ -1,3 +1,6 @@
+#ifndef PCAP_HPP
+#define PCAP_HPP
+
 /**
  * Interface pcap lib C++
  * 
@@ -46,3 +49,4 @@ private:
 
 void* th_packet_grab(void* data);
 
+#endif
