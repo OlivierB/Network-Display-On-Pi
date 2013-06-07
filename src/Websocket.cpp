@@ -1,16 +1,19 @@
-#include "../include/Websocket.hpp"
+// Class header
+#include <Websocket.hpp>
 
-
+// Library header
 #include <libwebsockets.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <time.h>
 
 #include <iostream>
 #include <vector>
 #include <string>
 
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
+
 
 using namespace std;
 

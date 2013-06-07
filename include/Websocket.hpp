@@ -7,12 +7,11 @@
  * 
  */
 
-#include <pcap.h>
+// Library header
 #include <pthread.h>
+#include <libwebsockets.h>
 
 #include <string>
-
-#include <libwebsockets.h>
 #include <set>
 
 class Websocket

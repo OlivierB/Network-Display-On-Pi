@@ -1,15 +1,18 @@
+// Class header
+#include <Pcap.hpp>
+#include <Websocket.hpp>
+
+
+// Library header
+#include <unistd.h>
+#include <signal.h>
+#include <libwebsockets.h>
+
 #include <iostream>
 
 
-// pcap lib
-#include "include/pcap.hpp"
-#include "include/Websocket.hpp"
-#include <unistd.h>
-#include <signal.h>
-
-#include <libwebsockets.h>
-
 using namespace std;
+
 
 int running = 1;
 
