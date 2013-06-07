@@ -1,6 +1,7 @@
 // Class header
 #include <Pcap.hpp>
 #include <Websocket.hpp>
+#include <Json.hpp>
 
 
 // Library header
@@ -9,6 +10,8 @@
 #include <libwebsockets.h>
 
 #include <iostream>
+#include <vector>
+#include <string>
 
 
 using namespace std;
