@@ -30,6 +30,8 @@ public:
 private:
     pthread_t thread_packet_grab;
     bool running;
+    bpf_u_int32 mask;   /* Our netmask */
+    bpf_u_int32 net;    /* Our IP */
     
 
     // data
@@ -46,5 +48,8 @@ private:
 };
 
 void* th_packet_grab(void* data);
+
+
+
 
 #endif
