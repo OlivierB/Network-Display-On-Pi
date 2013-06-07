@@ -8,32 +8,17 @@
  * 
  */
 
-#include <pcap.h>
-#include <pthread.h>
-
+#include <iostream>
 #include <string>
 
-#include <libwebsockets.h>
-#include <set>
-
-class Websocket
+class Json
 {
 public:
-    Websocket();
-    void run();
-    void start();
-    void stop();
-    void send(std::string val);
+    Json();
 
 private:
-	bool running;
-	pthread_t thread_websocket;
 
 };
-
-// websocket thread
-void* th_websocket(void* data);
-
 
 
 #endif
