@@ -58,6 +58,9 @@ Pcap::Pcap()
     speed_out = 0;
     speed_local = 0;
 
+    list_ip_increase = 0;
+    list_ip_increase_old = 0;
+
     p_size_in = 0;
     p_size_out = 0;
     p_size_local = 0;
@@ -105,6 +108,8 @@ void Pcap::collect(const u_char *packet, struct pcap_pkthdr * header)
         speed_out = p_size_out/diff;
         speed_local = p_size_local/diff;
 
+        list_ip_increase_old = list_ip_increase;
+        list_ip_increase =  list_ip_dst.size();
 
         // update
         gettimeofday(&time_collect, NULL);
@@ -115,6 +120,7 @@ void Pcap::collect(const u_char *packet, struct pcap_pkthdr * header)
         p_size_in = 0;
         p_size_out = 0;
         p_size_local = 0;
+        
     }
 
     // for (unsigned int i = 0; i < header->len; i++)
@@ -181,7 +187,10 @@ void Pcap::handler_ip(const struct pcap_pkthdr* pkthdr, const u_char* packet)
 
     // cout << (mask & 0xff) << "." << ((mask >> 8) & 0xff) << "." << ((mask >> 16) & 0xff) << "." << (mask >> 24);
 
-    if(((ip->ip_src.s_addr & mask) == net) && ((ip->ip_dst.s_addr & mask) == net))
+    if(ip->ip_dst.s_addr == 0xffffffff)
+    {
+        // cout << "Broadcast" << endl;
+    } else if(((ip->ip_src.s_addr & mask) == net) && ((ip->ip_dst.s_addr & mask) == net))
     {
         // cout << "IN:" << src << " -> " << "IN:" << dst << endl;
         p_size_local += pkthdr->len;
@@ -276,6 +285,39 @@ string Pcap::getInfo()
 
     return s.toString();
 };
+
+
+std::string Pcap::getBandwidth()
+{
+    Json s;
+
+    s.add("Ko", speed/1024.0);
+    s.add("loc_Ko", speed_local/1024.0);
+    s.add("in_Ko", speed_in/1024.0);
+    s.add("out_Ko", speed_out/1024.0);
+
+    return s.toString();
+};
+
+std::string  Pcap::getIpListDist()
+{
+    Json s;
+
+    if (list_ip_dst.size() < 100)
+    {
+        s.add("ip_dst", list_ip_dst);
+        s.add("spam", false);
+    } else
+    {
+        s.add("spam", true);
+    }
+    
+    s.add("ip_inc", (int)list_ip_increase - (int)list_ip_increase_old);
+
+    return s.toString();
+};
+
+
 
 void* th_packet_grab(void* data)
 {

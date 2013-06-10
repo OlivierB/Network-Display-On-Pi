@@ -33,6 +33,10 @@ public:
 
     std::string getInfo();
 
+    std::string getBandwidth();
+
+    std::string  getIpListDist();
+
 private:
     pthread_t thread_packet_grab;
     bool running;
@@ -52,6 +56,8 @@ private:
     double speed_out;
     double speed_local;
     std::set<std::string> list_ip_dst;
+    unsigned int list_ip_increase;
+    unsigned int list_ip_increase_old;
 
     unsigned int long p_number;
     unsigned int long p_size;

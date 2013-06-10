@@ -2,6 +2,7 @@
 #include <Pcap.hpp>
 #include <Websocket.hpp>
 #include <Json.hpp>
+#include <Update.hpp>
 
 
 // Library header
@@ -44,6 +45,8 @@ int main()
 
     // Var
     Pcap p;
+    Update u;
+    u.set(p);
 
     // Start listening
     p.start();
@@ -53,8 +56,7 @@ int main()
     while(running == 1)
     {
         sleep(1);
-        Websocket::getInstance()->send("bandwidth", p.getInfo());
-        Websocket::getInstance()->send("iplist", p.getInfo());
+        u.update();
         // p.getInfo();  
     }
     

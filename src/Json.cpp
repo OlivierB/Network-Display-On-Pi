@@ -49,6 +49,18 @@ void Json::add(std::string key, float val)
     json_str.push_back(tmp + convert.str());
 };
 
+void Json::add(std::string key, bool val)
+{
+    string tmp = "\"" + key + "\" : ";
+
+    if(val)
+        tmp += "true";
+    else
+        tmp += "false";
+
+    json_str.push_back(tmp);
+};
+
 void Json::add(std::string key, std::vector<std::string> val)
 {
     string tmp = "\"" + key + "\" : [";

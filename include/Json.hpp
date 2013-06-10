@@ -24,6 +24,7 @@ public:
     void add(std::string key, int val);
     void add(std::string key, double val);
     void add(std::string key, float val);
+    void add(std::string key, bool val);
 
     void add(std::string key, std::vector<std::string> val);
     void add(std::string key, std::vector<int> val);

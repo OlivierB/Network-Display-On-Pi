@@ -38,8 +38,13 @@ Websocket.o: $(SRC)Websocket.cpp
 	@echo $^
 	@$(CC) -c $^ $(CFLAGS)
 
-# Websocket manager
+# Json manager
 Json.o: $(SRC)Json.cpp
+	@echo $^
+	@$(CC) -c $^ $(CFLAGS)
+
+# Update manager
+Update.o: $(SRC)Update.cpp
 	@echo $^
 	@$(CC) -c $^ $(CFLAGS)
 
@@ -47,7 +52,7 @@ Json.o: $(SRC)Json.cpp
 ##################################################
 
 # Link edition and EXE creation
-$(EXEC): main.o Pcap.o Websocket.o Json.o
+$(EXEC): main.o Pcap.o Websocket.o Json.o Update.o
 	@echo "Link output files..."
 	@$(CC) -o $@  $^ $(LDFLAGS)
 	@echo "OK"
