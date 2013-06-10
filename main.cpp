@@ -44,23 +44,23 @@ int main()
 
     // Var
     Pcap p;
-    Websocket w;
 
     // Start listening
     p.start();
-    w.start();
+    Websocket::getInstance()->start();
 
     // LOOP
     while(running == 1)
     {
         sleep(1);
-        w.send(p.getInfo());
+        Websocket::getInstance()->send("bandwidth", p.getInfo());
+        Websocket::getInstance()->send("iplist", p.getInfo());
         // p.getInfo();  
     }
     
     // Stop
     p.stop();
-    w.stop();
+    Websocket::getInstance()->stop();
 
     return 0;
 }

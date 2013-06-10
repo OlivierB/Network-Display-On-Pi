@@ -17,20 +17,23 @@
 
 using namespace std;
 
+Websocket* Websocket::_wInstance = NULL;
+
+
 // Clients list used in callback function
 std::set<libwebsocket *> l_client;
 
 // Callback function
-static int callback_http(struct libwebsocket_context *context,
+static int callback_bandwidth(struct libwebsocket_context *context,
                          struct libwebsocket *wsi,
                          enum libwebsocket_callback_reasons reason, void *user,
                          void *in, unsigned long len)
 {
-    cout << ">>>>>>>>>>>>>>" << endl;
+    // cout << ">>>>>>>>>>>>>>" << endl;
     switch (reason) {
         case LWS_CALLBACK_ESTABLISHED:
-            cout << "connection established" << endl;
-            l_client.insert(wsi);
+            cout << "++connection established - bandwidth" << endl;
+            Websocket::getInstance()->addClient("bandwidth", wsi);
             break;
         case LWS_CALLBACK_HTTP:
             cout << "HTTP" << endl;
@@ -39,15 +42,51 @@ static int callback_http(struct libwebsocket_context *context,
             cout << "RECEIVE - " << (char *) in << endl;
             break;
         case LWS_CALLBACK_CLOSED:
-            cout << "CLOSE" << endl;
-            l_client.erase(wsi);
+            cout << "--connection closed - bandwidth" << endl;
+            Websocket::getInstance()->addClient("bandwidth", wsi);
         default:
-            cout << "unhandled callback" << endl;
+            // cout << "unhandled callback" << endl;
             break;
     }
-    cout << "<<<<<<<<<<<<<<" << endl << endl;
+    // cout << "<<<<<<<<<<<<<<" << endl << endl;
     return 0;
 };
+
+// Callback function
+static int callback_iplist(struct libwebsocket_context *context,
+                         struct libwebsocket *wsi,
+                         enum libwebsocket_callback_reasons reason, void *user,
+                         void *in, unsigned long len)
+{
+    switch (reason) {
+        case LWS_CALLBACK_ESTABLISHED:
+            cout << "++connection established - iplist" << endl;
+            Websocket::getInstance()->addClient("iplist", wsi);
+            break;
+        case LWS_CALLBACK_HTTP:
+            cout << "HTTP" << endl;
+            break;
+        case LWS_CALLBACK_RECEIVE:
+            cout << "RECEIVE - " << (char *) in << endl;
+            break;
+        case LWS_CALLBACK_CLOSED:
+            cout << "--connection closed - iplist" << endl;
+            Websocket::getInstance()->addClient("iplist", wsi);
+        default:
+            // cout << "unhandled callback" << endl;
+            break;
+    }
+    return 0;
+};
+
+Websocket* Websocket::getInstance()
+{
+   if (!_wInstance)
+      _wInstance = new Websocket;
+
+   return _wInstance;
+}
+
 
 Websocket::Websocket()
 {
@@ -57,12 +96,24 @@ Websocket::Websocket()
 void Websocket::start()
 {
     cout << "start" << endl;
-    pthread_create( &thread_websocket, NULL, th_websocket, (void*) this);
+    pthread_create(&thread_websocket, NULL, th_websocket, (void*) this);
 };
 
 void Websocket::stop()
 {
     running = false;
+};
+
+void Websocket::addClient(std::string s, libwebsocket *wsi)
+{
+    list_websockets_clients[s].insert(wsi);
+    // l_client.insert(wsi);
+};
+
+void Websocket::delClient(std::string s, libwebsocket *wsi)
+{
+    list_websockets_clients[s].erase(wsi);
+    // l_client.erase(wsi);
 };
 
 void Websocket::run()
@@ -72,7 +123,12 @@ void Websocket::run()
         /* first protocol must always be HTTP handler */
         {
             "bandwidth",        /* name */
-            callback_http,      /* callback */
+            callback_bandwidth, /* callback */
+            0,                  /* max frame size / rx buffer */
+        },
+        {
+            "iplist",           /* name */
+            callback_iplist,    /* callback */
             0,                  /* max frame size / rx buffer */
         },
         { NULL, NULL, 0 }       /* terminator */
@@ -117,10 +173,14 @@ void Websocket::run()
 };
 
 
-void Websocket::send(string val)
+void Websocket::send(string websocket, string val)
 {
-    for (std::set< libwebsocket *>::iterator it=l_client.begin(); it!=l_client.end(); ++it)
-        libwebsocket_write(*it, (unsigned char*) val.c_str(), val.length(), LWS_WRITE_TEXT);
+    if (list_websockets_clients.count(websocket) > 0)
+    {
+        for (std::set< libwebsocket *>::iterator it=list_websockets_clients[websocket].begin(); it!=list_websockets_clients[websocket].end(); ++it)
+            libwebsocket_write(*it, (unsigned char*) val.c_str(), val.length(), LWS_WRITE_TEXT);
+    }
+    
 };
 
 

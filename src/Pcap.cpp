@@ -188,9 +188,11 @@ void Pcap::handler_ip(const struct pcap_pkthdr* pkthdr, const u_char* packet)
     } else if(((ip->ip_src.s_addr & mask) == net) && !((ip->ip_dst.s_addr & mask) == net))
     {
         // cout << "IN:" << src << " -> " << "OUT:" << dst << endl;
+        list_ip_dst.insert(dst);
         p_size_out += pkthdr->len;
     } else if(!((ip->ip_src.s_addr & mask) == net) && ((ip->ip_dst.s_addr & mask) == net))
     {
+        list_ip_dst.insert(src);
         // cout << "OUT:" << src << " -> " << "IN:" << dst << endl;
         p_size_in += pkthdr->len;
     } else
@@ -270,6 +272,7 @@ string Pcap::getInfo()
     s.add("loc_Ko", speed_local/1024.0);
     s.add("in_Ko", speed_in/1024.0);
     s.add("out_Ko", speed_out/1024.0);
+    s.add("ip_dst", list_ip_dst);
 
     return s.toString();
 };

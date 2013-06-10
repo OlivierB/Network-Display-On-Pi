@@ -122,6 +122,24 @@ void Json::add(std::string key, Json val)
 };
 
 
+void Json::add(std::string key, std::set<std::string> val)
+{
+    string tmp = "\"" + key + "\" : [";
+
+    unsigned int i = 0;
+    for (std::set<string>::iterator it=val.begin(); it!=val.end(); ++it)
+    {
+        tmp += "\"" + *it + "\"";
+        if(i < val.size()-1)
+            tmp += ", ";
+        i++;
+    }
+
+    tmp += "]";
+    json_str.push_back(tmp);
+};
+
+
 std::string Json::toString()
 {
     string tmp = "{";

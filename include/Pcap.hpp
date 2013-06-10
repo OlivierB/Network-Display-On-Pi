@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <vector>
+#include <set>
 #include <string>
 
 // packet analisys
@@ -50,6 +51,7 @@ private:
     double speed_in;
     double speed_out;
     double speed_local;
+    std::set<std::string> list_ip_dst;
 
     unsigned int long p_number;
     unsigned int long p_size;
