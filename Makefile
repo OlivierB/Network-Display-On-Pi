@@ -14,7 +14,7 @@ SRC=src/
 INC=include/
 
 # Linker Flag
-LDFLAGS=-lpcap -lpthread -lwebsockets
+LDFLAGS=-lpcap -lpthread -lwebsockets -lsigar
 # Compilation Flag
 CFLAGS=-ggdb -I$(INC) -Wall
 
@@ -48,11 +48,16 @@ Update.o: $(SRC)Update.cpp
 	@echo $^
 	@$(CC) -c $^ $(CFLAGS)
 
+# Monitoring manager
+Monitoring.o: $(SRC)Monitoring.cpp
+	@echo $^
+	@$(CC) -c $^ $(CFLAGS)
+
 
 ##################################################
 
 # Link edition and EXE creation
-$(EXEC): main.o Pcap.o Websocket.o Json.o Update.o
+$(EXEC): main.o Pcap.o Websocket.o Json.o Update.o Monitoring.o
 	@echo "Link output files..."
 	@$(CC) -o $@  $^ $(LDFLAGS)
 	@echo "OK"

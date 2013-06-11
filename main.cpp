@@ -3,6 +3,7 @@
 #include <Websocket.hpp>
 #include <Json.hpp>
 #include <Update.hpp>
+#include <Monitoring.hpp>
 
 
 // Library header
@@ -45,6 +46,7 @@ int main()
 
     // Var
     Pcap p;
+    Monitoring m;
     Update u;
     u.set(p);
 
@@ -58,6 +60,7 @@ int main()
         sleep(1);
         u.update();
         // p.getInfo();  
+        m.getCpu();
     }
     
     // Stop
