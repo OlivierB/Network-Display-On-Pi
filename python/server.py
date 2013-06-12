@@ -11,7 +11,7 @@ import argparse, cmd, time
 
 import config.server
 
-import core.sniffer
+import core.sniffer, core.wsserver
 
 
 __program__ = "NDOP"
@@ -45,6 +45,12 @@ class ServerArgumentParser(argparse.ArgumentParser):
         self.add_argument("-p", "--port", default=9000, type=int, dest="port", 
             help="Websocket server port (default: %i)" % 9000)
 
+        self.add_argument("-m", "--mask", default="255.255.255.0", dest="mask", 
+            help="Local network mask (default: 255.255.255.0)")
+
+        self.add_argument("-n", "--net", default="192.168.1.0", dest="net", 
+            help="Local network address (default: 192.168.1.0)")
+
 
 
 
@@ -55,13 +61,26 @@ def main():
     
     args = ServerArgumentParser().parse_args()
 
-   
+
     print __description__
 
-    p = sniffer.Pcap()
-    # p.start()
+    # Init
+    ws = core.wsserver.WsServer()
+    # pcap = core.sniffer.Sniffer()
+    cl = core.wsserver.ClientsList()
 
-    time.sleep(7)
+    # Service start
+    ws.start()
+    # pcap.start()
+    
+    # Loop
+    try:
+        while 1:
+            time.sleep(1)
+            cl.send(None, "42")
+    finally:
+        ws.stop()
+        # pcap.stop()
 
             
     return 0

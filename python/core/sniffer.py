@@ -4,90 +4,142 @@ import pcap
 import sys
 import string
 import time
-import thread, threading
+import threading
 import socket
 import struct
+import types
 
 
-protocols={ socket.IPPROTO_TCP:'tcp',
-                socket.IPPROTO_UDP:'udp',
-                socket.IPPROTO_ICMP:'icmp'}
 
 
-class Pcap(threading.Thread):
+class Sniffer(threading.Thread):
     """
     
     """
 
     def __init__(self, dev="eth0"):
         threading.Thread.__init__(self)
+        # run stop conditions
         self.Terminated = False
+
+        # other
+        self.dev = dev
+        # Create new pcap capture
+        self.p = pcap.pcapObject()
+
+        # Stat
+        self.stat_nbPacket = 0
+
 
     def run(self):
 
+        print "sniffer : Pcap start..."
+
         try:
-            # Boucle de traitement
+            
+            # Select device
+            net, mask = pcap.lookupnet(self.dev)
+            # (Dev, buffer, promiscuous mode, timeout)
+            self.p.open_live(self.dev, 1600, 1, 1)
+
+            # self.p.setnonblock(1)
+
             while not self.Terminated:
-                time.spleep(1)
-                
-        except:
-            self.stop()
+                # print "av - ", self.Terminated
+                res = self.p.next()
+                # print "ap - ", self.Terminated
+                if isinstance(res, types.TupleType):
+                    # print self.stat_nbPacket, " --> ", res[0]
+                    self.stat_nbPacket += 1
 
-        return
 
-    
+        except Exception as e:
+            print "sniffer : ", e
+
+
     def stop(self):
         self.Terminated = True
-        return
 
-    # def decode_ip_packet(s):
-    #     d={}
-    #     d['version']=(ord(s[0]) & 0xf0) >> 4
-    #     d['header_len']=ord(s[0]) & 0x0f
-    #     d['tos']=ord(s[1])
-    #     d['total_len']=socket.ntohs(struct.unpack('H',s[2:4])[0])
-    #     d['id']=socket.ntohs(struct.unpack('H',s[4:6])[0])
-    #     d['flags']=(ord(s[6]) & 0xe0) >> 5
-    #     d['fragment_offset']=socket.ntohs(struct.unpack('H',s[6:8])[0] & 0x1f)
-    #     d['ttl']=ord(s[8])
-    #     d['protocol']=ord(s[9])
-    #     d['checksum']=socket.ntohs(struct.unpack('H',s[10:12])[0])
-    #     d['source_address']=pcap.ntoa(struct.unpack('i',s[12:16])[0])
-    #     d['destination_address']=pcap.ntoa(struct.unpack('i',s[16:20])[0])
-    #     if d['header_len']>5:
-    #         d['options']=s[20:4*(d['header_len']-5)]
-    #     else:
-    #         d['options']=None
-    #     d['data']=s[4*d['header_len']:]
-    #     return d
+        print 'sniffer : Pcap stop...'
+        self.join()
+        
+        # print 'sniffer : %d packets received, %d packets dropped, %d packets dropped by interface' % self.p.stats()
 
 
-    # def dumphex(s):
-    #     bytes = map(lambda x: '%.2x' % x, map(ord, s))
-    #     for i in xrange(0,len(bytes)/16):
-    #         print '    %s' % string.join(bytes[i*16:(i+1)*16],' ')
-    #     print '    %s' % string.join(bytes[(i+1)*16:],' ')
+
+
+
+if __name__ == "__main__":
+    p = Sniffer()
+    print "a1"
+    p.start()
+    # print "a2"
+    time.sleep(5)
+    print "a3"
+    p.stop()
+    print "a4"
+
+
+
+# protocols={ socket.IPPROTO_TCP:'tcp',
+#             socket.IPPROTO_UDP:'udp',
+#             socket.IPPROTO_ICMP:'icmp'}
+
+
+
+# def decode_ip_packet(s):
+#     d={}
+#     d['version']=(ord(s[0]) & 0xf0) >> 4
+#     d['header_len']=ord(s[0]) & 0x0f
+#     d['tos']=ord(s[1])
+#     d['total_len']=socket.ntohs(struct.unpack('H',s[2:4])[0])
+#     d['id']=socket.ntohs(struct.unpack('H',s[4:6])[0])
+#     d['flags']=(ord(s[6]) & 0xe0) >> 5
+#     d['fragment_offset']=socket.ntohs(struct.unpack('H',s[6:8])[0] & 0x1f)
+#     d['ttl']=ord(s[8])
+#     d['protocol']=ord(s[9])
+#     d['checksum']=socket.ntohs(struct.unpack('H',s[10:12])[0])
+#     d['source_address']=pcap.ntoa(struct.unpack('i',s[12:16])[0])
+#     d['destination_address']=pcap.ntoa(struct.unpack('i',s[16:20])[0])
+#     if d['header_len']>5:
+#         d['options']=s[20:4*(d['header_len']-5)]
+#     else:
+#         d['options']=None
+#     d['data']=s[4*d['header_len']:]
+#     return d
+
+
+# def dumphex(s):
+#     bytes = map(lambda x: '%.2x' % x, map(ord, s))
+#     for i in xrange(0,len(bytes)/16):
+#         print '    %s' % string.join(bytes[i*16:(i+1)*16],' ')
+#     print '    %s' % string.join(bytes[(i+1)*16:],' ')
             
 
-    # def print_packet(pktlen, data, timestamp):
-    #     if not data:
-    #         return
+def print_packet(pktlen, data, timestamp):
+    if not data:
+        return
 
-    #     if data[12:14]=='\x08\x00':
-    #         decoded=decode_ip_packet(data[14:])
-    #         print '\n%s.%f %s > %s' % (time.strftime('%H:%M',
-    #                                                                                      time.localtime(timestamp)),
-    #                                                          timestamp % 60,
-    #                                                          decoded['source_address'],
-    #                                                          decoded['destination_address'])
-    #         for key in ['version', 'header_len', 'tos', 'total_len', 'id',
-    #                                 'flags', 'fragment_offset', 'ttl']:
-    #             print '  %s: %d' % (key, decoded[key])
-    #         print '  protocol: %s' % protocols[decoded['protocol']]
-    #         print '  header checksum: %d' % decoded['checksum']
-    #         print '  data:'
-    #         dumphex(decoded['data'])
+    if data[12:14]=='\x08\x00':
+        # decoded=decode_ip_packet(data[14:])
+        # print '\n%s.%f %s > %s' % (time.strftime('%H:%M',
+        #                                                                              time.localtime(timestamp)),
+        #                                                  timestamp % 60,
+        #                                                  decoded['source_address'],
+        #                                                  decoded['destination_address'])
+        # for key in ['version', 'header_len', 'tos', 'total_len', 'id',
+        #                         'flags', 'fragment_offset', 'ttl']:
+        #     print '  %s: %d' % (key, decoded[key])
+        # print '  protocol: %s' % protocols[decoded['protocol']]
+        # print '  header checksum: %d' % decoded['checksum']
+        # print '  data:'
+        # dumphex(decoded['data'])
+        # print "b"
+        return
  
+
+
+
 
     # if __name__=='__main__':
 
@@ -126,12 +178,4 @@ class Pcap(threading.Thread):
     #         print '%s' % sys.exc_type
     #         print 'shutting down'
     #         print '%d packets received, %d packets dropped, %d packets dropped by interface' % p.stats()
-
-
-
-if __name__ == "__main__":
-    p = Pcap()
-    p.start()
-    time.sleep(5)
-    p.stop()
 
