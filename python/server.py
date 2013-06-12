@@ -6,12 +6,12 @@ NDOP
 
 """
 
-import sys, os
+import sys, os, json
 import argparse, cmd, time
 
 import config.server
 
-import core.sniffer, core.wsserver
+import core.sniffer, core.wsserver, core.monitoring
 
 
 __program__ = "NDOP"
@@ -66,20 +66,27 @@ def main():
 
     # Init
     ws = core.wsserver.WsServer()
+    m = core.monitoring.Monitoring()
     # pcap = core.sniffer.Sniffer()
     cl = core.wsserver.ClientsList()
 
     # Service start
     ws.start()
+    m.start()
     # pcap.start()
-    
+
     # Loop
     try:
         while 1:
             time.sleep(1)
-            cl.send(None, "42")
+            val = m.getState()
+            # if val != None:
+            cl.send(None, json.dumps(val))
+    except KeyboardInterrupt:
+        print "Stopping..."
     finally:
         ws.stop()
+        m.stop()
         # pcap.stop()
 
             

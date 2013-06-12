@@ -1,6 +1,6 @@
 #encoding: utf-8
 
-import threading
+import threading, multiprocessing
 import time, types
 
 import tornado.httpserver
@@ -80,6 +80,7 @@ class ClientsList(object):
         return cls._instance
 
     cli_list = dict()
+    mutex = threading.Lock()
 
     def __init__(self):
     # connection list
@@ -88,31 +89,40 @@ class ClientsList(object):
     def addClient(self, client, subprotocols):
         if len(subprotocols) > 0:
             for prot in subprotocols:
-                print self.cli_list
+                self.mutex.acquire()
                 if prot in self.cli_list.keys():
                     self.cli_list[prot] += [client]
                 else:
                     self.cli_list[prot] = [client]
-                    print "add protocol : ", prot
+                self.mutex.release()
+
 
     def delClient(self, client):
+        self.mutex.acquire()
         for k in self.cli_list.keys():
             self.cli_list[k].remove(client)
+        self.mutex.release()
+
 
     def send(self, proto, data):
+        self.mutex.acquire()
         if proto == None:
             for p in self.cli_list.keys():
                 for c in self.cli_list[p]:
                     c.write_message(data)
+            
         elif isinstance(type(proto), types.StringType):
             if proto in self.cli_list.keys():
                 for c in self.cli_list[proto]:
                     c.write_message(data)
+            
         else:
             for p in proto:
                 if p in self.cli_list.keys():
                     for c in self.cli_list[p]:
                         c.write_message(data)
+   
+        self.mutex.release()
 
     def listProto(self):
         return self.cli_list.keys()

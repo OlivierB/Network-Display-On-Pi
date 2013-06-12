@@ -13,12 +13,6 @@ import sys
 import threading
 import base64
 
-import matplotlib
-
-# Pour le support console sans serveur x
-matplotlib.use('Agg')
-
-from pylab import *
 
 
 def getSysInfo():
@@ -222,43 +216,51 @@ def graph(val=dict(), prefix=""):
     fig.clf()
 
 
-def graphFile(val=dict()):
-    """
-    Création du fichier du graphique
-
-    Arguments:
-    val -- métriques à acquérir
+def sysState():
     """
 
-    # valeur de retour
-    res = dict()
+    """
 
-    # Création d'un dossier tmp
-    num = 0
-    ok = False
-    while not ok:
-        rep = 'tmp_' + str(num)
-        try:
-            os.mkdir(rep)
-            ok = True
-        except OSError:
-            num += 1
+    val = dict()
 
-    # Appel de la fonction graph()
-    graph(val, rep+"/")
+    val["time"]     = time.time()
+    val["mem"]      = psutil.virtual_memory()[2]
+    val["swap"]     = psutil.swap_memory()[3]
+    val["io_read"]  = psutil.disk_io_counters(perdisk=False)[2]
+    val["io_write"] = psutil.disk_io_counters(perdisk=False)[3]
+    val["net_sent"] = psutil.network_io_counters(pernic=False)[0]
+    val["net_recv"] = psutil.network_io_counters(pernic=False)[1]
+    val["cpu"]      = psutil.cpu_percent(interval=0.8)
 
-    # récupération des fichiers
-    content = os.listdir(rep)
-    for x in content:
-        f = open('./'+rep+'/'+x, 'r')
-        res[x] = base64.b64encode(f.read())
-        f.close()
-        os.remove('./'+rep+'/'+x)
+    return val
 
-    # suppression du dossier
-    os.rmdir(rep)
-    return res
+def diffState(old, new):
+    val = dict()
 
+    diff = new["time"] - old["time"]
+    if diff <= 0:
+        diff = 1
+
+    val["time"]         = new["time"]
+    val["mem_load"]     = new["mem"]
+    val["proc_load"]    = new["cpu"]
+    val["swap_load"]    = new["swap"]
+
+
+    val["net_speed_out"]    = (new["net_sent"] - old["net_sent"]) / diff / 1024
+    val["net_speed_in"]     = (new["net_recv"] - old["net_recv"]) / diff / 1024
+
+
+    val["disk_speed_read"]  = (new["io_read"] - old["io_read"]) / diff / 1024
+    val["disk_speed_write"] = (new["io_write"] - old["io_write"]) / diff / 1024
+
+
+    val["in_Ko"]    = val["net_speed_in"]
+    val["out_Ko"]   = val["net_speed_out"]
+    val["loc_Ko"]   = 10
+    val["Ko"]       = val["net_speed_in"] + val["net_speed_out"]
+
+    return val
 
 
 class Monitoring(threading.Thread):
@@ -268,40 +270,66 @@ class Monitoring(threading.Thread):
 
     def __init__(self, inter=1):
         threading.Thread.__init__(self)
-        self.val = None
-        self.ok = True
+
         self.inter = inter
         self.Terminated = False
+        self.state = None
+        self.mutex = threading.Lock()
+
 
     def run(self):
+        print "Monitoring : Server start..."
+
         # Ajustement interval
         self.inter = round(self.inter)
         if self.inter < 1:
             self.inter = 1
 
+        old = sysState()
+
         try:
             # Boucle de traitement
             while not self.Terminated:
-                self.ok = False
+                # Start time
                 begin = time.time()
-                self.val = getSI(self.val)
+                self.val = sysState()
+
+                new = sysState()
+                self.state = diffState(old, new)
+                old = new
+
+                # Sleep time
                 diff = self.inter - (time.time() - begin)
                 if diff < 0:
                     diff = 0
-                self.ok = True
+
                 time.sleep(diff)
         except:
-            self.val = 0
+            raise
             self.stop()
-        return self.val
 
-        sys.stdout.write("\n")
+        # sys.stdout.write("\n")
     
+
     def stop(self):
         self.Terminated = True
-        while not self.ok:
-            pass
-        return self.val
+        print "Monitoring : Server stop..."
 
+    def getState(self):
+        return self.state
+
+
+if __name__ == "__main__":
+
+    m = Monitoring()
+    m.start()
+
+    try:
+        while 1:
+            time.sleep(1)
+            print m.getState()
+
+    except KeyboardInterrupt:
+        m.stop()
 
 
