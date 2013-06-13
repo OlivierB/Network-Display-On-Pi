@@ -1,5 +1,13 @@
 #encoding: utf-8
 
+"""
+Client system sniffer
+
+Use pcap
+
+@author: Olivier BLIN
+"""
+
 import pcap
 import sys
 import string
@@ -8,7 +16,6 @@ import threading
 import socket
 import struct
 import types
-
 
 
 
