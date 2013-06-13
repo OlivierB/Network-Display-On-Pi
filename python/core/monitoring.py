@@ -44,25 +44,23 @@ def diffState(old, new):
     if diff <= 0:
         diff = 1
 
-    val["time"]         = new["time"]
-    val["dtime"]        = diff
-    val["mem_load"]     = new["mem"]
-    val["proc_load"]    = new["cpu"]
-    val["swap_load"]    = new["swap"]
+    # time in second.microsec
+    val["time"]     = new["time"]
+    val["dtime"]    = diff
 
+    # sys data in %
+    val["mem"]      = new["mem"]
+    val["cpu"]      = new["cpu"]
+    val["swap"]     = new["swap"]
 
-    val["net_speed_out"]    = (new["net_sent"] - old["net_sent"]) / diff / 1024
-    val["net_speed_in"]     = (new["net_recv"] - old["net_recv"]) / diff / 1024
+    #  net data in o/sec
+    val["net_speed_out"]    = (new["net_sent"] - old["net_sent"]) / diff
+    val["net_speed_in"]     = (new["net_recv"] - old["net_recv"]) / diff
 
+    #  disk data in o/sec
+    val["disk_speed_read"]  = (new["io_read"] - old["io_read"]) / diff
+    val["disk_speed_write"] = (new["io_write"] - old["io_write"]) / diff
 
-    val["disk_speed_read"]  = (new["io_read"] - old["io_read"]) / diff / 1024
-    val["disk_speed_write"] = (new["io_write"] - old["io_write"]) / diff / 1024
-
-
-    val["in_Ko"]    = val["net_speed_in"]
-    val["out_Ko"]   = val["net_speed_out"]
-    val["loc_Ko"]   = 10
-    val["Ko"]       = val["net_speed_in"] + val["net_speed_out"]
 
     return val
 
@@ -120,6 +118,37 @@ class Monitoring(threading.Thread):
 
     def getState(self):
         return self.state
+
+    def get_cpu(self):
+        if self.state != None:
+            return self.state["cpu"]
+        else:
+            return 0
+
+    def get_mem(self):
+        if self.state != None:
+            return self.state["mem"]
+        else:
+            return 0
+
+    def get_swap(self):
+        if self.state != None:
+            return self.state["swap"]
+        else:
+            return 0
+
+    def get_net_out(self):
+        if self.state != None:
+            return self.state["net_speed_out"]
+        else:
+            return 0
+            
+    def get_net_in(self):
+        if self.state != None:
+            return self.state["net_speed_in"]
+        else:
+            return 0
+
 
 
 if __name__ == "__main__":

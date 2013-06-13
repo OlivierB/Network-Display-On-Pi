@@ -60,9 +60,6 @@ def main():
     m = core.monitoring.Monitoring()
     pcap = core.sniffer.Sniffer()
 
-    cl = core.wsserver.ClientsList()
-    u = core.update.Update(m, pcap)
-
     # Service start
     m.start()
     time.sleep(0.5)
@@ -72,6 +69,9 @@ def main():
     time.sleep(0.5)
     print "------------------------------"
     
+    # Data managememt
+    cl = core.wsserver.ClientsList()
+    u = core.update.Update(m, pcap)
     
 
     # Loop
