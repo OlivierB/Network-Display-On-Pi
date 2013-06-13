@@ -20,7 +20,7 @@ function Satellite3D(geometry, material) {
 		2: vz - 0.33
 	};
 
-	var cube = new THREE.Mesh(geometry, material);
+	this.cube = new THREE.Mesh(geometry, material);
 	cube.position.set(150, 0, 0);
 
 	pivot.add(cube);
@@ -39,6 +39,26 @@ Satellite3D.prototype = {
 		this.parent.rotation.z += x;
 		this.parent.rotation.y += y;
 		this.parent.rotation.x += z;
+	},
+
+	launchRay: function(target) {
+		var spline = new THREE.SplineCurve3([
+			this.cube.position,
+			target.cube.position
+		]);
+
+		var material = new THREE.LineBasicMaterial({
+			color: 0xff00f0,
+		});
+		var geometry = new THREE.Geometry();
+		var splinePoints = spline.getPoints(2);
+
+		for (var i = 0; i < splinePoints.length; i++) {
+			geometry.vertices.push(splinePoints[i]);
+		}
+
+		var line = new THREE.Line(geometry, material);
+		this.scene.add(line);
 	}
 
 }
