@@ -40,7 +40,7 @@ class Sniffer(threading.Thread):
             # Select device
             net, mask = pcap.lookupnet(self.dev)
             # (Dev, buffer, promiscuous mode, timeout)
-            self.p.open_live(self.dev, 1600, 0, 1)
+            self.p.open_live(self.dev, 1600, 1, 100)
 
             # self.p.setnonblock(1)
 

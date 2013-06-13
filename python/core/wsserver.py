@@ -13,14 +13,15 @@ import tornado.web
 
 class WSHandler_main(tornado.websocket.WebSocketHandler):
     def open(self):
-        print '+++connection'
+        # print '+++connection'
+        pass
 
     def on_message(self, message):
         # print 'message received %s' % message
         pass
 
     def on_close(self):
-        print '---connection'
+        # print '---connection'
         cl = ClientsList()
         cl.delClient(self)
 
