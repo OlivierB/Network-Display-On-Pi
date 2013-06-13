@@ -13,20 +13,20 @@ import tornado.web
 
 class WSHandler_main(tornado.websocket.WebSocketHandler):
     def open(self):
-        print 'new connection'
+        print '+++connection'
 
     def on_message(self, message):
-        print 'message received %s' % message
+        # print 'message received %s' % message
+        pass
 
     def on_close(self):
-        print 'connection closed'
+        print '---connection'
         cl = ClientsList()
         cl.delClient(self)
 
     def select_subprotocol(self, subprotocols):
         cl = ClientsList()
-        cl.addClient(self, subprotocols)
-        return None
+        return cl.addClient(self, subprotocols)
  
 
 application = tornado.web.Application([
@@ -49,7 +49,7 @@ class WsServer(threading.Thread):
 
         # HTTP server
         self.http_server = tornado.httpserver.HTTPServer(application)
-        self.http_server.listen(9000)
+        self.http_server.listen(port)
 
 
     def run(self):
@@ -62,7 +62,9 @@ class WsServer(threading.Thread):
 
 
         except Exception as e:
-            print "WsServer : ", e
+            # print "WsServer : ", e
+            tornado.ioloop.IOLoop.instance().stop()
+            raise
 
 
     def stop(self):
@@ -87,21 +89,38 @@ class ClientsList(object):
         pass
 
     def addClient(self, client, subprotocols):
+        prot = None
         if len(subprotocols) > 0:
-            for prot in subprotocols:
-                self.mutex.acquire()
-                if prot in self.cli_list.keys():
-                    self.cli_list[prot] += [client]
-                else:
-                    self.cli_list[prot] = [client]
-                self.mutex.release()
+            # Select the first protocol
+            prot = subprotocols[0]
+            self.mutex.acquire()
+            if prot in self.cli_list.keys():
+                self.cli_list[prot] += [client]
+            else:
+                self.cli_list[prot] = [client]
+            self.mutex.release()
+        return prot
+
 
 
     def delClient(self, client):
         self.mutex.acquire()
         for k in self.cli_list.keys():
-            self.cli_list[k].remove(client)
+            if client in self.cli_list[k]:
+                self.cli_list[k].remove(client)
         self.mutex.release()
+
+
+    def __send(self, client, data):
+        try:
+            client.write_message(data)
+            
+        except IOError:
+            print "Send IOError"
+        except Exception as e:
+            print "WsServer Error : ", e
+
+        return
 
 
     def send(self, proto, data):
@@ -109,18 +128,19 @@ class ClientsList(object):
         if proto == None:
             for p in self.cli_list.keys():
                 for c in self.cli_list[p]:
-                    c.write_message(data)
+                    self.__send(c, data)
             
         elif isinstance(type(proto), types.StringType):
             if proto in self.cli_list.keys():
                 for c in self.cli_list[proto]:
-                    c.write_message(data)
+                    self.__send(c, data)
             
         else:
             for p in proto:
                 if p in self.cli_list.keys():
                     for c in self.cli_list[p]:
-                        c.write_message(data)
+                        self.__send(c, data)
+
    
         self.mutex.release()
 

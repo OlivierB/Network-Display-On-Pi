@@ -40,14 +40,13 @@ class Sniffer(threading.Thread):
             # Select device
             net, mask = pcap.lookupnet(self.dev)
             # (Dev, buffer, promiscuous mode, timeout)
-            self.p.open_live(self.dev, 1600, 1, 1)
+            self.p.open_live(self.dev, 1600, 0, 1)
 
             # self.p.setnonblock(1)
 
             while not self.Terminated:
-                # print "av - ", self.Terminated
+                # time.sleep(1)
                 res = self.p.next()
-                # print "ap - ", self.Terminated
                 if isinstance(res, types.TupleType):
                     # print self.stat_nbPacket, " --> ", res[0]
                     self.stat_nbPacket += 1
@@ -61,7 +60,7 @@ class Sniffer(threading.Thread):
         self.Terminated = True
 
         print 'sniffer : Pcap stop...'
-        self.join()
+
         
         # print 'sniffer : %d packets received, %d packets dropped, %d packets dropped by interface' % self.p.stats()
 
