@@ -33,7 +33,7 @@ class Sniffer(threading.Thread):
 
     def run(self):
 
-        print "sniffer : Pcap start..."
+        print "Sniffer : Pcap start..."
 
         try:
             
@@ -53,13 +53,13 @@ class Sniffer(threading.Thread):
 
 
         except Exception as e:
-            print "sniffer : ", e
+            print "Sniffer : ", e
 
 
     def stop(self):
         self.Terminated = True
 
-        print 'sniffer : Pcap stop...'
+        print 'Sniffer : Pcap stop...'
 
         
         # print 'sniffer : %d packets received, %d packets dropped, %d packets dropped by interface' % self.p.stats()
@@ -70,13 +70,9 @@ class Sniffer(threading.Thread):
 
 if __name__ == "__main__":
     p = Sniffer()
-    print "a1"
     p.start()
-    # print "a2"
     time.sleep(5)
-    print "a3"
     p.stop()
-    print "a4"
 
 
 

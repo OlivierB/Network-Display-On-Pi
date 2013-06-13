@@ -1,5 +1,17 @@
 #encoding: utf-8
 
+"""
+Websocket module
+
+Manage websocket connections and subprotocols
+to send data to clients
+
+Use python tornado webserver
+
+@author: Olivier BLIN
+"""
+
+
 import threading, multiprocessing
 import time, types
 
@@ -10,18 +22,17 @@ import tornado.web
 
 
 
-
 class WSHandler_main(tornado.websocket.WebSocketHandler):
+    """
+    handler for main server page ("/")
+    """
     def open(self):
-        # print '+++connection'
         pass
 
     def on_message(self, message):
-        # print 'message received %s' % message
         pass
 
     def on_close(self):
-        # print '---connection'
         cl = ClientsList()
         cl.delClient(self)
 
@@ -30,23 +41,19 @@ class WSHandler_main(tornado.websocket.WebSocketHandler):
         return cl.addClient(self, subprotocols)
  
 
+# associate handler function and page
 application = tornado.web.Application([
     (r'/', WSHandler_main)
 ])
 
 
-
 class WsServer(threading.Thread):
     """
-    
+    Thread class for tornado webserver
     """
 
     def __init__(self, port=9000):
         threading.Thread.__init__(self)
-
-        # other
-        self.port = port
-
 
         # HTTP server
         self.http_server = tornado.httpserver.HTTPServer(application)
@@ -61,11 +68,9 @@ class WsServer(threading.Thread):
 
             tornado.ioloop.IOLoop.instance().start()
 
-
         except Exception as e:
-            # print "WsServer : ", e
+            print "WsServer : ", e
             tornado.ioloop.IOLoop.instance().stop()
-            raise
 
 
     def stop(self):
@@ -75,6 +80,11 @@ class WsServer(threading.Thread):
 
 
 class ClientsList(object):
+    """
+    Singleton class to collect client data
+    """
+
+    # Singleton creation
     _instance = None
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -82,14 +92,15 @@ class ClientsList(object):
                                 cls, *args, **kwargs)
         return cls._instance
 
+    #  class values
     cli_list = dict()
     mutex = threading.Lock()
 
-    def __init__(self):
-    # connection list
-        pass
 
     def addClient(self, client, subprotocols):
+        """
+        Add a websocket client only if it has a subprotocol
+        """
         prot = None
         if len(subprotocols) > 0:
             # Select the first protocol
@@ -105,6 +116,9 @@ class ClientsList(object):
 
 
     def delClient(self, client):
+        """
+        Delete a websocket client from list
+        """
         self.mutex.acquire()
         for k in self.cli_list.keys():
             if client in self.cli_list[k]:
@@ -113,25 +127,35 @@ class ClientsList(object):
 
 
     def __send(self, client, data):
+        """
+        Send data to clients
+        Exception managment
+        """
         try:
             client.write_message(data)
-            
         except IOError:
-            print "Send IOError"
+            print "WsServer Error : Send IOError"
         except Exception as e:
-            print "WsServer Error : ", e
+            # print "WsServer Error : ", e
+            pass
 
         return
 
 
     def send(self, proto, data):
+        """
+        Send data to client
+        proto = NoneType    -> Send to all protocols
+        proto = StringType  -> Send to "StringType" protocol
+        proto = StirngTyp list  -> Send to all protols in the list
+        """
         self.mutex.acquire()
-        if proto == None:
+        if type(proto) is type(None):
             for p in self.cli_list.keys():
                 for c in self.cli_list[p]:
                     self.__send(c, data)
             
-        elif isinstance(type(proto), types.StringType):
+        elif type(proto) is type(str()):
             if proto in self.cli_list.keys():
                 for c in self.cli_list[proto]:
                     self.__send(c, data)
@@ -141,15 +165,15 @@ class ClientsList(object):
                 if p in self.cli_list.keys():
                     for c in self.cli_list[p]:
                         self.__send(c, data)
-
-   
         self.mutex.release()
 
     def listProto(self):
         return self.cli_list.keys()
 
     def getData(self):
-        print self.cli_list
+        return self.cli_list
+
+
 
 if __name__ == "__main__":
 
@@ -160,7 +184,3 @@ if __name__ == "__main__":
             time.sleep(1)
     except KeyboardInterrupt:
         ws.stop()
-
-    # http_server = tornado.httpserver.HTTPServer(application)
-    # http_server.listen(9000)
-    # tornado.ioloop.IOLoop.instance().start()

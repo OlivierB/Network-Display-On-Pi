@@ -15,7 +15,7 @@ import core.sniffer, core.wsserver, core.monitoring
 
 
 __program__ = "NDOP"
-__version__ = "0.1"
+__version__ = "0.2"
 __description__ = "Network Sniffer with web display"
 
 
@@ -72,10 +72,7 @@ def main():
 
     # Service start
     m.start()
-    
     pcap.start()
-    time.sleep(3)
-
     ws.start()
     
     
@@ -86,7 +83,6 @@ def main():
             time.sleep(1)
             val = m.getState()
             cl.send(None, val)
-
     except KeyboardInterrupt:
         print "Stopping..."
     finally:
