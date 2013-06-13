@@ -125,13 +125,13 @@ Scene3D.prototype = {
 
 	onWindowResize: function() {
 
-		this.windowHalfX = window.innerWidth / 2;
-		this.windowHalfY = window.innerHeight / 2;
+		that.windowHalfX = window.innerWidth / 2;
+		that.windowHalfY = window.innerHeight / 2;
 
-		this.camera.aspect = window.innerWidth / window.innerHeight;
-		this.camera.updateProjectionMatrix();
+		that.camera.aspect = window.innerWidth / window.innerHeight;
+		that.camera.updateProjectionMatrix();
 
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		that.renderer.setSize(window.innerWidth, window.innerHeight);
 
 	},
 
