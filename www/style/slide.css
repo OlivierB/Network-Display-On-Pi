@@ -1,0 +1,121 @@
+
+
+
+.slidesjs-pagination li a.active, .slidesjs-pagination li a:hover.active {
+	background-position: 0 -13px;
+}
+.slidesjs-pagination li a:hover {
+	background-position: 0 -26px;
+}
+.slidesjs-pagination li a.active, .slidesjs-pagination li a:hover.active {
+	background-position: 0 -13px;
+}
+.slidesjs-pagination li a {
+	display: block;
+	width: 13px;
+	height: 0;
+	padding-top: 13px;
+	background-image: url(/res/img/pagination.png);
+	background-position: 0 0;
+	float: left;
+	overflow: hidden;
+
+}
+
+.slidesjs-pagination {
+	margin: 6px 0 0;
+	float: right;
+	list-style: none;
+}
+.slidesjs-pagination li {
+	float: left;
+	margin: 0 1px;
+}
+
+
+
+
+/*.icon-chevron-left:before {
+	content: "\f053";
+}
+
+.icon-chevron-right:before {
+	content: "\f054";
+}
+*/
+
+.icon-chevron-left, .icon-chevron-right {
+	font-family: FontAwesome;
+	font-weight: normal;
+	font-style: normal;
+	text-decoration: inherit;
+	-webkit-font-smoothing: antialiased;
+	display: inline;
+	width: auto;
+	height: auto;
+	line-height: normal;
+	vertical-align: baseline;
+	background-image: none;
+	background-position: 0 0;
+	background-repeat: repeat;
+	margin-top: 0;
+	font-size: 30px;
+	padding-left: 10%;
+	padding-right: 10%;
+	color: white;
+}
+.slidesjs-navigation:hover{
+	text-decoration: none;
+}
+.icon-chevron-left:hover, .icon-chevron-right:hover{
+	color: rgb(173,0,0);
+}
+
+.slidesjs-navigation{
+	margin-left: 5px;
+	margin-right: 5px;
+
+}
+
+.slidesjs-play {
+	font-family: FontAwesome;
+	background-image: url(/res/img/play.png);
+	background-position: 0 0;
+	background-repeat: no-repeat;
+	
+	margin-top: 5px;
+	padding-top: 13px;
+	color:rgba(0,0,0,0.0);
+
+}
+.slidesjs-play:hover  {
+	font-family: FontAwesome;
+	background-image: url(/res/img/play.png);
+	background-position: 0 0;
+	background-repeat: no-repeat;
+	
+	margin-top: 5px;
+	padding-top: 13px;
+	color:rgba(0,0,0,0.0);
+
+}
+
+.slidesjs-stop{
+	font-family: FontAwesome;
+	background-image: url(/res/img/pause.png);
+	background-position: 0 0;
+	background-repeat: no-repeat;
+	
+	padding-top: 13px;
+	color:rgba(0,0,0,0.0);
+}
+
+.slidesjs-stop:hover{
+	font-family: FontAwesome;
+	background-image: url(/res/img/pause.png);
+	background-position: 0 0;
+	background-repeat: no-repeat;
+	
+	padding-top: 13px;
+	color:rgba(0,0,0,0.0);
+}
