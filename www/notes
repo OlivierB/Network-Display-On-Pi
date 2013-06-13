@@ -1,0 +1,3 @@
+- to change the color of the alerts table : fucntion qroPrintEntryHeader() in /base/includes/base_output_query.inc.php
+
+- clean snort db : http://localhost/base/base_maintenance.php
