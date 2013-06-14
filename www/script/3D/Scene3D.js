@@ -27,9 +27,10 @@ function Scene3D() {
 
 
 	// add the 'sun'
-	var sphere = new THREE.Mesh(this.sphereGeometry, this.YellowMaterial);
-	this.scene.add(sphere);
-
+	// this.sphere = new THREE.Mesh(this.sphereGeometry, this.YellowMaterial);
+	// this.scene.add(this.sphere);
+	this.sphere = new Satellite3D(this.sphereGeometry, this.YellowMaterial, 0);
+	this.sphere.addToScene(this.scene);
 
 	this.initSatellites();
 
@@ -103,13 +104,14 @@ Scene3D.prototype = {
 
 
 		for (var i = 0; i < 30; i++) {
-			var sat = new Satellite3D(this.cubeGeometry, this.YellowMaterial);
+			var sat = new Satellite3D(this.cubeGeometry, this.YellowMaterial, 150);
 
 			sat.addToScene(this.scene);
 
 			this.satellites.push(sat);
-
 		}
+
+		
 	},
 
 	initRender: function() {
@@ -125,13 +127,13 @@ Scene3D.prototype = {
 
 	onWindowResize: function() {
 
-		this.windowHalfX = window.innerWidth / 2;
-		this.windowHalfY = window.innerHeight / 2;
+		that.windowHalfX = window.innerWidth / 2;
+		that.windowHalfY = window.innerHeight / 2;
 
-		this.camera.aspect = window.innerWidth / window.innerHeight;
-		this.camera.updateProjectionMatrix();
+		that.camera.aspect = window.innerWidth / window.innerHeight;
+		that.camera.updateProjectionMatrix();
 
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		that.renderer.setSize(window.innerWidth, window.innerHeight);
 
 	},
 
@@ -153,6 +155,9 @@ Scene3D.prototype = {
 			sat.rotate(sat.dir[0] / 50, sat.dir[1] / 50, sat.dir[2] / 50);
 		}
 
+		// that.satellites[2].launchRay(that.sphere.getPosition(), that.scene,THREE.Math.randInt(0,16777215));
+		
+		// console.log(that.sphere.getPosition());
 		that.renderer.render(that.scene, that.camera);
 	}
 }
