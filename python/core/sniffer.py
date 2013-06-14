@@ -18,6 +18,51 @@ import struct
 import types
 
 
+dEtherType = dict()
+dEtherType['\x08\x00'] =  'Internet Protocol version 4 (IPv4)'
+dEtherType['\x08\x06'] =  'Address Resolution Protocol (ARP)'
+dEtherType['\x08\x42'] =  'Wake-on-LAN[3]'
+dEtherType['\x22\xF3'] =  'IETF TRILL Protocol'
+dEtherType['\x60\x03'] =  'DECnet Phase IV'
+dEtherType['\x80\x35'] =  'Reverse Address Resolution Protocol'
+dEtherType['\x80\x9B'] =  'AppleTalk (Ethertalk)'
+dEtherType['\x80\xF3'] =  'AppleTalk Address Resolution Protocol (AARP)'
+dEtherType['\x81\x00'] =  'VLAN-tagged frame (IEEE 802.1Q) & Shortest Path Bridging IEEE 802.1aq[4]'
+dEtherType['\x81\x37'] =  'IPX'
+dEtherType['\x81\x38'] =  'IPX'
+dEtherType['\x82\x04'] =  'QNX Qnet'
+dEtherType['\x86\xDD'] =  'Internet Protocol Version 6 (IPv6)'
+dEtherType['\x88\x08'] =  'Ethernet flow control'
+dEtherType['\x88\x09'] =  'Slow Protocols (IEEE 802.3)'
+dEtherType['\x88\x19'] =  'CobraNet'
+dEtherType['\x88\x47'] =  'MPLS unicast'
+dEtherType['\x88\x48'] =  'MPLS multicast'
+dEtherType['\x88\x63'] =  'PPPoE Discovery Stage'
+dEtherType['\x88\x64'] =  'PPPoE Session Stage'
+dEtherType['\x88\x70'] =  'Jumbo Frames'
+dEtherType['\x88\x7B'] =  'HomePlug 1.0 MME'
+dEtherType['\x88\x8E'] =  'EAP over LAN (IEEE 802.1X)'
+dEtherType['\x88\x92'] =  'PROFINET Protocol'
+dEtherType['\x88\x9A'] =  'HyperSCSI (SCSI over Ethernet)'
+dEtherType['\x88\xA2'] =  'ATA over Ethernet'
+dEtherType['\x88\xA4'] =  'EtherCAT Protocol'
+dEtherType['\x88\xA8'] =  'Provider Bridging (IEEE 802.1ad) & Shortest Path Bridging IEEE 802.1aq[5]'
+dEtherType['\x88\xAB'] =  'Ethernet Powerlink[citation needed]'
+dEtherType['\x88\xCC'] =  'Link Layer Discovery Protocol (LLDP)'
+dEtherType['\x88\xCD'] =  'SERCOS III'
+dEtherType['\x88\xE1'] =  'HomePlug AV MME[citation needed]'
+dEtherType['\x88\xE3'] =  'Media Redundancy Protocol (IEC62439-2)'
+dEtherType['\x88\xE5'] =  'MAC security (IEEE 802.1AE)'
+dEtherType['\x88\xF7'] =  'Precision Time Protocol (IEEE 1588)'
+dEtherType['\x89\x02'] =  'IEEE 802.1ag Connectivity Fault Management (CFM) Protocol / ITU-T Recommendation Y.1731 (OAM)'
+dEtherType['\x89\x06'] =  'Fibre Channel over Ethernet (FCoE)'
+dEtherType['\x89\x14'] =  'FCoE Initialization Protocol'
+dEtherType['\x89\x15'] =  'RDMA over Converged Ethernet (RoCE)'
+dEtherType['\x89\x2F'] =  'High-availability Seamless Redundancy (HSR)'
+dEtherType['\x90\x00'] =  'Ethernet Configuration Testing Protocol[6]'
+dEtherType['\x91\x00'] =  'Q-in-Q'
+dEtherType['\xCA\xFE'] =  'Veritas Low Latency Transport (LLT)[7] for Veritas Cluster Server'
+
 
 
 protocols={ socket.IPPROTO_TCP:'tcp',
@@ -43,6 +88,7 @@ def decode_ip_packet(s):
     else:
         d['options']=None
     d['data']=s[4*d['header_len']:]
+
     return d
 
 def dumphex(s):
@@ -57,16 +103,18 @@ def print_packet(pktlen, data, timestamp):
 
     if data[12:14]=='\x08\x00':
         decoded=decode_ip_packet(data[14:])
-        print '\n%s.%f %s > %s' % (time.strftime('%H:%M',
-                                                                                     time.localtime(timestamp)),
-                                                         timestamp % 60,
-                                                         decoded['source_address'],
-                                                         decoded['destination_address'])
+        print '\n%s.%f %s > %s' % ( time.strftime('%H:%M',
+                                    time.localtime(timestamp)),
+                                    timestamp % 60,
+                                    decoded['source_address'],
+                                    decoded['destination_address'])
         for key in ['version', 'header_len', 'tos', 'total_len', 'id',
                                 'flags', 'fragment_offset', 'ttl']:
             print '  %s: %d' % (key, decoded[key])
+
         print '  protocol: %s' % protocols[decoded['protocol']]
         print '  header checksum: %d' % decoded['checksum']
+        print '  pkt len : ', pktlen
         print '  data:'
         dumphex(decoded['data'])
         return
@@ -79,13 +127,16 @@ class Sniffer(threading.Thread):
     
     """
 
-    def __init__(self, dev="eth0"):
+    def __init__(self, dev="eth0", net="192.168.1.0", mask="255.255.255.0"):
         threading.Thread.__init__(self)
         # stop condition
         self.Terminated = False
 
-        # other
+        # param
         self.dev = dev
+        self.net = net
+        self.mask = mask
+
         # Create new pcap capture object
         self.p = pcap.pcapObject()
 
@@ -95,12 +146,20 @@ class Sniffer(threading.Thread):
     def run(self):
 
         print "Sniffer : Pcap start..."
+        print self.dev
 
         try:
-            # Select device
-            net, mask = pcap.lookupnet(self.dev)
+            # Get device informations if possible (IP address assigned)
+            try:
+                net, mask = pcap.lookupnet(self.dev)
+                self.net = pcap.ntoa(net)
+                self.mask = pcap.ntoa(mask)
+            except:
+                pass
+
+
             # (Dev, buffer, promiscuous mode, timeout)
-            self.p.open_live(self.dev, 1600, 1, 100)
+            self.p.open_live(self.dev, 1600, 0, 100)
 
 
             while not self.Terminated:
@@ -122,9 +181,23 @@ class Sniffer(threading.Thread):
 
 
     def packet_analyse(self, pkt):
-        # print "--> ", pkt[0]
+        # p = decode_ip_packet(pkt[1])
+        # print "--> ", pkt[0], " ", decode_ip_packet(pkt[1])["total_len"], " ", decode_ip_packet(pkt[1])["header_len"]
 
-        return
+        # pktlen, data, timestamp
+        v = pkt[1][12:14]
+        # if v in dEtherType.keys():
+        #     print dEtherType[v]
+
+        # if pkt[1][12:14]=='\x08\x00':
+        #     print "IP"
+        # elif pkt[1][12:14]=='\x08\x06':
+        #     print "ARP"
+        # elif pkt[1][12:14]=='\x80\x35':
+        #     print "RARP"
+        # else:
+        #     print "Unknow"
+        # return
 
 
 if __name__ == "__main__":
@@ -183,4 +256,53 @@ if __name__ == "__main__":
     #         print '%s' % sys.exc_type
     #         print 'shutting down'
     #         print '%d packets received, %d packets dropped, %d packets dropped by interface' % p.stats()
+
+
+
+
+"""
+0x0800  Internet Protocol version 4 (IPv4)
+0x0806  Address Resolution Protocol (ARP)
+0x0842  Wake-on-LAN[3]
+0x22F3  IETF TRILL Protocol
+0x6003  DECnet Phase IV
+0x8035  Reverse Address Resolution Protocol
+0x809B  AppleTalk (Ethertalk)
+0x80F3  AppleTalk Address Resolution Protocol (AARP)
+0x8100  VLAN-tagged frame (IEEE 802.1Q) & Shortest Path Bridging IEEE 802.1aq[4]
+0x8137  IPX
+0x8138  IPX
+0x8204  QNX Qnet
+0x86DD  Internet Protocol Version 6 (IPv6)
+0x8808  Ethernet flow control
+0x8809  Slow Protocols (IEEE 802.3)
+0x8819  CobraNet
+0x8847  MPLS unicast
+0x8848  MPLS multicast
+0x8863  PPPoE Discovery Stage
+0x8864  PPPoE Session Stage
+0x8870  Jumbo Frames
+0x887B  HomePlug 1.0 MME
+0x888E  EAP over LAN (IEEE 802.1X)
+0x8892  PROFINET Protocol
+0x889A  HyperSCSI (SCSI over Ethernet)
+0x88A2  ATA over Ethernet
+0x88A4  EtherCAT Protocol
+0x88A8  Provider Bridging (IEEE 802.1ad) & Shortest Path Bridging IEEE 802.1aq[5]
+0x88AB  Ethernet Powerlink[citation needed]
+0x88CC  Link Layer Discovery Protocol (LLDP)
+0x88CD  SERCOS III
+0x88E1  HomePlug AV MME[citation needed]
+0x88E3  Media Redundancy Protocol (IEC62439-2)
+0x88E5  MAC security (IEEE 802.1AE)
+0x88F7  Precision Time Protocol (IEEE 1588)
+0x8902  IEEE 802.1ag Connectivity Fault Management (CFM) Protocol / ITU-T Recommendation Y.1731 (OAM)
+0x8906  Fibre Channel over Ethernet (FCoE)
+0x8914  FCoE Initialization Protocol
+0x8915  RDMA over Converged Ethernet (RoCE)
+0x892F  High-availability Seamless Redundancy (HSR)
+0x9000  Ethernet Configuration Testing Protocol[6]
+0x9100  Q-in-Q
+0xCAFE  Veritas Low Latency Transport (LLT)[7] for Veritas Cluster Server
+"""
 

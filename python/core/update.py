@@ -16,9 +16,9 @@ WSSUBPROT_IPLIST        = 'iplist'
 
 
 class Update():
-    def __init__(self, monnitor, pcap):
+    def __init__(self, monnitor, sniffer):
         self.m = monnitor
-        self.p = pcap
+        self.sniff = sniffer
         self.cl = core.wsserver.ClientsList()
 
         # values save

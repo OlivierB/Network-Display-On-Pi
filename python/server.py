@@ -33,14 +33,17 @@ class ServerArgumentParser(argparse.ArgumentParser):
         self.description = "%s Version %s" % (__description__, __version__)
         
 
-        self.add_argument("-p", "--port", default=9000, type=int, dest="port", 
-            help="Websocket server port (default: %i)" % 9000)
+        self.add_argument("-p", "--port", default=config.server.websocket_port, type=int, dest="websocket_port", 
+            help="Websocket server port (default: %i)" % config.server.websocket_port)
 
-        self.add_argument("-m", "--mask", default="255.255.255.0", dest="mask", 
-            help="Local network mask (default: 255.255.255.0)")
+        self.add_argument("-d", "--device", default=config.server.sniffer_device, dest="sniffer_device", 
+            help="Network device for sniffing (default: %s)" % config.server.sniffer_device)
 
-        self.add_argument("-n", "--net", default="192.168.1.0", dest="net", 
-            help="Local network address (default: 192.168.1.0)")
+        self.add_argument("-m", "--mask", default=config.server.sniffer_device_mask, dest="sniffer_mask", 
+            help="Local network mask (default: %s)" % config.server.sniffer_device_mask)
+
+        self.add_argument("-n", "--net", default=config.server.sniffer_device_net, dest="sniffer_net", 
+            help="Local network address (default: %s)" % config.server.sniffer_device_net)
 
 
 
@@ -56,14 +59,14 @@ def main():
     print "------------------------------"
 
     # Init
-    ws = core.wsserver.WsServer()
+    ws = core.wsserver.WsServer(args.websocket_port)
     m = core.monitoring.Monitoring()
-    pcap = core.sniffer.Sniffer()
+    sniff = core.sniffer.Sniffer(args.sniffer_device, args.sniffer_net, args.sniffer_mask)
 
     # Service start
     m.start()
     time.sleep(0.5)
-    pcap.start()
+    sniff.start()
     time.sleep(0.5)
     ws.start()
     time.sleep(0.5)
@@ -71,7 +74,7 @@ def main():
     
     # Data managememt
     cl = core.wsserver.ClientsList()
-    u = core.update.Update(m, pcap)
+    u = core.update.Update(m, sniff)
     
 
     # Loop
@@ -87,7 +90,7 @@ def main():
         print "------------------------------"
         ws.stop()
         m.stop()
-        pcap.stop()
+        sniff.stop()
 
             
     return 0
