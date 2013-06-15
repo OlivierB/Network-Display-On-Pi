@@ -36,7 +36,7 @@ class ServerArgumentParser(argparse.ArgumentParser):
         self.add_argument("-p", "--port", default=config.server.websocket_port, type=int, dest="websocket_port", 
             help="Websocket server port (default: %i)" % config.server.websocket_port)
 
-        self.add_argument("-d", "--device", default=config.server.sniffer_device, dest="sniffer_device", 
+        self.add_argument("-i", "--interface", default=config.server.sniffer_device, dest="sniffer_device", 
             help="Network device for sniffing (default: %s)" % config.server.sniffer_device)
 
         self.add_argument("-m", "--mask", default=config.server.sniffer_device_mask, dest="sniffer_mask", 

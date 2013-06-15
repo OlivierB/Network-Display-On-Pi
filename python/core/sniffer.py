@@ -17,57 +17,7 @@ import socket
 import struct
 import types
 
-
-dEtherType = dict()
-dEtherType['\x08\x00'] =  'Internet Protocol version 4 (IPv4)'
-dEtherType['\x08\x06'] =  'Address Resolution Protocol (ARP)'
-dEtherType['\x08\x42'] =  'Wake-on-LAN[3]'
-dEtherType['\x22\xF3'] =  'IETF TRILL Protocol'
-dEtherType['\x60\x03'] =  'DECnet Phase IV'
-dEtherType['\x80\x35'] =  'Reverse Address Resolution Protocol'
-dEtherType['\x80\x9B'] =  'AppleTalk (Ethertalk)'
-dEtherType['\x80\xF3'] =  'AppleTalk Address Resolution Protocol (AARP)'
-dEtherType['\x81\x00'] =  'VLAN-tagged frame (IEEE 802.1Q) & Shortest Path Bridging IEEE 802.1aq[4]'
-dEtherType['\x81\x37'] =  'IPX'
-dEtherType['\x81\x38'] =  'IPX'
-dEtherType['\x82\x04'] =  'QNX Qnet'
-dEtherType['\x86\xDD'] =  'Internet Protocol Version 6 (IPv6)'
-dEtherType['\x88\x08'] =  'Ethernet flow control'
-dEtherType['\x88\x09'] =  'Slow Protocols (IEEE 802.3)'
-dEtherType['\x88\x19'] =  'CobraNet'
-dEtherType['\x88\x47'] =  'MPLS unicast'
-dEtherType['\x88\x48'] =  'MPLS multicast'
-dEtherType['\x88\x63'] =  'PPPoE Discovery Stage'
-dEtherType['\x88\x64'] =  'PPPoE Session Stage'
-dEtherType['\x88\x70'] =  'Jumbo Frames'
-dEtherType['\x88\x7B'] =  'HomePlug 1.0 MME'
-dEtherType['\x88\x8E'] =  'EAP over LAN (IEEE 802.1X)'
-dEtherType['\x88\x92'] =  'PROFINET Protocol'
-dEtherType['\x88\x9A'] =  'HyperSCSI (SCSI over Ethernet)'
-dEtherType['\x88\xA2'] =  'ATA over Ethernet'
-dEtherType['\x88\xA4'] =  'EtherCAT Protocol'
-dEtherType['\x88\xA8'] =  'Provider Bridging (IEEE 802.1ad) & Shortest Path Bridging IEEE 802.1aq[5]'
-dEtherType['\x88\xAB'] =  'Ethernet Powerlink[citation needed]'
-dEtherType['\x88\xCC'] =  'Link Layer Discovery Protocol (LLDP)'
-dEtherType['\x88\xCD'] =  'SERCOS III'
-dEtherType['\x88\xE1'] =  'HomePlug AV MME[citation needed]'
-dEtherType['\x88\xE3'] =  'Media Redundancy Protocol (IEC62439-2)'
-dEtherType['\x88\xE5'] =  'MAC security (IEEE 802.1AE)'
-dEtherType['\x88\xF7'] =  'Precision Time Protocol (IEEE 1588)'
-dEtherType['\x89\x02'] =  'IEEE 802.1ag Connectivity Fault Management (CFM) Protocol / ITU-T Recommendation Y.1731 (OAM)'
-dEtherType['\x89\x06'] =  'Fibre Channel over Ethernet (FCoE)'
-dEtherType['\x89\x14'] =  'FCoE Initialization Protocol'
-dEtherType['\x89\x15'] =  'RDMA over Converged Ethernet (RoCE)'
-dEtherType['\x89\x2F'] =  'High-availability Seamless Redundancy (HSR)'
-dEtherType['\x90\x00'] =  'Ethernet Configuration Testing Protocol[6]'
-dEtherType['\x91\x00'] =  'Q-in-Q'
-dEtherType['\xCA\xFE'] =  'Veritas Low Latency Transport (LLT)[7] for Veritas Cluster Server'
-
-
-
-protocols={ socket.IPPROTO_TCP:'tcp',
-            socket.IPPROTO_UDP:'udp',
-            socket.IPPROTO_ICMP:'icmp'}
+import config.network
 
 def decode_ip_packet(s):
     d={}
@@ -112,7 +62,7 @@ def print_packet(pktlen, data, timestamp):
                                 'flags', 'fragment_offset', 'ttl']:
             print '  %s: %d' % (key, decoded[key])
 
-        print '  protocol: %s' % protocols[decoded['protocol']]
+        print '  protocol: %s' % decoded['protocol']
         print '  header checksum: %d' % decoded['checksum']
         print '  pkt len : ', pktlen
         print '  data:'
@@ -131,6 +81,10 @@ class Sniffer(threading.Thread):
         threading.Thread.__init__(self)
         # stop condition
         self.Terminated = False
+
+        # Data
+        self.ET = config.network.dEtherType
+        self.IPT = config.network.dIPType
 
         # param
         self.dev = dev
@@ -186,8 +140,8 @@ class Sniffer(threading.Thread):
 
         # pktlen, data, timestamp
         v = pkt[1][12:14]
-        # if v in dEtherType.keys():
-        #     print dEtherType[v]
+        if v in self.ET.keys():
+            print self.ET[v]["protocol"]
 
         # if pkt[1][12:14]=='\x08\x00':
         #     print "IP"

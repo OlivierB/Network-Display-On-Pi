@@ -204,14 +204,3 @@ dIPType = {
     255 : { 'callback' : None, 'protocol' : 'None', 'description' : 'Reserved'}
 }
 
-
-
-if __name__ == "__main__":
-    print dEtherType.keys()
-    try:
-        while 1:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print "Stopping..."
-    finally:
-
