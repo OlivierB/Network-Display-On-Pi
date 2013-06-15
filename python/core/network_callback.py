@@ -21,18 +21,26 @@ def callback_ethertype_ipv4(pktdata):
     pkt['id']           = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
     pkt['flags']        = (ord(pktdata[6]) & 0xe0) >> 5
     pkt['fragment_offset']  = socket.ntohs(struct.unpack('H', pktdata[6:8])[0] & 0x1f)
-    pkt['ttl']       = ord(pktdata[8])
-    pkt['protocol']  = ord(pktdata[9])
+    pkt['ttl']              = ord(pktdata[8])
+
+    prot = ord(pktdata[9])
+    pkt['data_protocol_number']  = prot
+
+    if prot in dIPType.keys():
+        pkt['data_protocol']  = dIPType[prot]["protocol"]
+    else:
+        pkt['data_protocol']  = "?"
+
     pkt['checksum']  = socket.ntohs(struct.unpack('H', pktdata[10:12])[0])
-    pkt['src']       = socket.inet_ntoa(struct.unpack('i', pktdata[12:16])[0])
-    pkt['dst']       = socket.inet_ntoa(struct.unpack('i', pktdata[16:20])[0])
+    pkt['src']       = socket.inet_ntoa(pktdata[12:16])
+    pkt['dst']       = socket.inet_ntoa(pktdata[16:20])
     
     if pkt['header_len'] > 5:
-        pkt['options'] = s[20:4*(pkt['header_len']-5)]
+        pkt['options'] = pktdata[20:4*(pkt['header_len']-5)]
     else:
         pkt['options'] = None
 
-    pkt['data'] = s[4*pkt['header_len']:]
+    pkt['data'] = pktdata[4*pkt['header_len']:]
 
     return pkt
 
