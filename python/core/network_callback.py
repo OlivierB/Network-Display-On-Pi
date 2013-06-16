@@ -29,7 +29,7 @@ def callback_ethertype_ipv4(pktdata):
     if prot in dIPType.keys():
         pkt['data_protocol']  = dIPType[prot]["protocol"]
     else:
-        pkt['data_protocol']  = "?"
+        pkt['data_protocol']  = "Unknown"
 
     pkt['checksum']  = socket.ntohs(struct.unpack('H', pktdata[10:12])[0])
     pkt['src']       = socket.inet_ntoa(pktdata[12:16])

@@ -38,6 +38,7 @@ class Sniffer(threading.Thread):
 
         # Create new pcap capture object
         self.p = pcap.pcapObject()
+        self.nd = NetworkData()
 
         # Stat
 
@@ -62,32 +63,54 @@ class Sniffer(threading.Thread):
 
             while not self.Terminated:
                 # return tuple : pktlen, data, timestamp
-                res = self.p.next()
-                if isinstance(res, types.TupleType):
-                    self.packet_analyse(res)
+                pkt = self.p.next()
+                if isinstance(pkt, types.TupleType):
+                    pktdec = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
 
-            print 'sniffer : %d packets received, %d packets dropped, %d packets dropped by interface' % self.p.stats()
+                    if pktdec["data"]["data_protocol"] != "IPv4":
+                        print "%s-%s" % (bin(ord(pktdec["data"]["EtherType"][0])), bin(ord(pktdec["data"]["EtherType"][1])))
+                        print "%i-%i" % (ord(pktdec["data"]["EtherType"][0]), ord(pktdec["data"]["EtherType"][1]))
+                        print "\\x%X\\x%X" % (ord(pktdec["data"]["EtherType"][0]), ord(pktdec["data"]["EtherType"][1]))
+                        
+                    #     print "---------------------"
+                    pass
+
+                    # core.network_utils.packet_show(pktdec)
+                    # print "---------------------"
+            a, b, c = self.p.stats()
+            print 'sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % self.p.stats(), b/(a*1.0)*100
 
         except Exception as e:
             print "Sniffer : ", e
             raise
 
-
     def stop(self):
         self.Terminated = True
 
         print 'Sniffer : Pcap stop...'
-        
 
 
-    def packet_analyse(self, pkt):
-        p = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
-        
-        core.network_utils.packet_show(p)
 
-        print "---------------------"
+class NetworkData(object):
+    """
+    Singleton class to collect network statistic
+    """
 
+    # Singleton creation
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(NetworkData, cls).__new__(
+                                cls, *args, **kwargs)
+        return cls._instance
 
+    pkt_nbr = 0
+
+    def analyse(self, pkt):
+        self.pkt_nbr += 1
+
+    def stats(self,):
+        pass
 
 
 
