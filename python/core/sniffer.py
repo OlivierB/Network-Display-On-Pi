@@ -16,6 +16,7 @@ import threading
 import socket
 import struct
 import types
+import operator
 
 import core.network_utils
 
@@ -66,19 +67,13 @@ class Sniffer(threading.Thread):
                 pkt = self.p.next()
                 if isinstance(pkt, types.TupleType):
                     pktdec = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
+                    self.nd.analyse(pktdec)
 
-                    if pktdec["data"]["data_protocol"] != "IPv4":
-                        print "%s-%s" % (bin(ord(pktdec["data"]["EtherType"][0])), bin(ord(pktdec["data"]["EtherType"][1])))
-                        print "%i-%i" % (ord(pktdec["data"]["EtherType"][0]), ord(pktdec["data"]["EtherType"][1]))
-                        print "\\x%X\\x%X" % (ord(pktdec["data"]["EtherType"][0]), ord(pktdec["data"]["EtherType"][1]))
-                        
-                    #     print "---------------------"
-                    pass
 
-                    # core.network_utils.packet_show(pktdec)
-                    # print "---------------------"
+            # End
             a, b, c = self.p.stats()
-            print 'sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % self.p.stats(), b/(a*1.0)*100
+            print 'sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % self.p.stats(), b/(a*1.0+1)*100
+            print self.nd.stats()
 
         except Exception as e:
             print "Sniffer : ", e
@@ -105,12 +100,45 @@ class NetworkData(object):
         return cls._instance
 
     pkt_nbr = 0
+    ip_list_outside = dict()
+    # ip_list_inside = dict()
+
 
     def analyse(self, pkt):
         self.pkt_nbr += 1
+        if pkt["Ethernet"]["EtherType"] == '\x08\x00':
+            src = pkt["Ethernet"]["data"]["src"]
+            dst = pkt["Ethernet"]["data"]["dst"]
+            if not core.network_utils.ip_is_reserved(src):
+                self.add_ip_list_outside(src)
+            # else
+            #     self.add_ip_list_inside(src)
+
+    def add_ip_list_outside(self, ip):
+        if len(self.ip_list_outside) < 500:
+            if not ip in self.ip_list_outside.keys():
+                self.ip_list_outside[ip] = 1
+            else:
+                self.ip_list_outside[ip] += 1
+    
+    def get_ip_list_outside(self):
+        l = list()
+        nbip = 0
+        maxip = 10
+        sorted_l = sorted(self.ip_list_outside.iteritems(), key=operator.itemgetter(1), reverse=True)
+        for e in sorted_l:
+            l += [pcap.ntoa(e[0])]
+            if not nbip < maxip:
+                break
+            nbip += 1
+        return l
+
+    # def get_ip_list_inside(self):
+    #     return self.ip_list_inside
 
     def stats(self,):
-        pass
+        return self.pkt_nbr
+
 
 
 

@@ -8,6 +8,7 @@ Network implementation data
 
 import socket
 import struct
+import pcap
 
 
 
@@ -22,19 +23,11 @@ def callback_ethertype_ipv4(pktdata):
     pkt['flags']        = (ord(pktdata[6]) & 0xe0) >> 5
     pkt['fragment_offset']  = socket.ntohs(struct.unpack('H', pktdata[6:8])[0] & 0x1f)
     pkt['ttl']              = ord(pktdata[8])
-
-    prot = ord(pktdata[9])
-    pkt['data_protocol_number']  = prot
-
-    if prot in dIPType.keys():
-        pkt['data_protocol']  = dIPType[prot]["protocol"]
-    else:
-        pkt['data_protocol']  = "Unknown"
-
+    pkt['data_protocol']    = ord(pktdata[9])
     pkt['checksum']  = socket.ntohs(struct.unpack('H', pktdata[10:12])[0])
-    pkt['src']       = socket.inet_ntoa(pktdata[12:16])
-    pkt['dst']       = socket.inet_ntoa(pktdata[16:20])
-    
+    pkt['src']       = struct.unpack('I', pktdata[12:16])[0]
+    pkt['dst']       = struct.unpack('I', pktdata[16:20])[0]
+
     if pkt['header_len'] > 5:
         pkt['options'] = pktdata[20:4*(pkt['header_len']-5)]
     else:
@@ -44,22 +37,33 @@ def callback_ethertype_ipv4(pktdata):
 
     return pkt
 
+def callback_ethertype_arp(pktdata):
+    # print "ARP"
+    return
+
+def callback_ethertype_ipv6(pktdata):
+    # print "IPv6"
+    return
+
+def callback_ethertype_vlan(pktdata):
+    # print "VLAN"
+    return
 
 # EtherType list
 dEtherType = {
     '\x08\x00' : { 'callback' : callback_ethertype_ipv4, 'protocol' : 'IPv4', 'description' : 'Internet Protocol version 4'},
-    '\x08\x06' : { 'callback' : None, 'protocol' : 'ARP', 'description' : 'Address Resolution Protocol'},
+    '\x08\x06' : { 'callback' : callback_ethertype_arp, 'protocol' : 'ARP', 'description' : 'Address Resolution Protocol'},
     '\x08\x42' : { 'callback' : None, 'protocol' : 'WoL', 'description' : 'Wake on LAN'},
     '\x22\xF3' : { 'callback' : None, 'protocol' : 'IETF TRILL Protocol', 'description' : 'Transparent Interconnection of Lots of Links - IETF Standard (Routing Bridges or TRILL Switches)'},
     '\x60\x03' : { 'callback' : None, 'protocol' : 'DECnet Phase IV', 'description' : 'Network protocols - Digital Equipment Corporation'},
     '\x80\x35' : { 'callback' : None, 'protocol' : 'RARP', 'description' : 'Reverse Address Resolution Protocol'},
     '\x80\x9B' : { 'callback' : None, 'protocol' : 'AppleTalk (Ethertalk)', 'description' : 'Network protocols - Apple Inc.'},
     '\x80\xF3' : { 'callback' : None, 'protocol' : 'AARP', 'description' : 'AppleTalk Address Resolution Protocol - Apple Inc.'},
-    '\x81\x00' : { 'callback' : None, 'protocol' : 'VLAN-tag & SPB', 'description' : 'VLAN-tagged frame (IEEE 802.1Q) & Shortest Path Bridging (IEEE 802.1aq)'},
+    '\x81\x00' : { 'callback' : callback_ethertype_vlan, 'protocol' : 'VLAN-tag & SPB', 'description' : 'VLAN-tagged frame (IEEE 802.1Q) & Shortest Path Bridging (IEEE 802.1aq)'},
     '\x81\x37' : { 'callback' : None, 'protocol' : 'IPX (alternatif)', 'description' : 'Internetwork Packet Exchange'},
     '\x81\x38' : { 'callback' : None, 'protocol' : 'IPX', 'description' : 'Internetwork Packet Exchange'},
     '\x82\x04' : { 'callback' : None, 'protocol' : 'QNX Qnet', 'description' : 'network for a commercial Unix-like real-time operating system'},
-    '\x86\xDD' : { 'callback' : None, 'protocol' : 'IPv6', 'description' : 'Internet Protocol Version 6'},
+    '\x86\xDD' : { 'callback' : callback_ethertype_ipv6, 'protocol' : 'IPv6', 'description' : 'Internet Protocol Version 6'},
     '\x88\x08' : { 'callback' : None, 'protocol' : 'Ethernet flow control', 'description' : 'Priority-based flow control (IEEE 802.1Qbb)'},
     '\x88\x09' : { 'callback' : None, 'protocol' : 'Slow Protocols', 'description' : 'Slow Protocols (IEEE 802.3)'},
     '\x88\x19' : { 'callback' : None, 'protocol' : 'CobraNet', 'description' : 'Uncompressed, multi-channel, low-latency digital audio over a standard Ethernet network'},
@@ -91,7 +95,6 @@ dEtherType = {
     '\x91\x00' : { 'callback' : None, 'protocol' : 'Q-in-Q', 'description' : 'Stacked VLANs - Multiple VLAN headers into a single frame (IEEE 802.1ad)'},
     '\xCA\xFE' : { 'callback' : None, 'protocol' : 'LLT', 'description' : 'Veritas Low Latency Transport for Veritas Cluster Server'}
 }
-
 
 dIPType = {
     0 : { 'callback' : None, 'protocol' : 'dCCP', 'description' : 'IPv6 Hop-by-Hop Option'},
@@ -242,4 +245,26 @@ dIPType = {
     254 : { 'callback' : None, 'protocol' : 'None', 'description' : 'Use for experimentation and testing'},
     255 : { 'callback' : None, 'protocol' : 'None', 'description' : 'Reserved'}
 }
+
+dIPReserved = [
+    (pcap.aton('0.0.0.0'), 8),        # Current network (only valid as source address)  RFC 5735
+    (pcap.aton('10.0.0.0'), 8),       # Private network RFC 1918
+    (pcap.aton('100.64.0.0'), 10),    # Shared Address Space    RFC 6598
+    (pcap.aton('127.0.0.0'), 8),      # Loopback    RFC 5735
+    (pcap.aton('169.254.0.0'), 16),   # Link-local  RFC 3927
+    (pcap.aton('172.16.0.0'), 12),    # Private network RFC 1918
+    (pcap.aton('192.0.0.0'), 24),     # IETF Protocol Assignments   RFC 5735
+    (pcap.aton('192.0.2.0'), 24),     # TEST-NET-1, documentation and examples  RFC 5735
+    (pcap.aton('192.88.99.0'), 24),   # IPv6 to IPv4 relay  RFC 3068
+    (pcap.aton('192.168.0.0'), 16),   # Private network RFC 1918
+    (pcap.aton('198.18.0.0'), 15),    # Network benchmark tests RFC 2544
+    (pcap.aton('198.51.100.0'), 24),  # TEST-NET-2, documentation and examples  RFC 5737
+    (pcap.aton('203.0.113.0'), 24),   # TEST-NET-3, documentation and examples  RFC 5737
+    (pcap.aton('224.0.0.0'), 4),      # IP multicast (former Class D network)   RFC 5771
+    (pcap.aton('240.0.0.0'), 4),      # Reserved (former Class E network)   RFC 1700
+    (pcap.aton('255.255.255.255'), 32)# Broadcast
+]
+    
+
+
 

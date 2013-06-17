@@ -20,7 +20,7 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.web
 
-
+LIST_PROTOCOL = ['iplist', 'bandwidth', 'server_stat']
 
 class WSHandler_main(tornado.websocket.WebSocketHandler):
     """
@@ -38,7 +38,12 @@ class WSHandler_main(tornado.websocket.WebSocketHandler):
 
     def select_subprotocol(self, subprotocols):
         cl = ClientsList()
-        return cl.addClient(self, subprotocols)
+        prot = cl.addClient(self, subprotocols)
+        if prot in LIST_PROTOCOL:
+            return prot
+        else:
+            self.close()
+            return None
  
 
 # associate handler function and page

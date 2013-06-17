@@ -19,6 +19,7 @@ class Update():
     def __init__(self, monnitor, sniffer):
         self.m = monnitor
         self.sniff = sniffer
+        self.datanet = core.sniffer.NetworkData()
         self.cl = core.wsserver.ClientsList()
 
         # values save
@@ -70,7 +71,7 @@ class Update():
 
     def __get_iplist(self):
         val = dict()
-
+        val["iplist"] = self.datanet.get_ip_list_outside()
         return val
 
     # diff state
