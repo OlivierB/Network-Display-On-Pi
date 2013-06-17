@@ -39,6 +39,15 @@ Satellite3D.prototype = {
 
 	getPosition: function() {
 		return this.pivot.localToWorld(this.cube.position.clone());
+	},
+
+	update: function(){
+		this.rotate(this.dir[0] / 50, this.dir[1] / 50, this.dir[2] / 50);
+	},
+
+	destroy: function(scene){
+		scene.remove(this.pivot);
+		delete this.pivot;
 	}
 
 

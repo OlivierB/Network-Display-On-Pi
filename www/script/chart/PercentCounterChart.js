@@ -22,7 +22,6 @@ PercentCounterChart.prototype = {
 	},
 
 	connect : function (address, protocol){
-		var that = this;
 
 		this.address = address || App.serverAddress || 'localhost';
 		this.prot = protocol || App.ServerStatProtocol || 'server_stat';
@@ -32,15 +31,15 @@ PercentCounterChart.prototype = {
 
 		// When the connection is open, send some data to the server
 		this.connection.onopen = function () {
-		  that.connection.send('Ping'); // Send the message 'Ping' to the server
-		  that.alertContainer.html('');
-		};
+		  this.connection.send('Ping'); // Send the message 'Ping' to the server
+		  this.alertContainer.html('');
+		}.bind(this);
 
 		// Log errors
 		this.connection.onerror = function (error) {
 			console.log('WebSocket Error ' + error);
-			that.alertContainer.text(error);
-		};
+			this.alertContainer.text(error);
+		}.bind(this);
 
 		// Log messages from the server
 		this.connection.onmessage = function (e) {
@@ -48,16 +47,16 @@ PercentCounterChart.prototype = {
 
 			var obj = JSON.parse(e.data);
 
-			that.updateChart(obj[that.id_data]);
+			this.updateChart(obj[this.id_data]);
 			
 
-		};
+		}.bind(this);
 
 		this.connection.onclose = function (e) {
 			// console.log('Deconnexion tentative de reconnexion dans 5 sec !');
-			that.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
-			setTimeout(function(){that.connect(that.address, that.prot);}, 5000);
-		};
+			this.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
+			setTimeout(function(){this.connect(this.address, this.prot);}, 5000);
+		}.bind(this);
 	}
 }
 

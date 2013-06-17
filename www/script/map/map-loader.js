@@ -2,7 +2,7 @@
 var IpMap = new IpLocationMap('map');
 
 // Add the location of our IP
-IpMap.addPointFromIP('', 'blue');
+// IpMap.addPointFromIP('', 'blue');
 
 // Connection to the IP provider programm
 IpMap.connect(App.serverAddress, App.ipListProtocol);

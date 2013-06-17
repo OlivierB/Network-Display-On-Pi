@@ -125,7 +125,6 @@ BandwidthChart.prototype = {
 
 	},
 	connect : function (address, protocol){
-		var that = this;
 		// console.log('tentative de connexion live ' + App.serverAddress + '/' + App.bandwidtProtocol);
 
 		this.address = address || App.serverAddress || 'localhost';
@@ -134,32 +133,32 @@ BandwidthChart.prototype = {
 
 		this.connection = new WebSocket(this.address, this.prot);
 
-		
+		// this.animate.bind(this)
 		// When the connection is open, send some data to the server
 		this.connection.onopen = function () {
 			console.log("connexion");
-			that.alertContainer.html('');
-		  	that.connection.send('Ping'); // Send the message 'Ping' to the server
+			this.alertContainer.html('');
+		  	this.connection.send('Ping'); // Send the message 'Ping' to the server
 
-		  };
+		  }.bind(this);
 
 		// Log errors
 		this.connection.onerror = function (error) {
 			console.log('WebSocket Error ' + error);
-			that.alertContainer.text('Connection error : ' + error);
-		};
+			this.alertContainer.text('Connection error : ' + error);
+		}.bind(this);
 
 		// Log messages from the server
 		this.connection.onmessage = function (e) {
 			var obj = JSON.parse(e.data);
-			that.updateChart(obj.loc_Ko, obj.in_Ko , obj.out_Ko,obj.Ko);
-		};
+			this.updateChart(obj.loc_Ko, obj.in_Ko , obj.out_Ko,obj.Ko);
+		}.bind(this);
 
 		this.connection.onclose = function (e) {
 			// console.log('Deconnexion tentative de reconnexion dans 5 sec ' + App.serverAddress + '/' + App.bandwidtProtocol);
-			that.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
-			setTimeout(function(){that.connect(that.address, that.prot);}, 5000);
-		};
+			this.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
+			setTimeout(function(){this.connect(this.address, this.prot);}, 5000);
+		}.bind(this);
 
 	}
 
