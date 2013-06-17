@@ -29,8 +29,9 @@ IpLocationMap.prototype = {
 
 	addPointFromIP : function (ip, color){
 		var that = this;
+		// console.log("http://" + App.freeGeoIpAdress + "/json/" + ip)
 		$.ajax({ type: "GET",   
-			url: "http://freegeoip.net/json/" + ip,   
+			url: "http://" + App.freeGeoIpAdress + "/json/" + ip,   
 			async: true,
 			success: function(data){
 				that.addPoint(data.latitude, data.longitude, color);
@@ -51,7 +52,7 @@ IpLocationMap.prototype = {
 
 		// When the connection is open, send some data to the server
 		this.connection.onopen = function () {
-			console.log("connexion");
+			console.log(" IPlconnexion");
 			$('#alert-map').html('');
 		  	that.connection.send('Ping'); // Send the message 'Ping' to the server
 
@@ -70,14 +71,14 @@ IpLocationMap.prototype = {
 			var obj = JSON.parse(e.data);
 
 			// console.log('last ' + last + ', length ' + obj.ip_dst.length);
-			if(obj.ip_dst != null){
-				for(var i= 0; i < obj.ip_dst.length; i++)
+			if(obj.iplist != null){
+				for(var i= 0; i < obj.iplist.length; i++)
 				{
-					if(that.ips[obj.ip_dst[i]] == null)
+					if(that.ips[obj.iplist[i]] == null)
 					{
-						that.addPointFromIP(obj.ip_dst[i]);
+						that.addPointFromIP(obj.iplist[i]);
 						// console.log('ip ajoutee ' + obj.ip_dst[i]);
-						that.ips[obj.ip_dst[i]] = 1;
+						that.ips[obj.iplist[i]] = 1;
 					}
 				}
 			}

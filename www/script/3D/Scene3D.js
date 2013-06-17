@@ -1,8 +1,5 @@
 function Scene3D() {
 
-	// to handle callback
-	that = this;
-
 	// Window sixe
 	this.SCREEN_WIDTH = window.innerWidth,
 	this.SCREEN_HEIGHT = window.innerHeight,
@@ -10,12 +7,12 @@ function Scene3D() {
 	this.windowHalfX = window.innerWidth / 2,
 	this.windowHalfY = window.innerHeight / 2,
 
-
+	this.satellites = [];
+	this.rays = [];
 
 	// init
 	this.initCamera();
 	this.initController();
-
 
 
 	this.scene = new THREE.Scene();
@@ -26,9 +23,7 @@ function Scene3D() {
 
 
 
-	// add the 'sun'
-	// this.sphere = new THREE.Mesh(this.sphereGeometry, this.YellowMaterial);
-	// this.scene.add(this.sphere);
+	// add the 'sun' (central spherical satellite)
 	this.sphere = new Satellite3D(this.sphereGeometry, this.YellowMaterial, 0);
 	this.sphere.addToScene(this.scene);
 
@@ -37,7 +32,7 @@ function Scene3D() {
 	this.initRender();
 
 
-
+	// this.addRay(this.satellites[4], this.satellites[5], 0x00fff0, 6);
 }
 
 Scene3D.prototype = {
@@ -53,7 +48,7 @@ Scene3D.prototype = {
 
 	initController: function() {
 		this.controls = new THREE.OrbitControls(this.camera);
-		this.controls.addEventListener('change', this.render);
+		this.controls.addEventListener('change', this.render.bind(this));
 	},
 
 	initLight: function() {
@@ -99,19 +94,30 @@ Scene3D.prototype = {
 	},
 
 	initSatellites: function() {
-		this.satellites = [];
-
-
-
 		for (var i = 0; i < 30; i++) {
-			var sat = new Satellite3D(this.cubeGeometry, this.YellowMaterial, 150);
-
-			sat.addToScene(this.scene);
-
-			this.satellites.push(sat);
+			this.addSatellite(i);
 		}
+	},
 
-		
+	addSatellite: function(ip) {
+		var sat = new Satellite3D(this.cubeGeometry, this.YellowMaterial, Math.random()* 150 +100);
+
+		sat.addToScene(this.scene);
+
+		this.satellites[ip] = sat;
+	},
+
+	removeSatellite: function(ip){
+		sat.destroy(scene);
+		this.satellites.splice(ip, 1);
+	},
+
+	addRay: function(satellite_src, satellite_target, color, time) {
+		var ray = new Ray(satellite_src, satellite_target, color, time);
+		ray.addToScene(this.scene);
+
+		this.rays.push(ray);
+
 	},
 
 	initRender: function() {
@@ -122,42 +128,116 @@ Scene3D.prototype = {
 		document.getElementById('content-canvas').appendChild(this.renderer.domElement);
 
 
-		window.addEventListener('resize', this.onWindowResize, false);
+		window.addEventListener('resize', this.onWindowResize.bind(this), false);
 	},
 
 	onWindowResize: function() {
 
-		that.windowHalfX = window.innerWidth / 2;
-		that.windowHalfY = window.innerHeight / 2;
+		this.windowHalfX = window.innerWidth / 2;
+		this.windowHalfY = window.innerHeight / 2;
 
-		that.camera.aspect = window.innerWidth / window.innerHeight;
-		that.camera.updateProjectionMatrix();
+		this.camera.aspect = window.innerWidth / window.innerHeight;
+		this.camera.updateProjectionMatrix();
 
-		that.renderer.setSize(window.innerWidth, window.innerHeight);
+		this.renderer.setSize(window.innerWidth, window.innerHeight);
 
 	},
 
 	animate: function() {
-		that.controls.update();
+		this.controls.update();
 
-		requestAnimationFrame(that.animate);
+		requestAnimationFrame(this.animate.bind(this));
 
-		that.render();
+		this.render();
 	},
 
 	render: function() {
 
-		// that.camera.lookAt(that.scene.position);
 
-
-		for (var i = 1; i < that.satellites.length; i++) {
-			var sat = that.satellites[i];
-			sat.rotate(sat.dir[0] / 50, sat.dir[1] / 50, sat.dir[2] / 50);
+		for (var index in this.satellites) {
+			var sat = this.satellites[index];
+			sat.update();
 		}
 
-		// that.satellites[2].launchRay(that.sphere.getPosition(), that.scene,THREE.Math.randInt(0,16777215));
 		
-		// console.log(that.sphere.getPosition());
-		that.renderer.render(that.scene, that.camera);
+		for (var i = 0; i < this.rays.length; i++) {
+			var ray = this.rays[i];
+
+			if(!ray.update()){
+				// destruction of the ray
+				this.rays.splice(i, 1);
+				ray.destroy(this.scene);
+
+				i--;
+			}
+		}
+
+		this.renderer.render(this.scene, this.camera);
+	},
+
+
+
+	connect : function (address, protocol){
+
+		that = this;
+		this.alertContainer = $('#content-canvas-alert');
+
+		// console.log('tentative de connexion live ' + App.serverAddress + '/' + App.bandwidtProtocol);
+
+		this.address = address || App.serverAddress || 'localhost';
+		this.prot = protocol || App.localCommication || 'local_communication';
+
+
+		this.connection = new WebSocket(this.address, this.prot);
+
+		
+		// When the connection is open, send some data to the server
+		this.connection.onopen = function () {
+			console.log("connexion");
+			that.alertContainer.html('');
+		  	that.connection.send('Ping'); // Send the message 'Ping' to the server
+
+		  };
+
+		// Log errors
+		this.connection.onerror = function (error) {
+			console.log('WebSocket Error ' + error);
+			that.alertContainer.text('Connection error : ' + error);
+		};
+
+		// Log messages from the server
+		this.connection.onmessage = function (e) {
+			var obj = JSON.parse(e.data);
+			
+			if(obj.add_ip != null){
+				for(var i = 0; i < obj.add_ip.length; i++){
+					that.addSatellite(obj.add_ip[i]);
+				}
+			}
+
+			if(obj.remove_ip != null){
+				for(var i = 0; i < obj.remove_ip.length; i++){
+					that.removeSatellite(obj.remove_ip[i]);
+				}
+			}
+
+			if(obj.communications != null){
+				for(var i = 0; i < obj.communications.length; i++){
+					that.addRay(
+						that.satellites[obj.communications[i].ip_src], 
+						that.satellites[obj.communications[i].ip_dst],
+						that.color_code[obj.communications[i].protocole],
+						that.fromSizeToTime(obj.communications[i].size)
+					);
+				}
+			}			
+		};
+
+		this.connection.onclose = function (e) {
+			// console.log('Deconnexion tentative de reconnexion dans 5 sec ' + App.serverAddress + '/' + App.bandwidtProtocol);
+			that.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
+			setTimeout(function(){that.connect(that.address, that.prot);}, 5000);
+		};
+
 	}
 }

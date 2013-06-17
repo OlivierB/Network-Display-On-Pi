@@ -40,7 +40,12 @@
 		<div><?php include "pages/main_page.php" ?></div>
 		<div><?php include "pages/alert_page.php" ?></div>
 		<div><?php include "pages/map.php" ?></div>
-		<div><?php include "pages/3d_view.php" ?></div>
+
+		<div>
+			<?php 
+				include "pages/3d_view.php" 
+			?>
+		</div>
 
 		
 	</div>

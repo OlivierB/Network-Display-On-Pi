@@ -1,3 +1,14 @@
 - to change the color of the alerts table : fucntion qroPrintEntryHeader() in /base/includes/base_output_query.inc.php
 
 - clean snort db : http://localhost/base/base_maintenance.php
+
+- redemarrage auto pi : watchdog
+- overclock /boot/config.txt
+
+- freegeoip https://github.com/fiorix/freegeoip
+	- install go http://golang.org/doc/install (GOPATH = /usr/local/go/pkg (ca peut etre n'import quoi))
+	- install redis http://redis.io/topics/quickstart
+
+	-launch : 
+		- reddis-server
+		- go run freegeoip.go (in the freegeoip directory)
