@@ -82,6 +82,9 @@ class Sniffer(threading.Thread):
     def stop(self):
         self.Terminated = True
 
+    def stats(self):
+        self.p.stats()
+
         print 'Sniffer : Pcap stop...'
 
 
@@ -124,7 +127,7 @@ class NetworkData(object):
     def get_ip_list_outside(self):
         l = list()
         nbip = 0
-        maxip = 10
+        maxip = 20
         sorted_l = sorted(self.ip_list_outside.iteritems(), key=operator.itemgetter(1), reverse=True)
         for e in sorted_l:
             l += [pcap.ntoa(e[0])]
