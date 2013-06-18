@@ -20,7 +20,7 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.web
 
-LIST_ACCEPTED_SUBPROTOCOL = ['iplist', 'bandwidth', 'server_stat', 'alert']
+LIST_ACCEPTED_SUBPROTOCOL = ['iplist', 'bandwidth', 'server_stat', 'alert', 'protocols']
 
 class WSHandler_main(tornado.websocket.WebSocketHandler):
     """

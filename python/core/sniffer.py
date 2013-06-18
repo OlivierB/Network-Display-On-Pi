@@ -18,12 +18,15 @@ import struct
 import types
 import operator
 
+import core.network_callback
 import core.network_utils
 
 PCAP_PROMISCUOUS_MODE   = 1
 
 MAX_IP_LIST_OUTSIDE     = 1000
 MAX_TIME_IP_LIST        = 120    # secondes
+
+
 
 class Sniffer(threading.Thread):
     """
@@ -117,12 +120,32 @@ class NetworkData(object):
     data["ipl_out"]["tclean"] = time.time()
     data["ipl_out"]["ip"] = dict()
     data["ipl_in"] = dict() # ip list inside
-
+    data["ether_prot"] = dict() # list protocol ethernet
+    data["ip_prot"] = dict() # list protocol ip
 
 
     def analyse(self, pkt):
         self.data["pkt_nbr"] += 1
+
+        # List of Ethernet protocols
+        typ = pkt["Ethernet"]["EtherType"]
+        if typ in core.network_callback.dEtherType.keys():
+            if typ in self.data["ether_prot"]:
+                self.data["ether_prot"][typ] += 1
+            else:
+                self.data["ether_prot"][typ] = 1
+
+
         if pkt["Ethernet"]["EtherType"] == '\x08\x00':
+            
+            # List of IP protocols
+            typ = pkt["Ethernet"]["data"]["data_protocol"]
+            if typ in core.network_callback.dIPType.keys():
+                if typ in self.data["ip_prot"]:
+                    self.data["ip_prot"][typ] += 1
+                else:
+                    self.data["ip_prot"][typ] = 1
+
             src = pkt["Ethernet"]["data"]["src"]
             dst = pkt["Ethernet"]["data"]["dst"]
             bsrc = core.network_utils.ip_is_reserved(src)
@@ -209,6 +232,20 @@ class NetworkData(object):
         return self.data["net_load_in"]
     def get_netload_out(self):
         return self.data["net_load_out"]
+
+    def get_ethertype(self):
+        r = dict()
+        for k in self.data["ether_prot"].keys():
+            r[core.network_callback.dEtherType[k]["protocol"]] = self.data["ether_prot"][k]
+        return r
+
+    def get_IPtype(self):
+        r = dict()
+        for k in self.data["ip_prot"].keys():
+            r[core.network_callback.dIPType[k]["protocol"]] = self.data["ip_prot"][k]
+        return r
+
+        
 
 if __name__ == "__main__":
     p = Sniffer()

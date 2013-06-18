@@ -16,8 +16,14 @@ WSSUBPROT_SYSDATA       = 'server_stat'
 WSSUBPROT_BANDWIDTH     = 'bandwidth'
 WSSUBPROT_IPLIST        = 'iplist'
 WSSUBPROT_ALERT         = 'alert'
+WSSUBPROT_PROTOCOLS     = 'protocols'
 
-MAX_IP_LIST_SEND        = 5
+MAX_IP_LIST_SEND        = 20
+
+# UPDATE TIME
+TIME_UPDATE_IPTOP       = 60
+TIME_UPDATE_PROTOCOLS   = 30
+
 
 class Update():
     def __init__(self, monnitor, sniffer):
@@ -31,9 +37,10 @@ class Update():
         self.bandwidth  = self.__get_bandwidth()
         self.iplist     = self.__get_iplist()
 
-        # time list
+        # time list for update
         self.time = dict()
         self.time["timeiptop"]  = 0
+        self.time["protocols"]  = 0
 
     #  Global update
     def update(self):
@@ -41,6 +48,7 @@ class Update():
         self.__update_bandwidth()
         self.__update_iplist()
         self.__update_alert()
+        self.__update_protocols()
 
     # System data managment
     def __update_sysdata(self):
@@ -74,8 +82,8 @@ class Update():
 
     def __get_bandwidth(self):
         val = dict()
-        # val["in_Ko"]    = self.m.get_net_in() / 1024
-        # val["out_Ko"]   = self.m.get_net_out()  / 1024
+        val["tot_in_Ko"]    = self.m.get_net_in() / 1024
+        val["tot_out_Ko"]   = self.m.get_net_out()  / 1024
         val["in_Ko"]    = self.m.get_netload_in() / 1024
         val["out_Ko"]   = self.m.get_netload_out()  / 1024
 
@@ -101,7 +109,7 @@ class Update():
         s = self.iplist["start"]
         if l > 0:
             val = dict()
-            if (time.time() - self.time["timeiptop"]) > 60 :
+            if (time.time() - self.time["timeiptop"]) > TIME_UPDATE_IPTOP :
                 val["iptop"] = self.datanet.get_ip_list_outside_top(maxip = 10)
                 self.time["timeiptop"] = time.time()
                 
@@ -120,6 +128,23 @@ class Update():
         diff = True
 
         return diff
+
+    # Protocols List managment
+    def __update_protocols(self):
+
+        if (time.time() - self.time["protocols"]) > TIME_UPDATE_PROTOCOLS :
+            self.time["protocols"] = time.time()
+            val = self.__get_protocols()
+            self.cl.send(WSSUBPROT_PROTOCOLS, val)
+
+
+    def __get_protocols(self):
+        val = dict()
+        val["ethernet"] = self.datanet.get_ethertype()
+        val["ip"] = self.datanet.get_IPtype()
+
+        return val
+
 
     # Alert managment
     def __update_alert(self):
