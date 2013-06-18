@@ -24,7 +24,7 @@ import core.network_utils
 PCAP_PROMISCUOUS_MODE   = 1
 
 MAX_IP_LIST_OUTSIDE     = 1000
-MAX_TIME_IP_LIST        = 120    # secondes
+MAX_TIME_IP_LIST        = 600    # secondes
 
 
 
