@@ -22,7 +22,7 @@ MAX_IP_LIST_SEND        = 20
 
 # UPDATE TIME
 TIME_UPDATE_IPTOP       = 60
-TIME_UPDATE_PROTOCOLS   = 30
+TIME_UPDATE_PROTOCOLS   = 5
 
 
 class Update():
@@ -53,8 +53,7 @@ class Update():
     # System data managment
     def __update_sysdata(self):
         val = self.__get_sysdata()
-        if self.__diff_sysdata(val):
-            self.cl.send(WSSUBPROT_SYSDATA, val)
+        self.cl.send(WSSUBPROT_SYSDATA, val)
         self.sysdata = val
 
     def __get_sysdata(self):
@@ -62,16 +61,9 @@ class Update():
         val["mem_load"]     = self.m.get_mem()
         val["proc_load"]    = self.m.get_cpu()
         val["swap_load"]    = self.m.get_swap()
+        val["pkt_tot"], val["pkt_lost"] = self.m.get_pkt_stats()
         return val
 
-    def __diff_sysdata(self, new):
-        diff = True
-        old = self.sysdata
-        if old["mem_load"] == new["mem_load"]\
-            and old["proc_load"] == new["proc_load"]\
-            and old["swap_load"] == new["swap_load"]:
-            diff = True
-        return diff
 
     # Bandwidth information
     def __update_bandwidth(self):
@@ -87,7 +79,7 @@ class Update():
         val["in_Ko"]    = self.m.get_netload_in() / 1024
         val["out_Ko"]   = self.m.get_netload_out()  / 1024
 
-        val["loc_Ko"]   = self.m.get_netload_loc()
+        val["loc_Ko"]   = self.m.get_netload_loc() / 1024
         val["Ko"]       = val["in_Ko"] + val["out_Ko"] + val["loc_Ko"]
         return val
 

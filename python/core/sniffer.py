@@ -88,7 +88,11 @@ class Sniffer(threading.Thread):
         self.Terminated = True
 
     def stats(self):
-        self.p.stats()
+        try:
+            a, b, c = self.p.stats()
+        except:
+            return 0, 0, 0
+        return a, b, c
 
         print 'Sniffer : Pcap stop...'
 
@@ -145,6 +149,7 @@ class NetworkData(object):
                     self.data["ip_prot"][typ] += 1
                 else:
                     self.data["ip_prot"][typ] = 1
+
 
             src = pkt["Ethernet"]["data"]["src"]
             dst = pkt["Ethernet"]["data"]["dst"]
@@ -237,13 +242,14 @@ class NetworkData(object):
         r = dict()
         for k in self.data["ether_prot"].keys():
             r[core.network_callback.dEtherType[k]["protocol"]] = self.data["ether_prot"][k]
-        return r
+        return sorted(r.iteritems(), key=operator.itemgetter(1), reverse=True)
 
     def get_IPtype(self):
         r = dict()
         for k in self.data["ip_prot"].keys():
             r[core.network_callback.dIPType[k]["protocol"]] = self.data["ip_prot"][k]
-        return r
+
+        return sorted(r.iteritems(), key=operator.itemgetter(1), reverse=True)
 
         
 

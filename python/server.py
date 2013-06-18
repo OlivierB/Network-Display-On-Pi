@@ -60,8 +60,8 @@ def main():
 
     # Init
     ws = core.wsserver.WsServer(args.websocket_port)
-    m = core.monitoring.Monitoring()
     sniff = core.sniffer.Sniffer(args.sniffer_device, args.sniffer_net, args.sniffer_mask)
+    m = core.monitoring.Monitoring(sniff)
 
     # Service start
     m.start()
