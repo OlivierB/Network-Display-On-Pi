@@ -1,5 +1,8 @@
+function IpLocationMap(id) {
 
-function IpLocationMap(id){
+	// inheritance from WebSocketManager
+	WebSocketManager.call(this, id + '-alert');
+
 	//Ip displayed on the map
 	this.ips = [];
 
@@ -13,83 +16,42 @@ function IpLocationMap(id){
 
 }
 
-IpLocationMap.prototype = {
-	constructor: IpLocationMap,
+// inheritance from WebSocketManager
+IpLocationMap.prototype = Object.create(WebSocketManager.prototype);
 
-	addPoint : function (lat, long, color){
+IpLocationMap.prototype.addPoint = function(lat, long, color) {
 
-		color = color || "red";
+	color = color || "red";
 
-		var circle = L.circle([lat, long], 100, {
-			color: color,
-			fillColor: color,
-			fillOpacity: 0.5
-		}).addTo(this.map);
-	},
+	var circle = L.circle([lat, long], 100, {
+		color: color,
+		fillColor: color,
+		fillOpacity: 0.5
+	}).addTo(this.map);
+}
 
-	addPointFromIP : function (ip, color){
-		var that = this;
-		// console.log("http://" + App.freeGeoIpAdress + "/json/" + ip)
-		$.ajax({ type: "GET",   
-			url: "http://" + App.freeGeoIpAdress + "/json/" + ip,   
-			async: true,
-			success: function(data){
-				that.addPoint(data.latitude, data.longitude, color);
+IpLocationMap.prototype.addPointFromIP = function(ip, color) {
+	
+	// console.log("http://" + App.freeGeoIpAdress + "/json/" + ip)
+	$.ajax({
+		type: "GET",
+		url: "http://" + App.freeGeoIpAdress + "/json/" + ip,
+		async: true,
+		success: function(data) {
+			this.addPoint(data.latitude, data.longitude, color);
+		}.bind(this)
+	});
+}
+
+
+IpLocationMap.prototype.dataManager = function(obj) {
+	if(obj.iplist != null){
+		for (var i = 0; i < obj.iplist.length; i++) {
+			if (this.ips[obj.iplist[i]] == null) {
+				this.addPointFromIP(obj.iplist[i]);
+				// console.log('ip ajoutee ' + obj.ip_dst[i]);
+				this.ips[obj.iplist[i]] = 1;
 			}
-		});
-
-
-	},
-
-	connect : function (address, protocol){
-		var that = this;
-		// console.log('tentative de connexion');
-
-		this.address = address || App.serverAddress || 'localhost';
-		this.prot = protocol || App.ipListProtocol || 'iplist';
-		
-		this.connection = new WebSocket(this.address, this.prot);
-
-		// When the connection is open, send some data to the server
-		this.connection.onopen = function () {
-			console.log(" IPlconnexion");
-			$('#alert-map').html('');
-		  	that.connection.send('Ping'); // Send the message 'Ping' to the server
-
-		  };
-
-		// Log errors
-		this.connection.onerror = function (error) {
-			console.log('WebSocket Error ' + error);
-			$('#alert-map').text('Connection error : ' + error);
-		};
-
-		// Log messages from the server
-		this.connection.onmessage = function (e) {
-			// console.log('Server: ' + e.data);
-
-			var obj = JSON.parse(e.data);
-
-			// console.log('last ' + last + ', length ' + obj.ip_dst.length);
-			if(obj.iplist != null){
-				for(var i= 0; i < obj.iplist.length; i++)
-				{
-					if(that.ips[obj.iplist[i]] == null)
-					{
-						that.addPointFromIP(obj.iplist[i]);
-						// console.log('ip ajoutee ' + obj.ip_dst[i]);
-						that.ips[obj.iplist[i]] = 1;
-					}
-				}
-			}
-			
-		};
-
-		this.connection.onclose = function (e) {
-			// console.log('Deconnexion tentative de reconnexion dans 5 sec !');
-			$('#alert-map').html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
-			setTimeout(function(){that.connect(that.address, that.prot);}, 5000);
-		};
-
+		}
 	}
 }

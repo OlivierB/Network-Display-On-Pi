@@ -3,8 +3,8 @@
 
 <?php header_display('Alert page'); ?>
 
-<div id="content-table">
+<span id="content-table-alert"></span>
+<div id="content-table"></div>
 
-</div>
-
-<script type="text/javascript" src='./script/alert/alert-loader.js'></script>
+<script src='./script/alert/BaseAlert.js'></script>
+<script src='./script/alert/alert-loader.js'></script>

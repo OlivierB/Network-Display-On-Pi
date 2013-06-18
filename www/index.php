@@ -30,6 +30,7 @@
 	<!-- Personnal JS -->
 	<script src="/ndop.conf.js"></script>
 	<script src='/script/slide/slide-conf.js'></script>
+	<script src="/script/network/WebSocketManager.js"></script>
 
 </head>
 

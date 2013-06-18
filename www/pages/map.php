@@ -9,7 +9,7 @@
 <?php header_display('Visited IPs around the world'); ?>
 
 
-<span id="alert-map"></span>
+<span id="map-alert"></span>
 <div id="map"></div>
 
 <script type="text/javascript" src="./script/map/map-loader.js"></script>
