@@ -15,11 +15,13 @@ import sys
 import threading
 import base64
 
+import core.sniffer
 
 def sysState():
     """
     Get the system stats
     """
+    nd = core.sniffer.NetworkData()
 
     val = dict()
 
@@ -30,6 +32,9 @@ def sysState():
     val["io_write"] = psutil.disk_io_counters(perdisk=False)[3]
     val["net_sent"] = psutil.network_io_counters(pernic=False)[0]
     val["net_recv"] = psutil.network_io_counters(pernic=False)[1]
+    val["net_load_loc"] = nd.get_netload_loc()
+    val["net_load_in"]  = nd.get_netload_in()
+    val["net_load_out"] = nd.get_netload_out()
     val["cpu"]      = psutil.cpu_percent(interval=0.8)
 
     return val
@@ -61,6 +66,9 @@ def diffState(old, new):
     val["disk_speed_read"]  = (new["io_read"] - old["io_read"]) / diff
     val["disk_speed_write"] = (new["io_write"] - old["io_write"]) / diff
 
+    val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"]) / diff
+    val["net_load_in"] = (new["net_load_in"] - old["net_load_in"]) / diff
+    val["net_load_out"] = (new["net_load_out"] - old["net_load_out"]) / diff
 
     return val
 
@@ -146,6 +154,24 @@ class Monitoring(threading.Thread):
     def get_net_in(self):
         if self.state != None:
             return self.state["net_speed_in"]
+        else:
+            return 0
+
+    def get_netload_loc(self):
+        if self.state != None:
+            return self.state["net_load_loc"]
+        else:
+            return 0
+            
+    def get_netload_in(self):
+        if self.state != None:
+            return self.state["net_load_in"]
+        else:
+            return 0
+
+    def get_netload_out(self):
+        if self.state != None:
+            return self.state["net_load_out"]
         else:
             return 0
 

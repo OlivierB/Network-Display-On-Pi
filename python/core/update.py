@@ -8,6 +8,8 @@ Optimization of websocket send
 @author: Olivier BLIN
 """
 
+import time
+
 import core.sniffer, core.wsserver, core.monitoring
 
 WSSUBPROT_SYSDATA       = 'server_stat'
@@ -15,6 +17,7 @@ WSSUBPROT_BANDWIDTH     = 'bandwidth'
 WSSUBPROT_IPLIST        = 'iplist'
 WSSUBPROT_ALERT         = 'alert'
 
+MAX_IP_LIST_SEND        = 5
 
 class Update():
     def __init__(self, monnitor, sniffer):
@@ -27,6 +30,10 @@ class Update():
         self.sysdata    = self.__get_sysdata()
         self.bandwidth  = self.__get_bandwidth()
         self.iplist     = self.__get_iplist()
+
+        # time list
+        self.time = dict()
+        self.time["timeiptop"]  = 0
 
     #  Global update
     def update(self):
@@ -67,10 +74,13 @@ class Update():
 
     def __get_bandwidth(self):
         val = dict()
-        val["in_Ko"]    = self.m.get_net_in() / 1024
-        val["out_Ko"]   = self.m.get_net_out()  / 1024
-        val["loc_Ko"]   = 0
-        val["Ko"]       = val["in_Ko"] + val["out_Ko"]
+        # val["in_Ko"]    = self.m.get_net_in() / 1024
+        # val["out_Ko"]   = self.m.get_net_out()  / 1024
+        val["in_Ko"]    = self.m.get_netload_in() / 1024
+        val["out_Ko"]   = self.m.get_netload_out()  / 1024
+
+        val["loc_Ko"]   = self.m.get_netload_loc()
+        val["Ko"]       = val["in_Ko"] + val["out_Ko"] + val["loc_Ko"]
         return val
 
     def __diff_bandwidth(self, new):
@@ -84,14 +94,26 @@ class Update():
 
     # IP List managment
     def __update_iplist(self):
-        val = self.__get_iplist()
-        if self.__diff_iplist(val):
+        if self.iplist["start"] >= len(self.iplist["iplist"]):
+            self.iplist     = self.__get_iplist()
+
+        l = len(self.iplist["iplist"])
+        s = self.iplist["start"]
+        if l > 0:
+            val = dict()
+            if (time.time() - self.time["timeiptop"]) > 60 :
+                val["iptop"] = self.datanet.get_ip_list_outside_top(maxip = 10)
+                self.time["timeiptop"] = time.time()
+                
+            val['iplist'] = self.iplist["iplist"][s:(s+MAX_IP_LIST_SEND)]
             self.cl.send(WSSUBPROT_IPLIST, val)
-        self.bandwidth = val
+            self.iplist["start"] += MAX_IP_LIST_SEND
 
     def __get_iplist(self):
         val = dict()
         val["iplist"] = self.datanet.get_ip_list_outside()
+        val["start"] = 0
+
         return val
 
     def __diff_iplist(self, new):
@@ -104,7 +126,7 @@ class Update():
         val = self.__get_alert()
         if self.__diff_alert(val):
             self.cl.send(WSSUBPROT_ALERT, val)
-        self.bandwidth = val
+        self.alert = val
 
     def __get_alert(self):
         val = dict()
@@ -114,3 +136,4 @@ class Update():
         diff = True
 
         return diff
+
