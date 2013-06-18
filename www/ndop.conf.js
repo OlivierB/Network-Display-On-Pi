@@ -5,5 +5,6 @@ var App = {
 	'serverStatProtocol'	: 		'server_stat',
 	'freeGeoIpAdress'		: 		'192.168.1.144:8080',
 	'localCommication'		: 		'local_communication',
-	'baseAdress'			: 		'192.168.1.144'
+	'baseAdress'			: 		'192.168.1.144',
+	'protocolUseProtocol'	: 		'protocols'
 }

@@ -48,32 +48,38 @@ function BandwidthChart(id) {
 			text: "Current traffic",
 			fontFamily: "Champ"
 		},
+		toolTip: {
+			// enabled: true,
+			shared: true,
+			content: "<span style='\"'color: {color};'\"'><strong>{name}</strong></span> {y} kB/s"
+		},
 		data: [{
-				type: "line",
+				type: "splineArea",
+				name: "Global",
+				color: "rgba(100,128,210, 0.2)",
+				showInLegend: false,
+				dataPoints: this.global
+			}, {
+				type: "spline",
 				name: "Local Network",
 				dataPoints: this.local_network,
 				showInLegend: true
 			}, {
-				type: "line",
+				type: "spline",
 				name: "Incoming",
 				showInLegend: true,
 				dataPoints: this.incoming
 			}, {
-				type: "line",
+				type: "spline",
 				name: "Outcoming",
 				showInLegend: true,
 				dataPoints: this.outcoming
-			}, {
-				type: "line",
-				name: "Global",
-				showInLegend: true,
-				dataPoints: this.global
 			}
 		],
 		axisY: {
 			title: "kB/s",
 			titleFontFamily: "Champ",
-			titleFontWeight: "bold"
+			titleFontWeight: "bold",
 		}
 	});
 
@@ -85,6 +91,8 @@ BandwidthChart.prototype = Object.create(WebSocketManager.prototype);
 
 
 BandwidthChart.prototype.updateChart = function(local_, inp_, outp_, global_) {
+
+
 
 	yVal1 = local_;
 	this.local_network.push({
@@ -124,7 +132,5 @@ BandwidthChart.prototype.updateChart = function(local_, inp_, outp_, global_) {
 }
 
 BandwidthChart.prototype.dataManager = function(obj) {
-	this.updateChart(obj.loc_Ko, obj.in_Ko , obj.out_Ko,obj.Ko);
+	this.updateChart(obj.loc_Ko, obj.in_Ko, obj.out_Ko, obj.Ko);
 }
-
-

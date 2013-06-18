@@ -68,6 +68,9 @@ Scene3D.prototype.dataManager = function(obj) {
 	}
 }
 
+Scene3D.prototype.fromSizeToTime = function(size) {
+	return Math.log(size) / 100;
+}
 
 Scene3D.prototype.initCamera = function() {
 	// PerspectiveCamera(field of view, apsect, near, far)

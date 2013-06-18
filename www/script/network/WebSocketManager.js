@@ -42,10 +42,9 @@ WebSocketManager.prototype.connect = function(address, protocol) {
 			this.alertContainer.html('<span class="alert">Disconnected from server. Protocol not supported.</span>');
 		}
 		else{
-			// console.log('Deconnexion tentative de reconnexion dans 5 sec ' + App.serverAddress + '/' + App.bandwidtProtocol);
 			this.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
 			setTimeout(
-				this.connect(this.address, this.prot).bind(this), 5000);
+				this.connect(this.address, this.prot).bind(this), 50000);
 		}
 	}.bind(this);
 }
