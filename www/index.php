@@ -47,6 +47,11 @@
 				include "pages/3d_view.php" 
 			?>
 		</div>
+		<div>
+			<?php 
+				include "pages/server-stat.php" 
+			?>
+		</div>
 
 		
 	</div>

@@ -1,7 +1,21 @@
-#bandwidth{
-	height: 450px; 
-	width:95%;
-	margin: auto;
+#bandwidth div{
+	display: inline-block;
+}
+
+#bandwidth-chart{
+	height: 350px; 
+	width:80%;
+	/*margin: auto;*/
+}
+
+#protocol{
+	margin-left: 5%;
+}
+
+#protocol div{
+	height:250px;
+	width: 45%;
+	display: inline-block;
 }
 
 
