@@ -39,7 +39,8 @@ function Scene3D(id) {
 
 	// add the 'sun' (central spherical satellite)
 	this.sphere = new Satellite3D(this.sphereGeometry, this.OutputMaterial, 0);
-	this.sphere.addToScene(this.scene);
+	this.sphere.scale.set(3, 3, 3)
+	this.scene.add(this.sphere);
 	this.satellites['internet'] = this.sphere;
 
 	// this.initSatellites();
@@ -47,7 +48,6 @@ function Scene3D(id) {
 	this.initRender();
 
 
-	// this.addRay(this.satellites[4], this.satellites[5], 0x00fff0, 6);
 }
 
 // inheritance from WebSocketManager
@@ -76,6 +76,9 @@ Scene3D.prototype.dataManager = function(obj) {
 				// console.log('ajout ' + obj.communications[i].ip_dst);
 			}
 
+			// var scale = Math.log(obj.communications[i].size /600);
+			// this.satellites[obj.communications[i].ip_dst].cube.scale.set(scale, scale, scale);
+
 			this.addRay(
 				this.satellites[obj.communications[i].ip_src],
 				this.satellites[obj.communications[i].ip_dst],
@@ -86,7 +89,7 @@ Scene3D.prototype.dataManager = function(obj) {
 }
 
 Scene3D.prototype.fromSizeToTime = function(size) {
-	return (size) / 2;
+	return Math.log(size / 2)*5;
 }
 
 Scene3D.prototype.initCamera = function() {
@@ -145,7 +148,7 @@ Scene3D.prototype.initMaterial = function() {
 			overdraw: true
 		});
 	}
-
+	truc = this.scene;
 }
 
 Scene3D.prototype.initGeometry = function() {
@@ -174,25 +177,23 @@ Scene3D.prototype.addSatellite = function(ip) {
 		var sat = new Satellite3D(this.cubeGeometry, this.YellowMaterial, Math.random() * 150 + 100);
 
 
-	sat.addToScene(this.scene);
+	// sat.addToScene(this.scene);
+	this.scene.add(sat);
 
 	this.satellites[ip] = sat;
 }
 
 Scene3D.prototype.removeSatellite = function(ip) {
-	console.log(this.satellites);
 	if (this.satellites[ip] != null) {
-		this.satellites[ip].destroy(this.scene);
-		// this.satellites.splice(ip, 1);
+		this.scene.remove(this.satellites[ip]);
 		delete this.satellites[ip];
 	}
-	console.log(this.satellites);
 }
 
 Scene3D.prototype.addRay = function(satellite_src, satellite_target, color, time) {
 	var ray = new Ray(satellite_src, satellite_target, color, time);
-	ray.addToScene(this.scene);
-
+	// ray.addToScene(this.scene);
+	this.scene.add(ray);
 	this.rays.push(ray);
 
 }
@@ -247,7 +248,8 @@ Scene3D.prototype.render = function() {
 		if (!ray.update()) {
 			// destruction of the ray
 			this.rays.splice(i, 1);
-			ray.destroy(this.scene);
+			this.scene.remove(ray);
+			delete ray;
 
 			i--;
 		}

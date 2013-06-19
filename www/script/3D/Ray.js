@@ -1,5 +1,7 @@
 function Ray(satellite_src, satellite_target, color, time) {
 
+
+
 	this.satellite_target = satellite_target;
 	this.satellite_src = satellite_src;
 
@@ -14,40 +16,44 @@ function Ray(satellite_src, satellite_target, color, time) {
 		linewidth: 1
 	});
 
-	this.line = new THREE.Line(geometry, material);
+	THREE.Line.call(this, geometry, material);
+	// this.line = new THREE.Line(geometry, material);
 
 	this.time = time;
 	this.clock = new THREE.Clock(true);
 	// console.log(THREE.Clock(true));
 
 
+
+
+	this.packet = new THREE.Mesh(new THREE.CubeGeometry(3, 3, 3, false), new THREE.MeshLambertMaterial({
+		color: 0xF9A30E,
+		doubleSided: false,
+		wireframe: false,
+		overdraw: true
+	})); 
+
+	this.add(this.packet);
+
+
 }
 
-Ray.prototype = {
-	constructor: Ray,
+Ray.prototype = Object.create(THREE.Line.prototype);
 
-	addToScene: function(scene) {
-		scene.add(this.line);
-	},
+Ray.prototype.update = function() {
 
-	update: function() {
+	if (this.clock.getElapsedTime() < this.time && this.satellite_src != null && this.satellite_target != null) {
+		// console.log('update');
+		this.geometry.vertices[0] = this.satellite_src.getPosition();
+		this.geometry.vertices[1] = this.satellite_target.getPosition();
+		// this.line.updateMatrix()
+		this.geometry.verticesNeedUpdate = true;
 
-		if (this.clock.getElapsedTime() < this.time && this.satellite_src.pivot != null && this.satellite_target.pivot != null) {
-			// console.log('update');
-			this.line.geometry.vertices[0] = this.satellite_src.getPosition();
-			this.line.geometry.vertices[1] = this.satellite_target.getPosition();
-			// this.line.updateMatrix()
-			this.line.geometry.verticesNeedUpdate = true;
+		this.packet.position = this.satellite_src.getPosition().sub(this.satellite_target.getPosition()).multiplyScalar(this.clock.getElapsedTime() / this.time);
+		// console.log(this.packet.position);
 
-			return true;
-		}else
-		{
-			return false;
-		}
-	},
-
-	destroy: function(scene){
-		scene.remove(this.line);
-		delete this.line;
+		return true;
+	} else {
+		return false;
 	}
 }
