@@ -20,7 +20,7 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.web
 
-LIST_ACCEPTED_SUBPROTOCOL = ['iplist', 'bandwidth', 'server_stat', 'alert', 'protocols']
+LIST_ACCEPTED_SUBPROTOCOL = ['iplist', 'bandwidth', 'server_stat', 'alert', 'protocols', 'local_communication']
 
 class WSHandler_main(tornado.websocket.WebSocketHandler):
     """
@@ -63,6 +63,7 @@ class WsServer(threading.Thread):
         # HTTP server
         self.http_server = tornado.httpserver.HTTPServer(application)
         self.http_server.listen(port)
+        self.clientList = ClientsList()
 
 
     def run(self):
@@ -75,11 +76,12 @@ class WsServer(threading.Thread):
 
         except Exception as e:
             print "WsServer : ", e
-            tornado.ioloop.IOLoop.instance().stop()
+            self.stop()
 
 
     def stop(self):
         print 'WsServer : Server stop...'
+        self.clientList.closeCom()
         tornado.ioloop.IOLoop.instance().stop()
 
 
@@ -130,6 +132,14 @@ class ClientsList(object):
                 self.cli_list[k].remove(client)
         self.mutex.release()
 
+    def closeCom(self):
+        for k in self.cli_list.keys():
+            for c in self.cli_list[k]:
+                try:
+                    c.close()
+                    self.cli_list[k].remove(c)
+                except:
+                    pass
 
     def __send(self, client, data):
         """

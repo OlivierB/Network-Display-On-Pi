@@ -17,12 +17,14 @@ WSSUBPROT_BANDWIDTH     = 'bandwidth'
 WSSUBPROT_IPLIST        = 'iplist'
 WSSUBPROT_ALERT         = 'alert'
 WSSUBPROT_PROTOCOLS     = 'protocols'
+WSSUBPROT_LOC_COMM      = 'local_communication'
 
 MAX_IP_LIST_SEND        = 20
 
 # UPDATE TIME
 TIME_UPDATE_IPTOP       = 60
 TIME_UPDATE_PROTOCOLS   = 5
+TIME_UPDATE_LOCCOMM     = 2
 
 
 class Update():
@@ -36,11 +38,13 @@ class Update():
         self.sysdata    = self.__get_sysdata()
         self.bandwidth  = self.__get_bandwidth()
         self.iplist     = self.__get_iplist()
+        self.loccomm    = self.__init_loccomm()
 
         # time list for update
         self.time = dict()
         self.time["timeiptop"]  = 0
         self.time["protocols"]  = 0
+        self.time["loc_comm"]  = 0
 
     #  Global update
     def update(self):
@@ -49,6 +53,7 @@ class Update():
         self.__update_iplist()
         self.__update_alert()
         self.__update_protocols()
+        self.__update_loc_comm()
 
     # System data managment
     def __update_sysdata(self):
@@ -135,6 +140,27 @@ class Update():
         val["ethernet"] = self.datanet.get_ethertype()
         val["ip"] = self.datanet.get_IPtype()
 
+        return val
+
+    # Protocols List managment
+    def __init_loccomm(self):
+        val = dict()
+        val["iplist"] = set()
+
+        return val
+
+    def __update_loc_comm(self):
+        if (time.time() - self.time["loc_comm"]) > TIME_UPDATE_LOCCOMM :
+            self.time["loc_comm"] = time.time()
+            val = self.__get_loc_comm()
+            self.cl.send(WSSUBPROT_LOC_COMM, val)
+
+
+    def __get_loc_comm(self):
+        val = dict()
+        s_ip, val["communication"] = self.datanet.get_loccomm()
+        val["remove_ip"] = list(self.loccomm['iplist'] - s_ip)
+        self.loccomm['iplist'] = s_ip
         return val
 
 
