@@ -1,9 +1,13 @@
 function Satellite3D(geometry, material, distance) {
 
-	var pivot = new THREE.Object3D();
-	pivot.rotation.z = Math.random() * Math.PI * 2;
-	pivot.rotation.y = Math.random() * Math.PI * 2;
-	pivot.rotation.x = Math.random() * Math.PI * 2;
+
+
+	THREE.Object3D.call(this);
+
+	// var pivot = new THREE.Object3D();
+	this.rotation.z = Math.random() * Math.PI * 2;
+	this.rotation.y = Math.random() * Math.PI * 2;
+	this.rotation.x = Math.random() * Math.PI * 2;
 
 
 	var vx = Math.random() / 3;
@@ -19,37 +23,31 @@ function Satellite3D(geometry, material, distance) {
 	this.cube = new THREE.Mesh(geometry, material);
 	this.cube.position.set(distance, 0, 0);
 
-	pivot.add(this.cube);
-	this.pivot = pivot;
+	this.add(this.cube);
+	// this.pivot = pivot;
 
 }
 
-Satellite3D.prototype = {
-	constructor: Satellite3D,
+Satellite3D.prototype = Object.create(THREE.Object3D.prototype);
 
-	addToScene: function(scene) {
-		scene.add(this.pivot);
-	},
-
-	rotate: function(x, y, z) {
-		this.pivot.rotation.z += x;
-		this.pivot.rotation.y += y;
-		this.pivot.rotation.x += z;
-	},
-
-	getPosition: function() {
-		return this.pivot.localToWorld(this.cube.position.clone());
-	},
-
-	update: function(){
-		this.rotate(this.dir[0] / 50, this.dir[1] / 50, this.dir[2] / 50);
-	},
-
-	destroy: function(scene){
-		scene.remove(this.pivot);
-		delete this.pivot;
-	}
-
-
-
+Satellite3D.prototype.rotate = function(x, y, z) {
+	this.rotation.z += x;
+	this.rotation.y += y;
+	this.rotation.x += z;
 }
+
+Satellite3D.prototype.getPosition = function() {
+	return this.localToWorld(this.cube.position.clone());
+}
+
+Satellite3D.prototype.update = function() {
+	this.rotate(this.dir[0] / 50, this.dir[1] / 50, this.dir[2] / 50);
+}
+
+// destroy: function(scene){
+// 	scene.remove(this.pivot);
+// 	delete this.pivot;
+// }
+
+
+
