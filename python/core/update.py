@@ -24,7 +24,7 @@ MAX_IP_LIST_SEND        = 20
 # UPDATE TIME
 TIME_UPDATE_IPTOP       = 60
 TIME_UPDATE_PROTOCOLS   = 5
-TIME_UPDATE_LOCCOMM     = 2
+TIME_UPDATE_LOCCOMM     = 1
 
 
 class Update():
@@ -158,7 +158,7 @@ class Update():
 
     def __get_loc_comm(self):
         val = dict()
-        s_ip, val["communication"] = self.datanet.get_loccomm()
+        s_ip, val["communications"] = self.datanet.get_loccomm()
         val["remove_ip"] = list(self.loccomm['iplist'] - s_ip)
         self.loccomm['iplist'] = s_ip
         return val

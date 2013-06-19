@@ -288,12 +288,12 @@ class NetworkData(object):
                 l_ip.add(ss)
             if d != -1:
                 l_ip.add(sd)
-        l_comm.append(val)
+            l_comm.append(val)
         return l_ip, l_comm
 
     def ip_to_s(self, ip):
         if ip == -1:
-            return "output"
+            return "internet"
         else:
             return pcap.ntoa(ip)
 
