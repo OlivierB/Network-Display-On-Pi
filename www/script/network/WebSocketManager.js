@@ -44,7 +44,7 @@ WebSocketManager.prototype.connect = function(address, protocol) {
 		else{
 			this.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
 			setTimeout(
-				this.connect(this.address, this.prot).bind(this), 50000);
+				this.connect(this.address, this.prot).bind(this), 5000);
 		}
 	}.bind(this);
 }

@@ -8,3 +8,6 @@ memChartChart.connect(App.serverAddress, App.serverStatProtocol);
 
 var swapChart = new PercentCounterChart('swap', 'swap_load', 100);
 swapChart.connect(App.serverAddress, App.serverStatProtocol);
+
+var swapChart = new PercentCounterChart('loss', 'pkt_lost', 100);
+swapChart.connect(App.serverAddress, App.serverStatProtocol);

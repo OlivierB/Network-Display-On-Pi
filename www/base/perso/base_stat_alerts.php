@@ -161,7 +161,7 @@
   }
 
   /* Print the current view number and # of rows */
-  $qs->PrintResultCnt();
+  // $qs->PrintResultCnt();
 
   // echo '<FORM METHOD="post" NAME="PacketForm" ACTION="base_stat_alerts.php">';
   

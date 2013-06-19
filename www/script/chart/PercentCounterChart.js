@@ -21,7 +21,7 @@ PercentCounterChart.prototype = Object.create(WebSocketManager.prototype);
 
 PercentCounterChart.prototype.updateChart = function(percent) {
 	this.chart.data('easyPieChart').update(percent);
-	$('#' + this.id + " span").text(percent + "%");
+	$('#' + this.id + " span").text(percent.toFixed(2) + "%");
 }
 
 PercentCounterChart.prototype.dataManager = function(obj) {
