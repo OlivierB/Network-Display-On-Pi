@@ -34,31 +34,12 @@
 	<script src="/script/network/WebSocketManager.js"></script>
 	<script src="/script/resize/resize.js"></script>
 
-
 </head>
 
 <body>
 	<!-- All pages are included here, slideJS handle the animation -->
-	<div id="slides">
-		
-		<div><?php include "pages/main_page.php" ?></div>
-		<div><?php include "pages/alert_page.php" ?></div>
-		<div><?php include "pages/map.php" ?></div>
-
-		<div>
-			<?php 
-			include "pages/3d_view.php" 
-			?>
-		</div>
-		<div>
-			<?php 
-			include "pages/server-stat.php" 
-			?>
-		</div>
-
-		
-	</div>
-	
+	<div><?php include "pages/3d_view.php" ?></div>
 
 </body>
 </html>
+

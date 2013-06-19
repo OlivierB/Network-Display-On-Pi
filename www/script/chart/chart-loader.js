@@ -2,6 +2,8 @@
 var chart = new BandwidthChart("bandwidth-chart");
 chart.connect(App.serverAddress, App.bandwidtProtocol);
 
+var chart = new BandwidthText("bandwidth-text");
+chart.connect(App.serverAddress, App.bandwidtProtocol);
 
 
 

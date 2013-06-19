@@ -32,7 +32,7 @@ Ray.prototype = {
 
 	update: function() {
 
-		if (this.clock.getElapsedTime() < this.time) {
+		if (this.clock.getElapsedTime() < this.time && this.satellite_src.pivot != null && this.satellite_target.pivot != null) {
 			// console.log('update');
 			this.line.geometry.vertices[0] = this.satellite_src.getPosition();
 			this.line.geometry.vertices[1] = this.satellite_target.getPosition();

@@ -1,36 +1,33 @@
-#bandwidth div{
-	display: inline-block;
+
+#bandwidth-text{
+	margin-top: 40px;
+	margin-left: 30px;
+	font-size: 35px;
+	line-height: 50px;
+
 }
 
-#bandwidth-chart{
-	height: 350px; 
-	width:80%;
-	/*margin: auto;*/
+#bandwidth-text td{
+	padding-right: 15px;
 }
 
-#protocol{
-	margin-left: 5%;
+.bandwidth-number{
+	font-size: 100%;
+	font-weight: bold;
 }
 
-#protocol div{
-	height:250px;
-	width: 45%;
-	display: inline-block;
+#protocol-ethernet{
+	margin-top: 30px;
+}
+#protocol-ip{
+	margin-top: 30px;
 }
 
-
-
-#server-stat div{
-	display: inline-block;
-	text-align: center;
-	margin:auto;
-	width: 33%;
-}
-
-#server-stat div div{
-	display: block;
-}
 
 .percent-chart-loader{
-	padding-top: 0px !important;
+	margin: auto;
+}
+
+.server-stat-legend{
+	text-align: center;
 }

@@ -1,9 +1,18 @@
+/**
+ *
+ *	App.Details3D define the quality of the 3D.
+ *	1 being crappy and 10 beautiful.
+ **/
+
+
+
 function Scene3D(id) {
 
 	// inheritance from WebSocketManager
 	WebSocketManager.call(this, id + '-alert');
 
 	this.id = id;
+	this.detail3D = App.Details3D || 5;
 
 	// Window sixe
 	this.SCREEN_WIDTH = window.innerWidth,
@@ -12,7 +21,7 @@ function Scene3D(id) {
 	this.windowHalfX = window.innerWidth / 2,
 	this.windowHalfY = window.innerHeight / 2,
 
-	this.satellites = [];
+	this.satellites = new Array();
 	this.rays = [];
 
 	// init
@@ -29,10 +38,11 @@ function Scene3D(id) {
 
 
 	// add the 'sun' (central spherical satellite)
-	this.sphere = new Satellite3D(this.sphereGeometry, this.YellowMaterial, 0);
+	this.sphere = new Satellite3D(this.sphereGeometry, this.OutputMaterial, 0);
 	this.sphere.addToScene(this.scene);
+	this.satellites['internet'] = this.sphere;
 
-	this.initSatellites();
+	// this.initSatellites();
 
 	this.initRender();
 
@@ -45,31 +55,38 @@ Scene3D.prototype = Object.create(WebSocketManager.prototype);
 
 
 Scene3D.prototype.dataManager = function(obj) {
-	if (obj.add_ip != null) {
-		for (var i = 0; i < obj.add_ip.length; i++) {
-			this.addSatellite(obj.add_ip[i]);
-		}
-	}
+
 
 	if (obj.remove_ip != null) {
 		for (var i = 0; i < obj.remove_ip.length; i++) {
-			this.removeSatellite(obj.remove_ip[i]);
+			// this.removeSatellite(obj.remove_ip[i]);
 		}
 	}
 
 	if (obj.communications != null) {
 		for (var i = 0; i < obj.communications.length; i++) {
+
+			if (this.satellites[obj.communications[i].ip_src] == null) {
+				this.addSatellite(obj.communications[i].ip_src);
+				// console.log('ajout ' + obj.communications[i].ip_src);
+			}
+
+			if (this.satellites[obj.communications[i].ip_dst] == null) {
+				this.addSatellite(obj.communications[i].ip_dst);
+				// console.log('ajout ' + obj.communications[i].ip_dst);
+			}
+
 			this.addRay(
 				this.satellites[obj.communications[i].ip_src],
 				this.satellites[obj.communications[i].ip_dst],
-				this.color_code[obj.communications[i].protocole],
-				this.fromSizeToTime(obj.communications[i].size));
+				Math.random() * 0xffffff,
+				this.fromSizeToTime(obj.communications[i].number));
 		}
 	}
 }
 
 Scene3D.prototype.fromSizeToTime = function(size) {
-	return Math.log(size) / 100;
+	return (size) / 2;
 }
 
 Scene3D.prototype.initCamera = function() {
@@ -115,10 +132,27 @@ Scene3D.prototype.initMaterial = function() {
 		wireframe: false,
 		overdraw: true
 	});
+
+	if (this.detail3D > 5) {
+		this.OutputMaterial = new THREE.MeshLambertMaterial({
+			map: new THREE.ImageUtils.loadTexture('/res/img/3D/texture/Earth-Clouds.jpg')
+		});
+	}else{
+		this.OutputMaterial = new THREE.MeshLambertMaterial({
+			color: 0x0000cb,
+			doubleSided: false,
+			wireframe: false,
+			overdraw: true
+		});
+	}
+
 }
 
 Scene3D.prototype.initGeometry = function() {
-	this.sphereGeometry = new THREE.SphereGeometry(10, 10, 10, false);
+	var segmentsWidth = this.detail3D * 10 - 50;
+	var segmentsHeight = this.detail3D * 10 - 50;
+
+	this.sphereGeometry = new THREE.SphereGeometry(10, segmentsWidth, segmentsHeight, false);
 	this.cubeGeometry = new THREE.CubeGeometry(20, 20, 20, false);
 }
 
@@ -134,7 +168,11 @@ Scene3D.prototype.initSatellites = function() {
 }
 
 Scene3D.prototype.addSatellite = function(ip) {
-	var sat = new Satellite3D(this.cubeGeometry, this.YellowMaterial, Math.random() * 150 + 100);
+	if (this.detail3D > 5)
+		var sat = new Satellite3D(this.sphereGeometry, this.YellowMaterial, Math.random() * 150 + 100);
+	else
+		var sat = new Satellite3D(this.cubeGeometry, this.YellowMaterial, Math.random() * 150 + 100);
+
 
 	sat.addToScene(this.scene);
 
@@ -142,8 +180,13 @@ Scene3D.prototype.addSatellite = function(ip) {
 }
 
 Scene3D.prototype.removeSatellite = function(ip) {
-	sat.destroy(scene);
-	this.satellites.splice(ip, 1);
+	console.log(this.satellites);
+	if (this.satellites[ip] != null) {
+		this.satellites[ip].destroy(this.scene);
+		// this.satellites.splice(ip, 1);
+		delete this.satellites[ip];
+	}
+	console.log(this.satellites);
 }
 
 Scene3D.prototype.addRay = function(satellite_src, satellite_target, color, time) {
@@ -190,6 +233,10 @@ Scene3D.prototype.render = function() {
 
 	for (var index in this.satellites) {
 		var sat = this.satellites[index];
+
+		if (sat == null)
+			console.log('ouch ' + index);
+
 		sat.update();
 	}
 
@@ -208,71 +255,3 @@ Scene3D.prototype.render = function() {
 
 	this.renderer.render(this.scene, this.camera);
 }
-
-
-
-// connect: function(address, protocol) {
-
-// 	that = this;
-// 	this.alertContainer = $('#content-canvas-alert');
-
-// 	// console.log('tentative de connexion live ' + App.serverAddress + '/' + App.bandwidtProtocol);
-
-// 	this.address = address || App.serverAddress || 'localhost';
-// 	this.prot = protocol || App.localCommication || 'local_communication';
-
-
-// 	this.connection = new WebSocket(this.address, this.prot);
-
-
-// 	// When the connection is open, send some data to the server
-// 	this.connection.onopen = function() {
-// 		console.log("connexion");
-// 		that.alertContainer.html('');
-// 		that.connection.send('Ping'); // Send the message 'Ping' to the server
-
-// 	};
-
-// 	// Log errors
-// 	this.connection.onerror = function(error) {
-// 		console.log('WebSocket Error ' + error);
-// 		that.alertContainer.text('Connection error : ' + error);
-// 	};
-
-// 	// Log messages from the server
-// 	this.connection.onmessage = function(e) {
-// 		var obj = JSON.parse(e.data);
-// if (obj.add_ip != null) {
-// 		for (var i = 0; i < obj.add_ip.length; i++) {
-// 			that.addSatellite(obj.add_ip[i]);
-// 		}
-// 	}
-
-// 	if (obj.remove_ip != null) {
-// 		for (var i = 0; i < obj.remove_ip.length; i++) {
-// 			that.removeSatellite(obj.remove_ip[i]);
-// 		}
-// 	}
-
-// 	if (obj.communications != null) {
-// 		for (var i = 0; i < obj.communications.length; i++) {
-// 			that.addRay(
-// 				that.satellites[obj.communications[i].ip_src],
-// 				that.satellites[obj.communications[i].ip_dst],
-// 				that.color_code[obj.communications[i].protocole],
-// 				that.fromSizeToTime(obj.communications[i].size));
-// 		}
-// 	}
-
-// 	};
-
-// 	this.connection.onclose = function(e) {
-// 		// console.log('Deconnexion tentative de reconnexion dans 5 sec ' + App.serverAddress + '/' + App.bandwidtProtocol);
-// 		that.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
-// 		setTimeout(function() {
-// 			that.connect(that.address, that.prot);
-// 		}, 5000);
-// 	};
-
-// }
-// }

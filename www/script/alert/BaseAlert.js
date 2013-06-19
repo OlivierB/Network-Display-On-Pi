@@ -19,11 +19,11 @@ BaseAlert.prototype.load = function() {
 			$("#" + this.id + "-alert").html(msg);
 		}.bind(this)
 	});
-
-	setTimeout(this.load.bind(this), 5000);
+	console.log('ss');
+	setTimeout(this.load.bind(this), 500000);
 };
 
 BaseAlert.prototype.launch = function() {
 	// refresh every 5 seconds
-	setInterval(this.load.bind(this), 5000);
+	this.load();
 };
