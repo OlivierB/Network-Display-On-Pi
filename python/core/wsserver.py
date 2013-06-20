@@ -22,6 +22,7 @@ import tornado.web
 
 LIST_ACCEPTED_SUBPROTOCOL = ['iplist', 'bandwidth', 'server_stat', 'alert', 'protocols', 'local_communication']
 
+
 class WSHandler_main(tornado.websocket.WebSocketHandler):
     """
     handler for main server page ("/")
