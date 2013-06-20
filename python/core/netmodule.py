@@ -37,7 +37,7 @@ class NetModule(threading.Thread):
     def run(self):
         while not self.Terminated:
             try:
-                self.pkt_handle(self.queue.get(timeout=0.1))
+                self.pkt_handle(self.queue.get(timeout=0.3))
             except:
                 pass
 

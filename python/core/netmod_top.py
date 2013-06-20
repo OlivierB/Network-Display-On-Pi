@@ -11,7 +11,7 @@ inherit from NetModule
 """
 
 
-import time, psutil, Queue, threading
+import time, psutil
 
 import netmodule as netmod
 
@@ -22,6 +22,7 @@ class MyMod(netmod.NetModule):
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
 
+        # packet data
         self.oldValues = self.sysState()
         self.state = None
 

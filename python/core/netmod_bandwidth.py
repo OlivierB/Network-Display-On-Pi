@@ -11,7 +11,7 @@ inherit from NetModule
 """
 
 
-import time, psutil, Queue, threading
+import time, psutil
 
 import netmodule as netmod
 
