@@ -65,13 +65,11 @@ def main():
     # Init
     ws = core.wsserver.WsServer(args.websocket_port)
     sniff = core.sniffer.Sniffer(args.sniffer_device, args.sniffer_net, args.sniffer_mask)
-    m = core.monitoring.Monitoring(sniff)
 
+    # Webserver data
     wsdata = core.wsserver.ClientsList()
 
     # Service start
-    m.start()
-    time.sleep(0.5)
     sniff.start()
     time.sleep(0.5)
     ws.start()
@@ -81,22 +79,15 @@ def main():
     if len(MODULE_LIST) > 0:
         print "------------------------------"
     
-    # Data managememt
-    cl = core.wsserver.ClientsList()
-    u = core.update.Update(m, sniff)
-    
-
     # Loop
     try:
         while 1:
             time.sleep(1)
-            val = m.getState()
     except KeyboardInterrupt:
         print "Stopping..."
     finally:
         print "------------------------------"
         ws.stop()
-        m.stop()
         sniff.stop()
         stop_modules(modlist)
             

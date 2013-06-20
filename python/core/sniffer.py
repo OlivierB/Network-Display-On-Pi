@@ -56,7 +56,7 @@ class Sniffer(threading.Thread):
 
         print "Sniffer : Pcap start on %s..." % self.dev
 
-        time.sleep(1.5)
+        time.sleep(1)
 
         try:
             # Get device informations if possible (IP address assigned)
