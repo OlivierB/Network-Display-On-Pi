@@ -7,8 +7,14 @@
 <?php header_display('3D viewer'); ?>
 
 <div class='slide-div'>
-	<span id="content-canvas-alert"></span>
-	<div id="content-canvas"></div>
+	<div class='row-fluid'>
+		<div class="span7" >
+			<span id="content-canvas-alert"></span>
+			<div id="content-canvas"></div>
+		</div>
+		<div class="span5" >
+		</div>
+	</div>
 </div>
 <script type="text/javascript" src='./script/3D/Ray.js'></script>
 <script type="text/javascript" src='./script/3D/Satellite3D.js'></script>
