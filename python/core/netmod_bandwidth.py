@@ -15,9 +15,11 @@ import time, psutil, Queue, threading
 
 import netmodule as netmod
 
+import core.network_utils
+
 class MyMod(netmod.NetModule):
-    def __init__(self):
-        netmod.NetModule.__init__(self, websocket=None, updatetime=1, protocol='bandwidth')
+    def __init__(self, sniffer, websocket=None):
+        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=websocket, updatetime=1, protocol='bandwidth')
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
@@ -56,11 +58,20 @@ class MyMod(netmod.NetModule):
 
 
     def pkt_handle(self, pkt):
-        pass
+        self.data["pkt_nbr"] += 1
 
-    def send(self, data):
-        print data
+        if pkt["Ethernet"]["EtherType"] == '\x08\x00':
+            src = pkt["Ethernet"]["data"]["src"]
+            dst = pkt["Ethernet"]["data"]["dst"]
+            bsrc = core.network_utils.ip_is_reserved(src)
+            bdst = core.network_utils.ip_is_reserved(dst)
 
+            if bsrc and bdst:
+                self.data["net_load_loc"] += pkt["pkt_len"]
+            elif not bsrc and bdst:
+                self.data["net_load_in"] += pkt["pkt_len"]
+            elif bsrc and not bdst:
+                self.data["net_load_out"] += pkt["pkt_len"]
 
     def sysState(self):
         """

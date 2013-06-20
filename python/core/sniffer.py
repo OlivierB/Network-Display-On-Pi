@@ -47,7 +47,9 @@ class Sniffer(threading.Thread):
         self.p = pcap.pcapObject()
         self.nd = NetworkData()
 
-        # Stat
+        # Modules list
+        self.lmodulesQ = list()
+        self.mutexQ = threading.Lock()
 
 
     def run(self):
@@ -73,7 +75,14 @@ class Sniffer(threading.Thread):
                 pkt = self.p.next()
                 if isinstance(pkt, types.TupleType):
                     pktdec = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
-                    self.nd.analyse(pktdec)
+                    # self.nd.analyse(pktdec)
+                    self.mutexQ.acquire()
+                    for q in self.lmodulesQ:
+                        try:
+                            q.put(pktdec, block=False)
+                        except:
+                            pass
+                    self.mutexQ.release()
 
 
             # End
@@ -86,6 +95,11 @@ class Sniffer(threading.Thread):
 
     def stop(self):
         self.Terminated = True
+
+    def addModuleQueue(self, modQ):
+        self.mutexQ.acquire()
+        self.lmodulesQ.append(modQ)
+        self.mutexQ.release()
 
     def stats(self):
         try:

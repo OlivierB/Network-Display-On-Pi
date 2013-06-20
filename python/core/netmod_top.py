@@ -16,8 +16,8 @@ import time, psutil, Queue, threading
 import netmodule as netmod
 
 class MyMod(netmod.NetModule):
-    def __init__(self):
-        netmod.NetModule.__init__(self, websocket=None, updatetime=1, protocol='server_stat')
+    def __init__(self, sniffer, websocket=None):
+        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=None, updatetime=1, protocol='server_stat')
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
@@ -53,10 +53,11 @@ class MyMod(netmod.NetModule):
         val["mem"]      = psutil.virtual_memory()[2]
         val["swap"]     = psutil.swap_memory()[3]
         val["cpu"]      = psutil.cpu_percent(interval=0)
-        # # Disk data collect
+        val["sniff_stats"] = self.sniffer.stats() # nbp, plost with pcap, plost with device
+
+         # # Disk data collect
         # val["io_read"]  = psutil.disk_io_counters(perdisk=False)[2]
         # val["io_write"] = psutil.disk_io_counters(perdisk=False)[3]
-        # val["sniff_stats"] = self.sniffer.stats() # nbp, plost with pcap, plost with device
 
         return val
 
@@ -78,19 +79,19 @@ class MyMod(netmod.NetModule):
         val["mem"]      = new["mem"]
         val["cpu"]      = new["cpu"]
         val["swap"]     = new["swap"]
-        
+
+        # Packet stats
+        ptot = (new["sniff_stats"][0] - old["sniff_stats"][0])
+        plost = (new["sniff_stats"][1] - old["sniff_stats"][1])
+        if ptot > 0:
+            val["sniff_stats_ploss"] = plost/(ptot*1.0)*100
+        else:
+            val["sniff_stats_ploss"] = 0
+        val["sniff_stats_ptot"] = new["sniff_stats"][0]
+
         # #  disk data in o/sec
         # val["disk_speed_read"]  = (new["io_read"] - old["io_read"]) / diff
         # val["disk_speed_write"] = (new["io_write"] - old["io_write"]) / diff
-
-        # # Packet stats
-        # ptot = (new["sniff_stats"][0] - old["sniff_stats"][0])
-        # plost = (new["sniff_stats"][1] - old["sniff_stats"][1])
-        # if ptot > 0:
-        #     val["sniff_stats_ploss"] = plost/(ptot*1.0)*100
-        # else:
-        #     val["sniff_stats_ploss"] = 0
-        # val["sniff_stats_ptot"] = new["sniff_stats"][0]
 
         return val
 

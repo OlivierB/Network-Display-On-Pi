@@ -13,7 +13,7 @@ class NetModule(threading.Thread):
     Module main class
     Define most usefull inherit functions
     """
-    def __init__(self, websocket=None, updatetime=10, protocol=None):
+    def __init__(self, sniffer=None, websocket=None, updatetime=10, protocol=None):
         threading.Thread.__init__(self)
 
         # stop condition
@@ -23,11 +23,13 @@ class NetModule(threading.Thread):
         self.queue = Queue.Queue(maxsize=1000)
 
         # intern variable
+        self.sniffer        = sniffer
         self.websocket      = websocket
         self.updatetime     = updatetime
         self.protocol       = protocol
         self.lastupdate     = 0
 
+        self.sniffer.addModuleQueue(self.queue)
 
     def stop(self):
         self.Terminated = True
