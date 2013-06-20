@@ -13,15 +13,11 @@ import importlib
 
 import config.server
 
-import core.sniffer, core.wsserver, core.monitoring
-import core.update
+import core.sniffer, core.wsserver
 
-# import core.netmod_bandwidth, core.netmod_top
-
-MODULE_LIST = ["netmod_bandwidth", "netmod_top", "netmod_protocols", "netmod_iplist", "netmod_loccomm"]
 
 __program__ = "NDOP"
-__version__ = "0.2"
+__version__ = "0.1.0"
 __description__ = "Network Sniffer with web display"
 
 
@@ -33,7 +29,7 @@ class ServerArgumentParser(argparse.ArgumentParser):
     def __init__(self):
         super(ServerArgumentParser, self).__init__()
         
-        # initialisations
+        # init
         self.description = "%s Version %s" % (__description__, __version__)
         
 
@@ -50,29 +46,35 @@ class ServerArgumentParser(argparse.ArgumentParser):
             help="Local network address (default: %s)" % config.server.sniffer_device_net)
 
 
-
 def main():
     """
-    
+    Main server function
+
+    Stand by Loop
+    Modules loader
     """
     
+    # Get command line arguments
     args = ServerArgumentParser().parse_args()
 
 
     print __description__
     print "------------------------------"
 
-    # Init
+    # Init websocket server (tornado)
     ws = core.wsserver.WsServer(args.websocket_port)
+    # init packet capture system
     sniff = core.sniffer.Sniffer(args.sniffer_device, args.sniffer_net, args.sniffer_mask)
 
-    # Webserver data
+    # Singeton Webserver data (for websocket)
     wsdata = core.wsserver.ClientsList()
 
-    # Service start
-    modlist = load_modules(MODULE_LIST, sniff, wsdata)
-    if len(MODULE_LIST) > 0:
+    # Load and start modules
+    modlist = load_modules(config.server.module_list, sniff, wsdata)
+    if len(config.server.module_list) > 0:
         print "------------------------------"
+
+    # Start services
     sniff.start()
     time.sleep(0.5)
     ws.start()
@@ -96,11 +98,16 @@ def main():
 
      
 def load_modules(lmod, sniffer, ws):
+    """
+    Load and start modules
+
+    return tuple (module, ClassInstnceStarted)
+    """
     lLoadMod = list()
     for m in lmod:
         try:
             # import module
-            module = importlib.import_module("core." + m)
+            module = importlib.import_module("modules." + m)
 
             # Check module main class
             getattr(module, "MyMod")
@@ -125,6 +132,9 @@ def load_modules(lmod, sniffer, ws):
 
 
 def stop_modules(lmod):
+    """
+    Stop all modules
+    """
     for m in lmod:
         m[1].stop()
 
