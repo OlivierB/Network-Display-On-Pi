@@ -38,7 +38,7 @@ function Scene3D(id) {
 
 
 	// add the 'sun' (central spherical satellite)
-	this.sphere = new Satellite3D(this.sphereGeometry, this.OutputMaterial, 0);
+	this.sphere = new Satellite3D(this.sphereGeometry, 'output', 0, this.OutputMaterial);
 	this.sphere.scale.set(3, 3, 3)
 	this.scene.add(this.sphere);
 	this.satellites['internet'] = this.sphere;
@@ -89,7 +89,7 @@ Scene3D.prototype.dataManager = function(obj) {
 }
 
 Scene3D.prototype.fromSizeToTime = function(size) {
-	return Math.log(size / 2)*5;
+	return (Math.log(size *0.8)) + 1;
 }
 
 Scene3D.prototype.initCamera = function() {
@@ -126,6 +126,9 @@ Scene3D.prototype.initLight = function() {
 	spotLight.shadowCameraFov = 30;
 
 	this.scene.add(spotLight);
+
+	var ambientLight = new THREE.AmbientLight(0x999999);
+      this.scene.add(ambientLight);
 }
 
 Scene3D.prototype.initMaterial = function() {
@@ -156,7 +159,7 @@ Scene3D.prototype.initGeometry = function() {
 	var segmentsHeight = this.detail3D * 10 - 50;
 
 	this.sphereGeometry = new THREE.SphereGeometry(10, segmentsWidth, segmentsHeight, false);
-	this.cubeGeometry = new THREE.CubeGeometry(20, 20, 20, false);
+	this.cubeGeometry = new THREE.CubeGeometry(15, 15, 15, false);
 }
 
 Scene3D.prototype.initAxisHelper = function() {
@@ -172,9 +175,9 @@ Scene3D.prototype.initSatellites = function() {
 
 Scene3D.prototype.addSatellite = function(ip) {
 	if (this.detail3D > 5)
-		var sat = new Satellite3D(this.sphereGeometry, this.YellowMaterial, Math.random() * 150 + 100);
+		var sat = new Satellite3D(this.sphereGeometry, ip.split('.')[3], Math.random() * 150 + 100);
 	else
-		var sat = new Satellite3D(this.cubeGeometry, this.YellowMaterial, Math.random() * 150 + 100);
+		var sat = new Satellite3D(this.cubeGeometry, ip.split('.')[3], Math.random() * 150 + 100);
 
 
 	// sat.addToScene(this.scene);

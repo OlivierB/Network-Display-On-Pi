@@ -1,4 +1,4 @@
-function Satellite3D(geometry, material, distance) {
+function Satellite3D(geometry, ip, distance, material) {
 
 
 
@@ -19,6 +19,11 @@ function Satellite3D(geometry, material, distance) {
 		1: vy - 0.33,
 		2: vz - 0.33
 	};
+
+
+	material =  material || this.createMaterialFromIp(ip);
+
+
 
 	this.cube = new THREE.Mesh(geometry, material);
 	this.cube.position.set(distance, 0, 0);
@@ -44,10 +49,28 @@ Satellite3D.prototype.update = function() {
 	this.rotate(this.dir[0] / 50, this.dir[1] / 50, this.dir[2] / 50);
 }
 
-// destroy: function(scene){
-// 	scene.remove(this.pivot);
-// 	delete this.pivot;
-// }
+Satellite3D.prototype.createMaterialFromIp = function(ip){
+	// create a canvas element
+		var canvas = document.createElement('canvas');
+		var context = canvas.getContext('2d');
+		context.canvas.width = 300;
+		context.canvas.height = 300;
+		context.fillStyle = "#F9A30E";
+
+		context.fillRect(0, 0, 300, 300);
 
 
+		context.font = "Bold 80px Arial";
+		context.fillStyle = "rgba(255,0,0,0.95)";
 
+		
+		context.fillText(ip, 55, 175);
+
+		// canvas contents will be used for a texture
+		var texture = new THREE.Texture(canvas);
+		texture.needsUpdate = true;
+
+		return new THREE.MeshLambertMaterial({
+			map: texture
+		});
+}

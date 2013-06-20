@@ -49,7 +49,8 @@ Ray.prototype.update = function() {
 		// this.line.updateMatrix()
 		this.geometry.verticesNeedUpdate = true;
 
-		this.packet.position = this.satellite_src.getPosition().sub(this.satellite_target.getPosition()).multiplyScalar(this.clock.getElapsedTime() / this.time);
+		this.packet.position = this.geometry.vertices[1].sub(this.geometry.vertices[0]).multiplyScalar(this.clock.getElapsedTime() / this.time).add(this.geometry.vertices[0]);
+
 		// console.log(this.packet.position);
 
 		return true;

@@ -7,5 +7,6 @@ var App = {
 	'localCommication'		: 		'local_communication',
 	'baseAdress'			: 		'192.168.1.144',
 	'protocolUseProtocol'	: 		'protocols',
-	'Details3D'				: 		10 // Between 1 & 10
+	'Details3D'				: 		7 /* Between 1 & 10*/,
+	'offline'				: 		true
 }
