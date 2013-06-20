@@ -14,12 +14,7 @@ function Scene3D(id) {
 	this.id = id;
 	this.detail3D = App.Details3D || 5;
 
-	// Window sixe
-	this.SCREEN_WIDTH = window.innerWidth,
-	this.SCREEN_HEIGHT = window.innerHeight,
-
-	this.windowHalfX = window.innerWidth / 2,
-	this.windowHalfY = window.innerHeight / 2,
+	
 
 	this.satellites = new Array();
 	this.rays = [];
@@ -44,8 +39,9 @@ function Scene3D(id) {
 	this.satellites['internet'] = this.sphere;
 
 	// this.initSatellites();
-
+	
 	this.initRender();
+	this.onWindowResize();
 
 
 }
@@ -214,13 +210,19 @@ Scene3D.prototype.initRender = function() {
 
 Scene3D.prototype.onWindowResize = function() {
 
-	this.windowHalfX = window.innerWidth / 2;
-	this.windowHalfY = window.innerHeight / 2;
+	// Window sixe
+	this.SCREEN_WIDTH = $('#' + this.id).width();
+	this.SCREEN_HEIGHT = window.innerHeight;
 
-	this.camera.aspect = window.innerWidth / window.innerHeight;
+	this.windowHalfX = this.SCREEN_WIDTH / 2;
+	this.windowHalfY = this.SCREEN_HEIGHT / 2;
+
+	
+
+	this.camera.aspect = this.SCREEN_WIDTH / this.SCREEN_HEIGHT;
 	this.camera.updateProjectionMatrix();
 
-	this.renderer.setSize(window.innerWidth, window.innerHeight);
+	this.renderer.setSize(this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
 
 }
 
