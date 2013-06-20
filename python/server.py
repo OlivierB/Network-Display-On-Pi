@@ -18,7 +18,7 @@ import core.update
 
 # import core.netmod_bandwidth, core.netmod_top
 
-MODULE_LIST = ["netmod_bandwidth", "netmod_top", "netmod_protocols"]
+MODULE_LIST = ["netmod_bandwidth", "netmod_top", "netmod_protocols", "netmod_iplist"]
 
 __program__ = "NDOP"
 __version__ = "0.2"

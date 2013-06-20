@@ -17,7 +17,7 @@ import core.network_callback
 
 class MyMod(netmod.NetModule):
     def __init__(self, sniffer, websocket=None):
-        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=None, updatetime=1, protocol='server_stat')
+        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=websocket, updatetime=1, protocol='protocols')
 
         # packet data
         self.lEtherProtocol = dict() # list protocol ethernet
@@ -39,7 +39,7 @@ class MyMod(netmod.NetModule):
 
         # send data
         self.send(res)
-        
+
 
     def pkt_handle(self, pkt):
         # List of Ethernet protocols
