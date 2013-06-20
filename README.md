@@ -16,6 +16,4 @@ Network-Display-On-Pi
 
 ### openbox configuration :
 * create file ~/.config/openbox/autostart
-* Insert commands lines :<br/>
-`sakura &` <br/>
-`google-chrome --kiosk --incognito --no-context-menu http://address &`
+* see autostart file on github
