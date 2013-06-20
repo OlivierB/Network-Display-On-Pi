@@ -18,7 +18,7 @@ import core.update
 
 # import core.netmod_bandwidth, core.netmod_top
 
-MODULE_LIST = ["netmod_bandwidth", "netmod_top", "netmod_protocols", "netmod_iplist"]
+MODULE_LIST = ["netmod_bandwidth", "netmod_top", "netmod_protocols", "netmod_iplist", "netmod_loccomm"]
 
 __program__ = "NDOP"
 __version__ = "0.2"
@@ -70,14 +70,15 @@ def main():
     wsdata = core.wsserver.ClientsList()
 
     # Service start
+    modlist = load_modules(MODULE_LIST, sniff, wsdata)
+    if len(MODULE_LIST) > 0:
+        print "------------------------------"
     sniff.start()
     time.sleep(0.5)
     ws.start()
     time.sleep(0.5)
     print "------------------------------"
-    modlist = load_modules(MODULE_LIST, sniff, wsdata)
-    if len(MODULE_LIST) > 0:
-        print "------------------------------"
+    
     
     # Loop
     try:

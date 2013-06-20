@@ -29,7 +29,10 @@ class NetModule(threading.Thread):
         self.protocol       = protocol
         self.lastupdate     = 0
 
-        self.sniffer.addModuleQueue(self.queue)
+        if self.sniffer != None:
+            self.sniffer.addModuleQueue(self.queue)
+        if self.websocket != None and protocol != None:
+            self.websocket.addProtocol(protocol)
 
     def stop(self):
         self.Terminated = True
