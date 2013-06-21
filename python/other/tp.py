@@ -114,9 +114,9 @@ class ModP(mp.Process):
         # if (time.time() - self.lastupdate) > self.updatetime:
         #         self.update()
         #         self.lastupdate = time.time()
-        elem = self.args.recv()
+        elem = self.args.get()
         print elem.getVal()
-        print self.args.recv()
+        print self.args.get()
         print elem.getVal()
         print "fin"
 
@@ -142,18 +142,34 @@ class ModP(mp.Process):
 
 
 if __name__ == "__main__":
-    parent_conn, child_conn2 = mp.Pipe()
+    queue = mp.Queue()
     e = elem("main")
-    p = ModP("A", args=child_conn2)
+    p = ModP("A", args=queue)
 
     p.start()
+    queue.put(e)
     time.sleep(2)
-    parent_conn.send(e)
     e.putVal("NAAAAAAAAAAN")
-    parent_conn.send("ee")
+    time.sleep(2)
+    queue.put("ee")
     time.sleep(2)
     p.stop()
     p.join()
+
+
+
+    # parent_conn, child_conn2 = mp.Pipe()
+    # e = elem("main")
+    # p = ModP("A", args=child_conn2)
+
+    # p.start()
+    # time.sleep(2)
+    # parent_conn.send(e)
+    # e.putVal("NAAAAAAAAAAN")
+    # parent_conn.send("ee")
+    # time.sleep(2)
+    # p.stop()
+    # p.join()
 
     # th = ModT("A")
     # th2 = ModT("B")
