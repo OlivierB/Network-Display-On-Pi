@@ -15,7 +15,7 @@ import time, psutil
 
 import netmodule as netmod
 
-import core.network_utils
+import core.network_utils, core.network_callback
 
 class MyMod(netmod.NetModule):
     def __init__(self, websocket=None):
@@ -60,7 +60,7 @@ class MyMod(netmod.NetModule):
     def pkt_handle(self, pkt):
         self.data["pkt_nbr"] += 1
 
-        if pkt["Ethernet"]["EtherType"] == '\x08\x00':
+        if pkt["Ethernet"]["EtherType"] == core.network_callback.Ether_IPv4:
             src = pkt["Ethernet"]["data"]["src"]
             dst = pkt["Ethernet"]["data"]["dst"]
             bsrc = core.network_utils.ip_is_reserved(src)

@@ -15,6 +15,8 @@ import config.server
 import core.sniffer, core.wsserver
 import core.netmod_manager
 
+import core.network_callback
+
 __program__ = "NDOP"
 __version__ = "0.1.0"
 __description__ = "Network Sniffer with web display"
@@ -83,6 +85,7 @@ def main():
     try:
         while 1:
             time.sleep(1)
+            # print "stats : ", sniff.stats()
     except KeyboardInterrupt:
         print "Stopping..."
     finally:
