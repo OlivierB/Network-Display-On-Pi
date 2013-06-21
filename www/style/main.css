@@ -40,3 +40,8 @@ a{
 h2{
 	text-align: center;
 }
+
+li{
+	font-size: 25px;
+	list-style: none;
+}

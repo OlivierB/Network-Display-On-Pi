@@ -1,6 +1,6 @@
-<script type="text/javascript" src="./script/chart/BandwidthChart.js"></script>
-<script type="text/javascript" src="./script/text/BandwidthText.js"></script>
-<script type="text/javascript" src="./script/chart/PercentBarChart.js"></script>
+<script type="text/javascript" src="/script/chart/BandwidthChart.js"></script>
+<script type="text/javascript" src="/script/text/BandwidthText.js"></script>
+<script type="text/javascript" src="/script/chart/PercentBarChart.js"></script>
 
 
 <?php header_display('Main page'); ?>
@@ -30,4 +30,4 @@
 		</div>
 </div>
 
-<script type="text/javascript" src="./script/chart/chart-loader.js"></script>
+<script type="text/javascript" src="/modules/traffic/script/chart-loader.js"></script>

@@ -41,20 +41,17 @@
 	<!-- All pages are included here, slideJS handle the animation -->
 	<div id="slides">
 		
-		<div><?php include "pages/main_page.php" ?></div>
-		<div><?php include "pages/alert_page.php" ?></div>
-		<div><?php include "pages/map.php" ?></div>
+		<div><?php include "modules/traffic/index.php" ?></div>
+		<div><?php include "modules/alertBase/index.php" ?></div>
+		<div><?php include "modules/serverStat/index.php" ?></div>
+		<div><?php include "modules/map/index.php" ?></div>
 
 		<div>
 			<?php 
-			include "pages/3d_view.php" 
+			include "modules/network3D/index.php" 
 			?>
 		</div>
-		<div>
-			<?php 
-			include "pages/server-stat.php" 
-			?>
-		</div>
+		
 
 		
 	</div>

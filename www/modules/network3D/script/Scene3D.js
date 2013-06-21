@@ -14,7 +14,7 @@ function Scene3D(id) {
 	this.id = id;
 	this.detail3D = App.Details3D || 5;
 
-	
+
 
 	this.satellites = new Array();
 	this.rays = [];
@@ -39,10 +39,13 @@ function Scene3D(id) {
 	this.satellites['internet'] = this.sphere;
 
 	// this.initSatellites();
-	
+
 	this.initRender();
 	this.onWindowResize();
 
+	this.needDisplay = false;
+
+	
 
 }
 
@@ -51,7 +54,6 @@ Scene3D.prototype = Object.create(WebSocketManager.prototype);
 
 
 Scene3D.prototype.dataManager = function(obj) {
-
 
 	if (obj.remove_ip != null) {
 		for (var i = 0; i < obj.remove_ip.length; i++) {
@@ -82,10 +84,12 @@ Scene3D.prototype.dataManager = function(obj) {
 				this.fromSizeToTime(obj.communications[i].number));
 		}
 	}
+
+	this.needDisplay = true;
 }
 
 Scene3D.prototype.fromSizeToTime = function(size) {
-	return (Math.log(size *0.8)) + 1;
+	return (Math.log(size * 0.8)) + 1;
 }
 
 Scene3D.prototype.initCamera = function() {
@@ -124,7 +128,7 @@ Scene3D.prototype.initLight = function() {
 	this.scene.add(spotLight);
 
 	var ambientLight = new THREE.AmbientLight(0x999999);
-      this.scene.add(ambientLight);
+	this.scene.add(ambientLight);
 }
 
 Scene3D.prototype.initMaterial = function() {
@@ -137,9 +141,9 @@ Scene3D.prototype.initMaterial = function() {
 
 	if (this.detail3D > 5) {
 		this.OutputMaterial = new THREE.MeshLambertMaterial({
-			map: new THREE.ImageUtils.loadTexture('/res/img/3D/texture/Earth-Clouds.jpg')
+			map: new THREE.ImageUtils.loadTexture('/modules/network3D/res/img/texture/Earth-Clouds.jpg')
 		});
-	}else{
+	} else {
 		this.OutputMaterial = new THREE.MeshLambertMaterial({
 			color: 0x0000cb,
 			doubleSided: false,
@@ -163,17 +167,24 @@ Scene3D.prototype.initAxisHelper = function() {
 	this.scene.add(axes);
 }
 
-Scene3D.prototype.initSatellites = function() {
-	for (var i = 0; i < 30; i++) {
-		this.addSatellite(i);
-	}
-}
+
 
 Scene3D.prototype.addSatellite = function(ip) {
 	if (this.detail3D > 5)
 		var sat = new Satellite3D(this.sphereGeometry, ip.split('.')[3], Math.random() * 150 + 100);
 	else
 		var sat = new Satellite3D(this.cubeGeometry, ip.split('.')[3], Math.random() * 150 + 100);
+
+
+	// sat.addToScene(this.scene);
+	this.scene.add(sat);
+
+	this.satellites[ip] = sat;
+
+	// if (this.detail3D > 5)
+	// 	var sat = new Satellite3D(this.sphereGeometry, ip >> 24, Math.random() * 150 + 100);
+	// else
+	// 	var sat = new Satellite3D(this.cubeGeometry,  ip >> 24, Math.random() * 150 + 100);
 
 
 	// sat.addToScene(this.scene);
@@ -190,11 +201,13 @@ Scene3D.prototype.removeSatellite = function(ip) {
 }
 
 Scene3D.prototype.addRay = function(satellite_src, satellite_target, color, time) {
-	var ray = new Ray(satellite_src, satellite_target, color, time);
-	// ray.addToScene(this.scene);
-	this.scene.add(ray);
-	this.rays.push(ray);
+	if (!this.needDisplay) {
+		var ray = new Ray(satellite_src, satellite_target, color, time);
+		this.scene.add(ray);
+		this.rays.push(ray);
 
+		this.numberSatellitesAddedSinceRefresh++;
+	}
 }
 
 Scene3D.prototype.initRender = function() {
@@ -217,7 +230,7 @@ Scene3D.prototype.onWindowResize = function() {
 	this.windowHalfX = this.SCREEN_WIDTH / 2;
 	this.windowHalfY = this.SCREEN_HEIGHT / 2;
 
-	
+
 
 	this.camera.aspect = this.SCREEN_WIDTH / this.SCREEN_HEIGHT;
 	this.camera.updateProjectionMatrix();
@@ -237,28 +250,28 @@ Scene3D.prototype.animate = function() {
 Scene3D.prototype.render = function() {
 
 
+	// console.log('ajout depuis rafr : ' + this.numberSatellitesAddedSinceRefresh);
+	this.needDisplay = false;
+
+
 	for (var index in this.satellites) {
-		var sat = this.satellites[index];
-
-		if (sat == null)
-			console.log('ouch ' + index);
-
-		sat.update();
+		this.satellites[index].update();
 	}
 
 
-	for (var i = 0; i < this.rays.length; i++) {
+	var i = this.rays.length;
+	for ( ;i--;) {
+		// console.log(i);
 		var ray = this.rays[i];
 
 		if (!ray.update()) {
 			// destruction of the ray
-			this.rays.splice(i, 1);
 			this.scene.remove(ray);
 			delete ray;
-
-			i--;
+			this.rays.splice(i, 1);
 		}
 	}
 
 	this.renderer.render(this.scene, this.camera);
+		
 }

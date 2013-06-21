@@ -14,11 +14,11 @@ function Satellite3D(geometry, ip, distance, material) {
 	var vy = (Math.random() * (1 - vx)) / 2;
 	var vz = 1 - vx - vy;
 
-	this.dir = {
-		0: vx - 0.33,
-		1: vy - 0.33,
-		2: vz - 0.33
-	};
+	this.dir = [
+		(vx - 0.33)/50,
+		(vy - 0.33)/50,
+		(vz - 0.33)/50
+	];
 
 
 	material =  material || this.createMaterialFromIp(ip);
@@ -29,7 +29,6 @@ function Satellite3D(geometry, ip, distance, material) {
 	this.cube.position.set(distance, 0, 0);
 
 	this.add(this.cube);
-	// this.pivot = pivot;
 
 }
 
@@ -46,7 +45,7 @@ Satellite3D.prototype.getPosition = function() {
 }
 
 Satellite3D.prototype.update = function() {
-	this.rotate(this.dir[0] / 50, this.dir[1] / 50, this.dir[2] / 50);
+	this.rotate(this.dir[0], this.dir[1], this.dir[2]);
 }
 
 Satellite3D.prototype.createMaterialFromIp = function(ip){

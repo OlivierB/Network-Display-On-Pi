@@ -41,8 +41,8 @@ function Ray(satellite_src, satellite_target, color, time) {
 Ray.prototype = Object.create(THREE.Line.prototype);
 
 Ray.prototype.update = function() {
-
-	if (this.clock.getElapsedTime() < this.time && this.satellite_src != null && this.satellite_target != null) {
+	//  && this.satellite_src != null && this.satellite_target != null
+	if (this.clock.getElapsedTime() < this.time) {
 		// console.log('update');
 		this.geometry.vertices[0] = this.satellite_src.getPosition();
 		this.geometry.vertices[1] = this.satellite_target.getPosition();
