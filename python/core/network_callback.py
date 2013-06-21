@@ -240,10 +240,7 @@ dIPType = {
     139 : { 'callback' : None, 'protocol' : 'HIP', 'description' : 'Host Identity Protocol'},
     140 : { 'callback' : None, 'protocol' : 'Shim6', 'description' : 'Shim6 Protocol'},
     141 : { 'callback' : None, 'protocol' : 'WESP', 'description' : 'Wrapped Encapsulating Security Payload'},
-    142 : { 'callback' : None, 'protocol' : 'ROHC', 'description' : 'Robust Header Compression'},
-    253 : { 'callback' : None, 'protocol' : 'None', 'description' : 'Use for experimentation and testing'},
-    254 : { 'callback' : None, 'protocol' : 'None', 'description' : 'Use for experimentation and testing'},
-    255 : { 'callback' : None, 'protocol' : 'None', 'description' : 'Reserved'}
+    142 : { 'callback' : None, 'protocol' : 'ROHC', 'description' : 'Robust Header Compression'}
 }
 
 dIPReserved = [
@@ -265,6 +262,10 @@ dIPReserved = [
     (pcap.aton('255.255.255.255'), 32)# Broadcast
 ]
     
+for typ in dEtherType.keys():
+    locals()["Ether_"+dEtherType[typ]["protocol"].replace(" ", "_")] = typ
 
+for typ in dIPType.keys():
+    locals()["IP_"+dIPType[typ]["protocol"].replace(" ", "_")] = typ
 
 

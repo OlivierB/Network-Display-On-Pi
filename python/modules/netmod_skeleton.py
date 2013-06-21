@@ -11,8 +11,8 @@ inherit from NetModule
 import netmodule as netmod
 
 class MyMod(netmod.NetModule):
-    def __init__(self, sniffer, websocket):
-        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=websocket, updatetime=1, protocol='skeleton')
+    def __init__(self, websocket):
+        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='skeleton')
 
     def update(self):
         pass

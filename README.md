@@ -15,7 +15,5 @@ Network-Display-On-Pi
 - sakura (optional good terminal)
 
 ### openbox configuration :
-*create file ~/.config/openbox/autostart
-*Insert commands lines :
-** `sakura &`
-** `google-chrome --kiosk --incognito --no-context-menu http://address &`
+* create file ~/.config/openbox/autostart
+* see autostart file on github

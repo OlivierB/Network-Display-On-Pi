@@ -9,12 +9,13 @@ NDOP
 
 import sys, os, json, exceptions
 import argparse, cmd, time
-import importlib
 
 import config.server
 
 import core.sniffer, core.wsserver
+import core.netmod_manager
 
+import core.network_callback
 
 __program__ = "NDOP"
 __version__ = "0.1.0"
@@ -66,11 +67,9 @@ def main():
     # init packet capture system
     sniff = core.sniffer.Sniffer(args.sniffer_device, args.sniffer_net, args.sniffer_mask)
 
-    # Singeton Webserver data (for websocket)
-    wsdata = core.wsserver.ClientsList()
-
-    # Load and start modules
-    modlist = load_modules(config.server.module_list, sniff, wsdata)
+    
+    # Load and start modules with Modules manager
+    modmanager = core.netmod_manager.NetmodManager(config.server.module_list)
     if len(config.server.module_list) > 0:
         print "------------------------------"
 
@@ -86,57 +85,17 @@ def main():
     try:
         while 1:
             time.sleep(1)
+            # print "stats : ", sniff.stats()
     except KeyboardInterrupt:
         print "Stopping..."
     finally:
         print "------------------------------"
         ws.stop()
         sniff.stop()
-        stop_modules(modlist)
+        modmanager.stop()
             
     return 0
 
-     
-def load_modules(lmod, sniffer, ws):
-    """
-    Load and start modules
-
-    return tuple (module, ClassInstnceStarted)
-    """
-    lLoadMod = list()
-    for m in lmod:
-        try:
-            # import module
-            module = importlib.import_module("modules." + m)
-
-            # Check module main class
-            getattr(module, "MyMod")
-
-            # Create an instance
-            modclass = module.MyMod(sniffer, websocket=ws)
-            # start module
-            modclass.start()
-
-            # add module to the list
-            lLoadMod.append((module, modclass))
-            print "Start module", m
-
-            # except ImportError as e:
-            #     print m, ":", e
-            # except AttributeError as e:
-            #     print m, ":", e
-        except Exception as e:
-            print m, ":", e
-
-    return lLoadMod
-
-
-def stop_modules(lmod):
-    """
-    Stop all modules
-    """
-    for m in lmod:
-        m[1].stop()
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -8,12 +8,14 @@ main module for monitoring
 
 import threading, time, Queue
 
+import core.wsserver
+
 class NetModule(threading.Thread):
     """
     Module main class
     Define most usefull inherit functions
     """
-    def __init__(self, sniffer=None, websocket=None, updatetime=10, protocol=None):
+    def __init__(self, websocket=None, updatetime=10, protocol=None):
         threading.Thread.__init__(self)
 
         # stop condition
@@ -23,14 +25,11 @@ class NetModule(threading.Thread):
         self.queue = Queue.Queue(maxsize=1000)
 
         # intern variable
-        self.sniffer        = sniffer
         self.websocket      = websocket
         self.updatetime     = updatetime
         self.protocol       = protocol
         self.lastupdate     = 0
 
-        if self.sniffer != None:
-            self.sniffer.addModuleQueue(self.queue)
         if self.websocket != None and protocol != None:
             self.websocket.addProtocol(protocol)
 
@@ -40,7 +39,7 @@ class NetModule(threading.Thread):
     def run(self):
         while not self.Terminated:
             try:
-                self.pkt_handle(self.queue.get(timeout=0.3))
+                self.pkt_handle(self.queue.get(timeout=0.5))
             except:
                 pass
 

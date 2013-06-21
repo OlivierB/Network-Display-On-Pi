@@ -20,6 +20,7 @@ import operator
 
 import core.network_callback
 import core.network_utils
+import core.netmod_manager
 
 PCAP_PROMISCUOUS_MODE   = 1
 
@@ -45,8 +46,7 @@ class Sniffer(threading.Thread):
         self.p = pcap.pcapObject()
 
         # Modules list
-        self.lmodulesQ = list()
-        self.mutexQ = threading.Lock()
+        self.lmod = core.netmod_manager.NetmodManager()
 
 
     def run(self):
@@ -73,13 +73,8 @@ class Sniffer(threading.Thread):
                 if isinstance(pkt, types.TupleType):
                     pktdec = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
 
-                    self.mutexQ.acquire()
-                    for q in self.lmodulesQ:
-                        try:
-                            q.put(pktdec, block=False)
-                        except:
-                            pass
-                    self.mutexQ.release()
+                    # send pkt to modules
+                    self.lmod.send(pktdec)
 
 
             # End
@@ -93,10 +88,6 @@ class Sniffer(threading.Thread):
     def stop(self):
         self.Terminated = True
 
-    def addModuleQueue(self, modQ):
-        self.mutexQ.acquire()
-        self.lmodulesQ.append(modQ)
-        self.mutexQ.release()
 
     def stats(self):
         try:
