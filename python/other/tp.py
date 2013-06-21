@@ -103,21 +103,22 @@ class ModP(mp.Process):
 
     def run(self):
         print "Debut"
-        print self.args
-        # # while not self.Terminated:
-        # try:
-        #     self.pkt_handle(self.queue.get(timeout=3))
-        # except:
-        #     pass
+        # print self.args
+        # while not self.Terminated:
+        try:
+            self.pkt_handle(self.args.get(timeout=0.5))
+        except:
+            pass
 
 
-        # if (time.time() - self.lastupdate) > self.updatetime:
-        #         self.update()
-        #         self.lastupdate = time.time()
-        elem = self.args.get()
-        print elem.getVal()
-        print self.args.get()
-        print elem.getVal()
+        if (time.time() - self.lastupdate) > self.updatetime:
+                self.update()
+                self.lastupdate = time.time()
+
+        # elem = self.args.get()
+        # print elem.getVal()
+        # print self.args.get()
+        # print elem.getVal()
         print "fin"
 
 
@@ -151,7 +152,7 @@ if __name__ == "__main__":
     time.sleep(2)
     e.putVal("NAAAAAAAAAAN")
     time.sleep(2)
-    queue.put("ee")
+    e.putVal("OOOOOOOOO")
     time.sleep(2)
     p.stop()
     p.join()
@@ -187,4 +188,30 @@ if __name__ == "__main__":
     
     # th.stop()
     # th2.stop()
+    
 
+# from multiprocessing import Process, Queue
+# class Processor(Process):
+
+#     def __init__(self, queue):
+#         super(Processor, self).__init__()
+#         self.queue = queue
+
+#     def return_name(self):
+#         return "Process returned %s" % self.name
+
+#     def run(self):
+#         self.queue.put(self.return_name())
+
+# processes = []
+
+# if __name__ == "__main__":
+
+#         for i in range(0,5):
+#                 q = Queue()
+#                 p=Processor(q)
+#                 processes.append((p, q))
+#                 p.start()
+#         for val in processes:
+#                 val[0].join()
+#                 print "RESULT is %s" % val[1].get()

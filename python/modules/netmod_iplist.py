@@ -19,8 +19,8 @@ MAX_IP_LIST_OUTSIDE     = 1000
 MAX_IP_LIST_SEND        = 20
 
 class MyMod(netmod.NetModule):
-    def __init__(self, sniffer, websocket=None):
-        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=websocket, updatetime=1, protocol='iplist')
+    def __init__(self, websocket=None):
+        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='iplist')
 
         # packet data
         self.lIPOut = dict()

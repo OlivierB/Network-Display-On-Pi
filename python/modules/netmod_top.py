@@ -16,8 +16,8 @@ import time, psutil
 import netmodule as netmod
 
 class MyMod(netmod.NetModule):
-    def __init__(self, sniffer, websocket=None):
-        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=websocket, updatetime=1, protocol='server_stat')
+    def __init__(self, websocket=None):
+        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='server_stat')
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
@@ -54,7 +54,7 @@ class MyMod(netmod.NetModule):
         val["mem"]      = psutil.virtual_memory()[2]
         val["swap"]     = psutil.swap_memory()[3]
         val["cpu"]      = psutil.cpu_percent(interval=0)
-        val["sniff_stats"] = self.sniffer.stats() # nbp, plost with pcap, plost with device
+        val["sniff_stats"] = 0,0,0 #self.sniffer.stats() # nbp, plost with pcap, plost with device
 
          # # Disk data collect
         # val["io_read"]  = psutil.disk_io_counters(perdisk=False)[2]

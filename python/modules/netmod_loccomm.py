@@ -20,8 +20,8 @@ import core.network_utils
 LOCCOMM_MAX_IP  = 1000
 
 class MyMod(netmod.NetModule):
-    def __init__(self, sniffer, websocket=None):
-        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=websocket, updatetime=1, protocol='local_communication')
+    def __init__(self, websocket=None):
+        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='local_communication')
 
         # packet data
         self.dIP_loccomm = dict()

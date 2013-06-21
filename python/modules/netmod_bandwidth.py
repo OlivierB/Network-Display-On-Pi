@@ -18,8 +18,8 @@ import netmodule as netmod
 import core.network_utils
 
 class MyMod(netmod.NetModule):
-    def __init__(self, sniffer, websocket=None):
-        netmod.NetModule.__init__(self, sniffer=sniffer, websocket=websocket, updatetime=1, protocol='bandwidth')
+    def __init__(self, websocket=None):
+        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='bandwidth')
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
