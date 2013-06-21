@@ -19,7 +19,7 @@ import core.network_utils, core.network_callback
 
 class MyMod(netmod.NetModule):
     def __init__(self, websocket=None):
-        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='bandwidth')
+        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='classip')
         
 
     def update(self):
@@ -27,7 +27,7 @@ class MyMod(netmod.NetModule):
 
 
     def pkt_handle(self, pkt):
-        pass
+        print "pkt : ", pkt
 
     
 

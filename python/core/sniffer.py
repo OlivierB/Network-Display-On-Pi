@@ -21,6 +21,7 @@ import operator
 import core.network_callback
 import core.network_utils
 import core.netmod_manager
+import core.packet
 
 PCAP_PROMISCUOUS_MODE   = 1
 
@@ -72,6 +73,7 @@ class Sniffer(threading.Thread):
                 pkt = self.p.next()
                 if isinstance(pkt, types.TupleType):
                     pktdec = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
+                    # pktdec = core.packet.Packet(pkt[0], pkt[1], pkt[2])
 
                     # send pkt to modules
                     self.lmod.send(pktdec)
