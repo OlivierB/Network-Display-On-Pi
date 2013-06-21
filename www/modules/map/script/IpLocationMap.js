@@ -29,11 +29,12 @@ IpLocationMap.prototype.addPointFromIP = function(ip, color) {
 
 IpLocationMap.prototype.dataManager = function(obj) {
 	if (obj.iplist != null) {
-		for (var i = 0; i < obj.iplist.length; i++) {
-			if (this.ips[obj.iplist[i]] == null) {
-				this.addPointFromIP(obj.iplist[i]);
-				// console.log('ip ajoutee ' + obj.ip_dst[i]);
-				this.ips[obj.iplist[i]] = 1;
+		var i = obj.iplist.length;
+		for (;i--;) {
+			var ip = obj.iplist[i];
+			if (this.ips[ip] == null) {
+				this.addPointFromIP(ip);
+				this.ips[ip] = 1;
 			}
 		}
 	}

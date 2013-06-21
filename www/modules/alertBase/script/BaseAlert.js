@@ -19,7 +19,6 @@ BaseAlert.prototype.load = function() {
 			$("#" + this.id + "-alert").html(msg);
 		}.bind(this)
 	});
-	console.log('ss');
 	setTimeout(this.load.bind(this), 500000);
 };
 

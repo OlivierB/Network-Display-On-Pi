@@ -35,6 +35,7 @@ WebSocketManager.prototype.connect = function(address, protocol) {
 	this.connection.onmessage = function(e) {
 		var obj = JSON.parse(e.data);
 		this.dataManager(obj);
+		// console.log('prot ' + this.prot);
 	}.bind(this);
 
 	this.connection.onclose = function(e) {
@@ -43,8 +44,7 @@ WebSocketManager.prototype.connect = function(address, protocol) {
 		}
 		else{
 			this.alertContainer.html('<span class="alert">Disconnected from server. Next try in 5 seconds.</span>');
-			setTimeout(
-				this.connect(this.address, this.prot).bind(this), 5000);
+			setTimeout(function(){this.connect(this.address, this.prot)}.bind(this), 5000);
 		}
 	}.bind(this);
 }

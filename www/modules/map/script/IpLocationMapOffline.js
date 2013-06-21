@@ -10,11 +10,12 @@ function IpLocationMapOffline(id) {
 	document.getElementById(id).appendChild(this.canvas);
 
 	// handle the resize of the window
-	$(window).resize(this.resize.bind(this));
-	this.resize();
+	
 
 
 	this.context = this.canvas.getContext('2d');
+
+	this.resize();
 
 	// Map Load
 	var imageObj = new Image();
@@ -63,8 +64,8 @@ IpLocationMapOffline.prototype.addPoint = function(lat, long, color) {
 	var y = this.mapHeight * (90 - lat) / 180 + this.paddingHeight;
 
 	this.drawCircle(x, y, 3, color);
+	// console.log('ajout');
 
-	this.save = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
 }
 
 
@@ -80,7 +81,5 @@ IpLocationMapOffline.prototype.drawCircle = function(centerX, centerY, radius, c
 
 IpLocationMapOffline.prototype.resize = function() {
 	this.canvas.width = $('#' + this.id).width();
-	this.canvas.height = $('#' + this.id).height();
-	if(this.save)
-		this.context.putImageData(this.save, 0, 0);
+	this.canvas.height = $('#' + this.id).height();	
 }

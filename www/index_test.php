@@ -38,7 +38,7 @@
 
 <body>
 	<!-- All pages are included here, slideJS handle the animation -->
-	<div><?php include "pages/3d_view.php" ?></div>
+	<div><?php include "modules/network3D/index.php" ?></div>
 
 </body>
 </html>
