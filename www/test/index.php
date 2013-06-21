@@ -13,7 +13,12 @@
 
 <script type="text/javascript">
 
-var ip = 838969536;
-console.log(ip >> 24 );
+var ip = 2416027840;
+var conv = (ip >>> 24) ;
+// if(conv < 0){
+// 	conv= 256 + conv;
+// }
+console.log( conv);
+
 
 </script>

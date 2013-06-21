@@ -81,8 +81,8 @@ class MyMod(netmod.NetModule):
             ss = self.ip_to_s(s)
             sd = self.ip_to_s(d)
             val = dict()
-            val['ip_src'] = ss
-            val['ip_dst'] = sd
+            val['ip_src'] = s
+            val['ip_dst'] = d
             val['number'] = elem[0]
             val['size'] = elem[1]
             if s != -1:

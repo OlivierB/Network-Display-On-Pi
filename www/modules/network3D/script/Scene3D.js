@@ -36,12 +36,14 @@ function Scene3D(id) {
 	this.sphere = new Satellite3D(this.sphereGeometry, 'output', 0, this.OutputMaterial);
 	this.sphere.scale.set(3, 3, 3)
 	this.scene.add(this.sphere);
-	this.satellites['internet'] = this.sphere;
+	this.satellites[-1] = this.sphere;
 
 	// this.initSatellites();
 
 	this.initRender();
 	this.onWindowResize();
+
+	this.loadConf();
 
 	this.needDisplay = false;
 
@@ -170,24 +172,19 @@ Scene3D.prototype.initAxisHelper = function() {
 
 
 Scene3D.prototype.addSatellite = function(ip) {
+
+	// for(var i = 0; i < network3D.length; i++){
+
+	// }
+
+	
+
 	if (this.detail3D > 5)
-		var sat = new Satellite3D(this.sphereGeometry, ip.split('.')[3], Math.random() * 150 + 100);
+		var sat = new Satellite3D(this.sphereGeometry, ip >>> 24, Math.random() * 150 + 100);
 	else
-		var sat = new Satellite3D(this.cubeGeometry, ip.split('.')[3], Math.random() * 150 + 100);
+		var sat = new Satellite3D(this.cubeGeometry,  ip >>> 24, Math.random() * 150 + 100);
 
 
-	// sat.addToScene(this.scene);
-	this.scene.add(sat);
-
-	this.satellites[ip] = sat;
-
-	// if (this.detail3D > 5)
-	// 	var sat = new Satellite3D(this.sphereGeometry, ip >> 24, Math.random() * 150 + 100);
-	// else
-	// 	var sat = new Satellite3D(this.cubeGeometry,  ip >> 24, Math.random() * 150 + 100);
-
-
-	// sat.addToScene(this.scene);
 	this.scene.add(sat);
 
 	this.satellites[ip] = sat;
@@ -274,4 +271,18 @@ Scene3D.prototype.render = function() {
 
 	this.renderer.render(this.scene, this.camera);
 		
+}
+
+Scene3D.prototype.loadConf = function(){
+
+	for(var i = 0; i < Network3DMakList.length; i++){
+		var tab = Network3DMakList[i].address.split('.');
+		Network3DMakList[i].addressHexa = 0;
+		for(var j = 0; j < 4; j++){
+			var val = parseFloat(tab[j]);
+			Network3DMakList[i].addressHexa += (val << (8*j));
+		}
+		// console.log(Network3DMakList[i].addressHexa)
+	}
+	
 }
