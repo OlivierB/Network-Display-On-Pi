@@ -15,7 +15,7 @@ import time, psutil
 
 import netmodule as netmod
 
-import core.network_utils, core.network_callback
+from scapy.all import *
 
 class MyMod(netmod.NetModule):
     def __init__(self, websocket=None):
@@ -27,7 +27,9 @@ class MyMod(netmod.NetModule):
 
 
     def pkt_handle(self, pkt):
-        print "pkt : ", pkt
+    	p = Ether(pkt)
+        if IP in p:
+        	print p[IP].src, "->", p[IP].dst
 
     
 

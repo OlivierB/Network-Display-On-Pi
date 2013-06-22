@@ -8,7 +8,7 @@ main module for monitoring
 
 import threading, time, Queue
 
-import core.wsserver
+# import core.wsserver
 
 class NetModule(threading.Thread):
     """

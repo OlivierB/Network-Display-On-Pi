@@ -74,7 +74,7 @@ class Sniffer(threading.Thread):
                 if isinstance(pkt, types.TupleType):
                     pktdec = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
                     # pktdec = core.packet.Packet(pkt[0], pkt[1], pkt[2])
-
+                    # pktdec = pkt[1]
                     # send pkt to modules
                     self.lmod.send(pktdec)
 
