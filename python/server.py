@@ -9,13 +9,12 @@ NDOP
 
 import sys, os, json, exceptions
 import argparse, cmd, time
+from multiprocessing import Pipe
 
 import config.server
 
 import core.sniffer, core.wsserver
-import core.netmod_manager
 
-import core.network_callback
 
 __program__ = "NDOP"
 __version__ = "0.1.0"
@@ -59,32 +58,31 @@ def main():
     args = ServerArgumentParser().parse_args()
 
 
-    print __description__
-    print "------------------------------"
+    print "####################################"
+    print "# Network Sniffer with web display #"
+    print "####################################"
 
+    pipe_receiver, pipe_sender  = Pipe(duplex=False)
     # Init websocket server (tornado)
     ws = core.wsserver.WsServer(args.websocket_port)
+    wsdata = core.wsserver.ClientsList()
     # init packet capture system
-    sniff = core.sniffer.Sniffer(args.sniffer_device, args.sniffer_net, args.sniffer_mask)
-
-    
-    # Load and start modules with Modules manager
-    modmanager = core.netmod_manager.NetmodManager(config.server.module_list)
-    if len(config.server.module_list) > 0:
-        print "------------------------------"
+    sniff = core.sniffer.Sniffer(pipe=pipe_sender, dev=args.sniffer_device) # , args.sniffer_net, args.sniffer_mask
 
     # Start services
-    sniff.start()
-    time.sleep(0.5)
     ws.start()
     time.sleep(0.5)
-    print "------------------------------"
+    sniff.start()
+    time.sleep(0.5)
     
     
     # Loop
     try:
         while 1:
-            time.sleep(1)
+            # time.sleep(1)
+            recv = pipe_receiver.recv()
+            for r in recv:
+                wsdata.send(r[0], r[1])
             # print "stats : ", sniff.stats()
     except KeyboardInterrupt:
         print "Stopping..."
@@ -92,7 +90,7 @@ def main():
         print "------------------------------"
         ws.stop()
         sniff.stop()
-        modmanager.stop()
+        # modmanager.stop()
             
     return 0
 

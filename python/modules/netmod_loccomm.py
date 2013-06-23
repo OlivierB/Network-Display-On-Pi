@@ -19,9 +19,9 @@ import core.network_utils
 
 LOCCOMM_MAX_IP  = 1000
 
-class MyMod(netmod.NetModule):
-    def __init__(self, websocket=None):
-        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='local_communication')
+class NetModChild(netmod.NetModule):
+    def __init__(self):
+        netmod.NetModule.__init__(self, updatetime=1, protocol='local_communication')
 
         # packet data
         self.dIP_loccomm = dict()
@@ -33,9 +33,9 @@ class MyMod(netmod.NetModule):
         val = self.get_loc_comm()
  
         # send data
-        self.send(val)
+        return val
 
-    def pkt_handle(self, pkt):
+    def pkt_handler(self, pkt):
         if pkt["Ethernet"]["EtherType"] == '\x08\x00':
 
             src = pkt["Ethernet"]["data"]["src"]

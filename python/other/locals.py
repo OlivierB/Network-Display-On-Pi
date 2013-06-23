@@ -10,20 +10,24 @@ import types
 import time
 import copy
 
+import core.network_callback
 import core.network_utils
+import core.packet
 
 def fpcap():
     p = pcap.pcapObject()
 
-    p.open_live("wlan0", 1600, 1, 1000)
+    p.open_live("wlan0", 1600, 1, 750)
 
     return p
 
 def sniff(p):
-    pkt = p.next()
+    pkt = None
 
-    while not(isinstance(pkt, types.TupleType)) and pkt[1] > 200:
+    while pkt == None: # or pkt[0] < 300
+        a = time.time()
         pkt = p.next()
+        print "time : ", (time.time() - a)
 
     pktd = pkt[1]
 
@@ -51,7 +55,7 @@ if __name__ == "__main__":
 
     # print p.stats()
 
-    res = core.network_utils.packet_decode(1200, pktd, 0)
+    # res = core.network_utils.packet_decode(1200, pktd, 0)
 
     # pktscapy = Ether(pktd)
     # a = time.time()
@@ -60,23 +64,31 @@ if __name__ == "__main__":
 
     # print "time : ", (time.time() - a)
 
-    a = time.time()
-    for i in range(10000):
-        r = Ether(pktd)
+    # a = time.time()
+    # for i in range(10000):
+    #     r = Ether(pktd)
 
-    print "time : ", (time.time() - a)
+    # print "time : ", (time.time() - a)
 
     a = time.time()
-    for i in range(10000):
+    for i in range(1000000):
         res = core.network_utils.packet_decode(1200, pktd, 0)
 
-    print "time : ", (time.time() - a)
+    print "dic time : ", (time.time() - a)
+
+    
 
     a = time.time()
-    for i in range(100000):
-        r = ''.join(pktd)
+    for i in range(1000000):
+        pktdec = core.packet.Packet(1200, pktd, 0)
 
-    print "time : ", (time.time() - a)
+    print "class - time : ", (time.time() - a)
+
+    # a = time.time()
+    # for i in range(100000):
+    #     r = ''.join(pktd)
+
+    # print "time : ", (time.time() - a)
 
 
 

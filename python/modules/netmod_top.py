@@ -15,9 +15,9 @@ import time, psutil
 
 import netmodule as netmod
 
-class MyMod(netmod.NetModule):
-    def __init__(self, websocket=None):
-        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='server_stat')
+class NetModChild(netmod.NetModule):
+    def __init__(self):
+        netmod.NetModule.__init__(self, updatetime=1, protocol='server_stat')
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
@@ -40,10 +40,8 @@ class MyMod(netmod.NetModule):
         val["pkt_tot"], val["pkt_lost"] = 0, 0
 
         # send data
-        self.send(val)
+        return val
 
-    def pkt_put(self, pkt):
-        pass
 
     def sysState(self):
         """
@@ -56,7 +54,7 @@ class MyMod(netmod.NetModule):
         val["cpu"]      = psutil.cpu_percent(interval=0)
         val["sniff_stats"] = 0,0,0 #self.sniffer.stats() # nbp, plost with pcap, plost with device
 
-         # # Disk data collect
+        # # Disk data collect
         # val["io_read"]  = psutil.disk_io_counters(perdisk=False)[2]
         # val["io_write"] = psutil.disk_io_counters(perdisk=False)[3]
 
@@ -95,19 +93,6 @@ class MyMod(netmod.NetModule):
         # val["disk_speed_write"] = (new["io_write"] - old["io_write"]) / diff
 
         return val
-
-
-
-if __name__ == "__main__":
-    m = MyMod()
-
-    m.start()
-    print "Start for 5 seconds"
-    a = time.time()
-    time.sleep(5)
-    print time.time() - a
-
-    m.stop()
 
 
 

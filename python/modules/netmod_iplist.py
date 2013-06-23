@@ -17,10 +17,11 @@ import core.network_callback
 
 MAX_IP_LIST_OUTSIDE     = 1000
 MAX_IP_LIST_SEND        = 20
+MAX_TIME_IP_LIST        = 600
 
-class MyMod(netmod.NetModule):
-    def __init__(self, websocket=None):
-        netmod.NetModule.__init__(self, websocket=websocket, updatetime=5, protocol='iplist')
+class NetModChild(netmod.NetModule):
+    def __init__(self):
+        netmod.NetModule.__init__(self, updatetime=5, protocol='iplist')
 
         # packet data
         self.lIPOut = dict()
@@ -47,11 +48,11 @@ class MyMod(netmod.NetModule):
             self.lIP_next_start += MAX_IP_LIST_SEND
 
             # send data
-            self.send(val)
+            return val
 
 
 
-    def pkt_handle(self, pkt):
+    def pkt_handler(self, pkt):
         if pkt["Ethernet"]["EtherType"] == '\x08\x00':
             src = pkt["Ethernet"]["data"]["src"]
             # dst = pkt["Ethernet"]["data"]["dst"]

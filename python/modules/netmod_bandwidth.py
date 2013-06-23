@@ -17,9 +17,9 @@ import netmodule as netmod
 
 import core.network_utils, core.network_callback
 
-class MyMod(netmod.NetModule):
-    def __init__(self, websocket=None):
-        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='bandwidth')
+class NetModChild(netmod.NetModule):
+    def __init__(self):
+        netmod.NetModule.__init__(self, updatetime=1, protocol='bandwidth')
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
@@ -54,10 +54,10 @@ class MyMod(netmod.NetModule):
         val["Ko"]       = val["in_Ko"] + val["out_Ko"] + val["loc_Ko"]
 
         # send data
-        self.send(val)
+        return val
 
 
-    def pkt_handle(self, pkt):
+    def pkt_handler(self, pkt):
         self.data["pkt_nbr"] += 1
 
         if pkt["Ethernet"]["EtherType"] == core.network_callback.Ether_IPv4:

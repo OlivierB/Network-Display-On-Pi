@@ -8,95 +8,139 @@ Use pcap
 @author: Olivier BLIN
 """
 
+import config.server
+
+import sys, time, socket, types
+import string, struct, operator
+import importlib
+import multiprocessing as mp
 import pcap
-import sys
-import string
-import time
-import threading
-import socket
-import struct
-import types
-import operator
 
 import core.network_callback
 import core.network_utils
-import core.netmod_manager
 import core.packet
 
 PCAP_PROMISCUOUS_MODE   = 1
+PCAP_SNIFFER_TIMEOUT    = 300
+MIN_TIME_MOD_UPDATE     = 0.5
 
 
-class Sniffer(threading.Thread):
+
+
+class Sniffer(mp.Process):
     """
     Class for packet capture
 
-    This class send packet in module's queue
+    This class some modules which analyse packets and make stats
     """
+    number = 0
+    def __init__(self, pipe, dev="eth0"):
+        mp.Process.__init__(self)
 
-    def __init__(self, dev="eth0", net="192.168.1.0", mask="255.255.255.0"):
-        threading.Thread.__init__(self)
         # stop condition
-        self.Terminated = False
+        self.Terminated = mp.Value('i', 0)
 
-        # param
+        # Var
         self.dev = dev
-        self.net = net
-        self.mask = mask
+        self.pipe = pipe
 
-        # Create new pcap capture object
-        self.p = pcap.pcapObject()
-
-        # Modules list
-        self.lmod = core.netmod_manager.NetmodManager()
-
+    def stop(self):
+        self.Terminated.value = 1
 
     def run(self):
+        print "Sniffer : Capture start"
+        # Init
+        term = self.Terminated.value    # little optimisation (local variable)
+        pipe = self.pipe
+        lmod = load_mod(config.server.module_list)
+        tb = time.time()
 
-        print "Sniffer : Pcap start on %s..." % self.dev
+        # Protocols
+        wsdata = core.wsserver.ClientsList()
+        for m in lmod:
+            wsdata.addProtocol(m.get_protocol())
 
-        # time.sleep(1)
-
+        # Get device informations if possible (IP address assigned)
         try:
-            # Get device informations if possible (IP address assigned)
-            try:
-                net, mask = pcap.lookupnet(self.dev)
-                self.net = pcap.ntoa(net)
-                self.mask = pcap.ntoa(mask)
-            except:
-                pass
+            net, mask = pcap.lookupnet(dev)
+        except:
+            net, mask = "192.168.1.0", "255.255.255.0"
 
-            # (Dev, buffer, promiscuous mode, timeout)
-            self.p.open_live(self.dev, 1600, PCAP_PROMISCUOUS_MODE, 100)
+        # Create new pcap capture object
+        p = pcap.pcapObject()
+        # (Dev, buffer, promiscuous mode, timeout)
+        p.open_live(self.dev, 1600, PCAP_PROMISCUOUS_MODE, PCAP_SNIFFER_TIMEOUT)
 
-            while not self.Terminated:
-                # return tuple : pktlen, data, timestamp
-                pkt = self.p.next()
-                if isinstance(pkt, types.TupleType):
+
+        try:    
+            # Handler loop
+            while not term:
+                pkt = p.next()
+
+                if pkt != None:
+                    # Decode packet
                     pktdec = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
                     # pktdec = core.packet.Packet(pkt[0], pkt[1], pkt[2])
-                    # pktdec = pkt[1]
+
                     # send pkt to modules
-                    self.lmod.send(pktdec)
+                    for m in lmod:
+                        m.pkt_handler(pktdec)
+
+                # Module update
+                if time.time() - tb > MIN_TIME_MOD_UPDATE:
+                    tb = time.time()
+                    ls = list()
+                    for m in lmod:
+                        data = m.get_data()
+                        if data != None:
+                            ls.append((m.get_protocol(), data))
+                    if len(ls) > 0:
+                        pipe.send(ls)                    
 
 
+        except KeyboardInterrupt:
             # End
-            a, b, c = self.p.stats()
-            print 'sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % self.p.stats(), b/(a*1.0+1)*100
-
+            print "Sniffer : Stopping..."
+            a, b, c = p.stats()
+            print 'Sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % p.stats(), b/(a*1.0+1)*100
         except Exception as e:
             print "Sniffer : ", e
             raise
 
-    def stop(self):
-        self.Terminated = True
 
 
-    def stats(self):
-        try:
-            a, b, c = self.p.stats()
-        except:
-            return 0, 0, 0
-        return a, b, c
+        
 
-        print 'Sniffer : Pcap stop...'
+def load_mod(lmod):
+        """
+        Load modules
+        """
+        # Singeton Webserver data (for websocket)
+        l_modules = list()
 
+        if len(lmod) > 0:
+            print "------------------------------"
+            for m in lmod:
+                try:
+                    # import module
+                    module = importlib.import_module("modules." + m)
+
+                    # Check module main class
+                    getattr(module, "NetModChild")
+
+                    # Create an instance
+                    modclass = module.NetModChild()
+
+                    # add module to the list
+                    l_modules.append(modclass)
+                    print "Load module", m
+
+                    # except ImportError as e:
+                    #     print m, ":", e
+                    # except AttributeError as e:
+                    #     print m, ":", e
+                except Exception as e:
+                    print m, ":", e
+            print "------------------------------"
+
+        return l_modules

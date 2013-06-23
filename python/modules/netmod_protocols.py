@@ -15,9 +15,9 @@ import netmodule as netmod
 
 import core.network_callback
 
-class MyMod(netmod.NetModule):
-    def __init__(self, websocket=None):
-        netmod.NetModule.__init__(self, websocket=websocket, updatetime=1, protocol='protocols')
+class NetModChild(netmod.NetModule):
+    def __init__(self):
+        netmod.NetModule.__init__(self, updatetime=1, protocol='protocols')
 
         # packet data
         self.lEtherProtocol = dict() # list protocol ethernet
@@ -38,10 +38,10 @@ class MyMod(netmod.NetModule):
         res["ip"] = sorted(val.iteritems(), key=operator.itemgetter(1), reverse=True)
 
         # send data
-        self.send(res)
+        return res
 
 
-    def pkt_handle(self, pkt):
+    def pkt_handler(self, pkt):
         # List of Ethernet protocols
         typ = pkt["Ethernet"]["EtherType"]
         if typ in core.network_callback.dEtherType.keys():
