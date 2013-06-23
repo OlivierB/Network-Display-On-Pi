@@ -51,14 +51,12 @@ class NetModChild(netmod.NetModule):
             return val
 
 
-
     def pkt_handler(self, pkt):
         if pkt["Ethernet"]["EtherType"] == '\x08\x00':
             src = pkt["Ethernet"]["data"]["src"]
             # dst = pkt["Ethernet"]["data"]["dst"]
             bsrc = core.network_utils.ip_is_reserved(src)
             # bdst = core.network_utils.ip_is_reserved(dst)
-
             if not bsrc:
                 self.add_ip_list_outside(src, pkt["pkt_timestamp"])
 
@@ -75,22 +73,26 @@ class NetModChild(netmod.NetModule):
 
             if (time.time() - self.lIPOut_cleantime) > MAX_TIME_IP_LIST:
                 self.cleaniplist()
-
         else:
             self.cleaniplist()
 
-
     def cleaniplist(self):
-        
-        # lastTime = self.lIPOut_cleantime
-        # r = sorted(self.lIPOut.values(), key=operator.itemgetter('nbr'))
-        # if len(r) > 0:
-        #     limit = r[0]["nbr"]
-        # else:
-        #     limit = 1
-        # t = time.time()
-        # map((lambda foo: self.__cleaniplist(foo, t, lastTime, limit)), self.lIPOut.keys())
+        lastTime = self.lIPOut_cleantime
+        r = sorted(self.lIPOut.values(), key=operator.itemgetter('nbr'))
+        if len(r) > 0:
+            limit = r[0]["nbr"]
+        else:
+            limit = 1
+        t = time.time()
+        map((lambda foo: self.__cleaniplist(foo, t, lastTime, limit)), self.lIPOut.keys())
         self.lIPOut_cleantime = time.time()
+
+    def __cleaniplist(self, ip, t, lt, limit):
+        diff = t - lt
+        elem = self.lIPOut[ip]
+        if not(((t - elem["time"]) < diff/2.0)\
+            or (elem["nbr"] > limit and (t - elem["time"]) < MAX_TIME_IP_LIST)):
+            self.lIPOut.pop(ip)
 
     def get_ipout(self):
         return map(pcap.ntoa, self.lIPOut.keys())
