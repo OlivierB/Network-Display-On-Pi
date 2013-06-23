@@ -4,40 +4,79 @@
 @author: Olivier BLIN
 """
 
-class Parent:        # define parent class
-   parentAttr = 100
-   def __init__(self):
-      print "Calling parent constructor"
+import pcap
+from scapy.all import *
+import types
+import time
+import copy
 
-   def parentMethod(self):
-      print 'Calling parent method'
+import core.network_utils
 
-   def setAttr(self, attr):
-      Parent.parentAttr = attr
+def fpcap():
+    p = pcap.pcapObject()
 
-   def getAttr(self):
-      print "Parent attribute :", Parent.parentAttr
+    p.open_live("wlan0", 1600, 1, 1000)
 
-class Child(Parent): # define child class
-   def __init__(self):
-      print "Calling child constructor"
+    return p
 
-   def childMethod(self):
-      print 'Calling child method'
+def sniff(p):
+    pkt = p.next()
+
+    while not(isinstance(pkt, types.TupleType)) and pkt[1] > 200:
+        pkt = p.next()
+
+    pktd = pkt[1]
+
+    return pktd
 
 
+
+
+# hexdump(pktd)
 
 if __name__ == "__main__":
-    c = Child()          # instance of child
-    c.childMethod()      # child calls its method
-    c.parentMethod()     # calls parent's method
-    c.setAttr(200)       # again call parent's method
-    c.getAttr()          # again call parent's method
+    p = fpcap()
+    pktd = sniff(p)
+    # nb = 0
 
+    # t = time.time()
+    # while time.time() - t < 10:
+    #     pktd = sniff(p)
+    #     nb += 1
 
-    print "----"
-    p = Parent()
-    p.getAttr()
-    cc = Child(p)
+    #     # for i in range(15):
+    #     #     r = ''.join(pktd)
+
+    # print nb
+
+    # print p.stats()
+
+    res = core.network_utils.packet_decode(1200, pktd, 0)
+
+    # pktscapy = Ether(pktd)
+    # a = time.time()
+    # for i in range(10000):
+    #     r = pktscapy.copy()
+
+    # print "time : ", (time.time() - a)
+
+    a = time.time()
+    for i in range(10000):
+        r = Ether(pktd)
+
+    print "time : ", (time.time() - a)
+
+    a = time.time()
+    for i in range(10000):
+        res = core.network_utils.packet_decode(1200, pktd, 0)
+
+    print "time : ", (time.time() - a)
+
+    a = time.time()
+    for i in range(100000):
+        r = ''.join(pktd)
+
+    print "time : ", (time.time() - a)
+
 
 
