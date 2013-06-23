@@ -8,7 +8,7 @@ NDOP
 """
 
 import sys, os, json, exceptions
-import argparse, cmd, time
+import argparse, cmd, time, importlib
 from multiprocessing import Pipe
 
 import config.server
@@ -66,6 +66,8 @@ def main():
     # Init websocket server (tornado)
     ws = core.wsserver.WsServer(args.websocket_port)
     wsdata = core.wsserver.ClientsList()
+    add_mod_prot(wsdata, config.server.module_list)
+    # print wsdata.getProtocols()
     # init packet capture system
     sniff = core.sniffer.Sniffer(pipe=pipe_sender, dev=args.sniffer_device) # , args.sniffer_net, args.sniffer_mask
 
@@ -75,7 +77,7 @@ def main():
     sniff.start()
     time.sleep(0.5)
     
-    
+
     # Loop
     try:
         while 1:
@@ -93,6 +95,30 @@ def main():
         # modmanager.stop()
             
     return 0
+
+
+def add_mod_prot(wsdata, lmod):
+    """
+    Load modules
+    """
+
+    if len(lmod) > 0:
+        for m in lmod:
+            try:
+                # import module
+                module = importlib.import_module("modules." + m)
+
+                # Check module main class
+                getattr(module, "NetModChild")
+
+                # Create an instance
+                modclass = module.NetModChild()
+                # Add protocol for the webserver
+                wsdata.addProtocol(modclass.get_protocol())
+
+            except Exception as e:
+                # print e
+                pass
 
 
 if __name__ == "__main__":

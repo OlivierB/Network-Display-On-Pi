@@ -66,16 +66,11 @@ class WsServer(threading.Thread):
 
 
     def run(self):
-
         print "WsServer : Server start..."
         try:
-
             tornado.ioloop.IOLoop.instance().start()
-
         except Exception as e:
             print "WsServer : ", e
-            self.stop()
-
 
     def stop(self):
         print 'WsServer : Server stop...'
@@ -189,6 +184,7 @@ class ClientsList(object):
 
 
     def addProtocol(self, prot):
+        # print prot
         self.protocols_list.append(prot)
 
     def getProtocols(self):

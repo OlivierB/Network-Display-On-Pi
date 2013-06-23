@@ -82,14 +82,14 @@ class NetModChild(netmod.NetModule):
 
     def cleaniplist(self):
         
-        lastTime = self.lIPOut_cleantime
-        r = sorted(self.lIPOut.values(), key=operator.itemgetter('nbr'))
-        if len(r) > 0:
-            limit = r[0]["nbr"]
-        else:
-            limit = 1
-        t = time.time()
-        map((lambda foo: self.__cleaniplist(foo, t, lastTime, limit)), self.lIPOut.keys())
+        # lastTime = self.lIPOut_cleantime
+        # r = sorted(self.lIPOut.values(), key=operator.itemgetter('nbr'))
+        # if len(r) > 0:
+        #     limit = r[0]["nbr"]
+        # else:
+        #     limit = 1
+        # t = time.time()
+        # map((lambda foo: self.__cleaniplist(foo, t, lastTime, limit)), self.lIPOut.keys())
         self.lIPOut_cleantime = time.time()
 
     def get_ipout(self):

@@ -55,11 +55,6 @@ class Sniffer(mp.Process):
         lmod = load_mod(config.server.module_list)
         tb = time.time()
 
-        # Protocols
-        wsdata = core.wsserver.ClientsList()
-        for m in lmod:
-            wsdata.addProtocol(m.get_protocol())
-
         # Get device informations if possible (IP address assigned)
         try:
             net, mask = pcap.lookupnet(dev)
