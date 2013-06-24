@@ -16,11 +16,14 @@ class Layer():
         if self.protocol == None:
             return "-> ROW"
         else:
-            return "-> "+self.protocol+" "+self.payload.__str__()
+            if self.payload != None:
+                return "-> "+self.protocol+" "+self.payload.__str__()
+            else:
+                return "-> "+self.protocol
 
     def get_protocol(self):
         return self.protocol
 
-    def get_pktdata(self):
-        return self.pktdata
+    def get_data(self):
+        return self.payload
 
