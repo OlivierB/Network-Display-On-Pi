@@ -1,14 +1,37 @@
+/*
 @font-face {
-    font-family: Champ;
-    src: url(/res/font/Champagne.ttf);
-    font-weight:400;
+font-family: Champ;
+src: url(/res/font/Champagne.ttf) format('truetype');
+}*/
+
+@font-face {
+	font-family: 'Champ';
+	src: url('/res/font/champagne__limousines-webfont.eot');
+	src: url('/res/font/champagne__limousines-webfont.eot?#iefix') format('embedded-opentype'),
+	url('/res/font/champagne__limousines-webfont.svg#champagne__limousinesregular') format('svg')
+	url('/res/font/champagne__limousines-webfont.woff') format('woff');
+
+	font-weight: normal;
+	font-style: normal;
+
 }
+
+@font-face {
+	font-family: 'ChampWoff';
+	src: url('/res/font/champagne__limousines-webfont.woff') format('woff');
+
+	font-weight: normal;
+	font-style: normal;
+
+}
+
 
 
 body {
 	background-color: #ccc;
 	/*background-color: white;*/
 	font-family: Champ;
+	/*font-weight: bold;*/
 }
 
 canvas{

@@ -14,15 +14,18 @@ function PercentBarChart(id, id_data) {
 
 		title: {
 			text: "Division of traffic",
+			fontFamily: 'ChampWoff',
+			fontSize: 30
 
 		},
 		axisX: {
 			interval: 1,
 			gridThickness: 0,
 			labelFontSize: 10,
-			labelFontStyle: "normal",
+			// labelFontStyle: "bold",
 			labelFontWeight: "normal",
 			labelFontFamily: "Lucida Sans Unicode",
+			labelFontColor: 'black'
 
 		},
 

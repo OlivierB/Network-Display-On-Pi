@@ -1,3 +1,16 @@
 #network3D-table{
-	padding-right: 55px;
+    padding-right: 15px;
+    position: absolute;
+    right: 3%;
+    top: 15%;
+}
+
+#network3D-table table th{
+    background-color: #D6D6D6;
+     font-size: 30px;
+     font-weight: bold;
+}
+
+#network3D-table table td {
+    font-size: 25px;
 }
