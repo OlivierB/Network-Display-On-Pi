@@ -1,4 +1,4 @@
-function Satellite3D(geometry, ip, distance, material) {
+function Satellite3D(geometry, ip, distance, material, textureColor, fontColor) {
 
 
 
@@ -21,7 +21,7 @@ function Satellite3D(geometry, ip, distance, material) {
 	];
 
 
-	material =  material || this.createMaterialFromIp(ip);
+	material =  material || this.createMaterialFromIp(ip, textureColor, fontColor);
 
 
 
@@ -48,19 +48,19 @@ Satellite3D.prototype.update = function() {
 	this.rotate(this.dir[0], this.dir[1], this.dir[2]);
 }
 
-Satellite3D.prototype.createMaterialFromIp = function(ip){
+Satellite3D.prototype.createMaterialFromIp = function(ip, textureColor, fontColor){
 	// create a canvas element
 		var canvas = document.createElement('canvas');
 		var context = canvas.getContext('2d');
 		context.canvas.width = 300;
 		context.canvas.height = 300;
-		context.fillStyle = "#F9A30E";
+		context.fillStyle = textureColor || "#F9A30E";
 
 		context.fillRect(0, 0, 300, 300);
 
 
 		context.font = "Bold 80px Arial";
-		context.fillStyle = "rgba(255,0,0,0.95)";
+		context.fillStyle = fontColor || "rgba(255,0,0,0.95)";
 
 		
 		context.fillText(ip, 55, 175);

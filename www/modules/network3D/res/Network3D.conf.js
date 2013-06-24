@@ -1,10 +1,19 @@
 Network3DMakList = [{
-		address: '192.168.1.0',
-		mask: 24,
-		color: '#4B9667'
+		address: '192.168.1.144',
+		mask: 32,
+		textureColor: '#7DC3F7',
+		fontColor: 'black'
 
 	}, {
-		address: '10.0.0.0',
-		mask: 8,
-		color: '#4EAFC5'
-	}]
+		address: '192.168.1.0',
+		mask: 24,
+		textureColor: '#E7CD2A',
+		fontColor: 'red'
+
+	}, {
+		address: '255.255.255.0',
+		mask: 24,
+		textureColor: '#5C5C5C',
+		fontColor: 'white'
+	}
+]

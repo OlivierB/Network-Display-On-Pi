@@ -13,12 +13,28 @@
 
 <script type="text/javascript">
 
-var ip = 2416027840;
-var conv = (ip >>> 24) ;
-// if(conv < 0){
-// 	conv= 256 + conv;
-// }
-console.log( conv);
+
+
+
+// 192.168.5.123
+var ip = 0xC0A8057B;
+
+
+
+var mask = 0xFFFFFFFF;
+
+mask = mask << (32 - 24);
+
+var res = (ip & mask);
+console.log(ip);
+console.log(mask);
+
+console.log((res >>> 1)*2);
+
+console.log(maskIp(ip, 24));
+
+
+
 
 
 </script>

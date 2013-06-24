@@ -46,7 +46,8 @@ function BandwidthChart(id) {
 	this.chart = new CanvasJS.Chart(this.id, {
 		title: {
 			text: "Current traffic",
-			fontFamily: "Champ"
+			fontFamily: "ChampWoff",
+			fontSize: 30
 		},
 		toolTip: {
 			// enabled: true,
@@ -78,7 +79,7 @@ function BandwidthChart(id) {
 		],
 		axisY: {
 			title: "kB/s",
-			titleFontFamily: "Champ",
+			titleFontFamily: "ChampWoff",
 			titleFontWeight: "bold",
 		}
 	});

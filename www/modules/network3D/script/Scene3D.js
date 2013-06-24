@@ -43,9 +43,10 @@ function Scene3D(id) {
 	this.initRender();
 	this.onWindowResize();
 
-	this.loadConf();
-
 	this.needDisplay = false;
+
+	this.infoDisplay = new InformationsDisplay();
+
 
 	
 
@@ -177,15 +178,17 @@ Scene3D.prototype.addSatellite = function(ip) {
 
 	// }
 
-	
+	var style = this.infoDisplay.addIp(ip);
 
 	if (this.detail3D > 5)
-		var sat = new Satellite3D(this.sphereGeometry, ip >>> 24, Math.random() * 150 + 100);
+		var sat = new Satellite3D(this.sphereGeometry, ip >>> 24, Math.random() * 150 + 100, null, style.textureColor, style.fontColor);
 	else
-		var sat = new Satellite3D(this.cubeGeometry,  ip >>> 24, Math.random() * 150 + 100);
+		var sat = new Satellite3D(this.cubeGeometry,  ip >>> 24, Math.random() * 150 + 100, null, style.textureColor, style.fontColor);
 
 
 	this.scene.add(sat);
+
+	
 
 	this.satellites[ip] = sat;
 }
@@ -273,16 +276,3 @@ Scene3D.prototype.render = function() {
 		
 }
 
-Scene3D.prototype.loadConf = function(){
-
-	for(var i = 0; i < Network3DMakList.length; i++){
-		var tab = Network3DMakList[i].address.split('.');
-		Network3DMakList[i].addressHexa = 0;
-		for(var j = 0; j < 4; j++){
-			var val = parseFloat(tab[j]);
-			Network3DMakList[i].addressHexa += (val << (8*j));
-		}
-		// console.log(Network3DMakList[i].addressHexa)
-	}
-	
-}
