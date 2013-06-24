@@ -22,7 +22,7 @@
 ** Joel Esler <joelesler@users.sourceforge.net>
 ********************************************************************************
 */
-
+ini_set('display_errors',0);
   include_once ("../base_conf.php");
   include ("$BASE_path/includes/base_constants.inc.php");
   include ("$BASE_path/includes/base_include.inc.php");
