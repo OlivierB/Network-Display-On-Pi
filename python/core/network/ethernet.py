@@ -21,8 +21,12 @@ class Ethernet(layer.Layer):
         # Ethernet protocol decode
         try:
             call = dEtherType[self.type]["callback"]
-            self.payload = call(pktdata[14:])
         except:
+            call = None
+
+        if call != None:
+            self.payload = call(pktdata[14:])
+        else:
             self.payload = layer.Layer(pktdata[14:])
 
 

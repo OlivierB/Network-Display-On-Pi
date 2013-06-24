@@ -73,6 +73,7 @@ class Sniffer(mp.Process):
                 if pkt != None:
                     # Decode packet
                     pktdec = packet.Packet(pkt[0], pkt[1], pkt[2])
+                    # print pktdec
 
                     # send pkt to modules
                     for m in lmod:
