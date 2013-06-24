@@ -24,6 +24,6 @@ class Layer():
     def get_protocol(self):
         return self.protocol
 
-    def get_pktdata(self):
+    def get_data(self):
         return self.payload
 
