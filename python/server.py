@@ -90,9 +90,12 @@ def main():
         print "Stopping..."
     finally:
         print "------------------------------"
-        ws.stop()
+        # Sniffer stop
         sniff.stop()
-        # modmanager.stop()
+        sniff.join()
+        # Webserver stop
+        ws.stop()
+        ws.join()
             
     return 0
 

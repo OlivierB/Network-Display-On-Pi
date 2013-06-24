@@ -14,7 +14,7 @@ import time, operator
 import netmodule as netmod
 
 import core.network.ethernet as ether
-import core.network.IP.ipv4 as ipv4
+import core.network.ether.ipv4 as ipv4
 import core.network.utils as netutils
 
 class NetModChild(netmod.NetModule):
