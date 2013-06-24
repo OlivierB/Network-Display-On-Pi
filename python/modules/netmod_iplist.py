@@ -13,7 +13,8 @@ import time, operator, pcap
 
 import netmodule as netmod
 
-import core.network_callback
+import core.network.ethernet as ether
+import core.network.utils as netutils
 
 MAX_IP_LIST_OUTSIDE     = 1000
 MAX_IP_LIST_SEND        = 20
@@ -52,13 +53,13 @@ class NetModChild(netmod.NetModule):
 
 
     def pkt_handler(self, pkt):
-        if pkt["Ethernet"]["EtherType"] == '\x08\x00':
-            src = pkt["Ethernet"]["data"]["src"]
-            # dst = pkt["Ethernet"]["data"]["dst"]
-            bsrc = core.network_utils.ip_is_reserved(src)
-            # bdst = core.network_utils.ip_is_reserved(dst)
+        if pkt.Ether.is_type(ether.Ether_IPv4):
+            src = pkt.Ether.payload.src
+            # dst = pkt.Ether.payload.dst
+            bsrc = netutils.ip_is_reserved(src)
+            # bdst = netutils.ip_is_reserved(dst)
             if not bsrc:
-                self.add_ip_list_outside(src, pkt["pkt_timestamp"])
+                self.add_ip_list_outside(src, pkt.timestamp)
 
 
     def add_ip_list_outside(self, ip, timestamp):

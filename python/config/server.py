@@ -19,6 +19,6 @@ sniffer_device_net = "192.168.1.0"
 sniffer_device_mask = "255.255.255.0"
 
 # Network module to launch with server
-# module_list = ["netmod_classip", "netmod_top", "netmod_iplist", "netmod_loccomm"]
+# module_list = ["netmod_classip"]
 module_list = ["netmod_top", "netmod_iplist", "netmod_loccomm", "netmod_protocols", "netmod_bandwidth"]
 

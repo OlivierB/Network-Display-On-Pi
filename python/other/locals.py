@@ -5,19 +5,19 @@
 """
 
 import pcap
-from scapy.all import *
+# from scapy.all import *
 import types
 import time
 import copy
 
 import core.network_callback
 import core.network_utils
-import core.packet
+import core.network.packet as packet
 
 def fpcap():
     p = pcap.pcapObject()
 
-    p.open_live("wlan0", 1600, 1, 750)
+    p.open_live("eth1", 1600, 1, 750)
 
     return p
 
@@ -35,12 +35,35 @@ def sniff(p):
 
 
 
+DEEP=6
+def deeps(s, d, p):
+    if d < DEEP:
+        r = s[p+d:]
+        deeps(s, d+1, p)
+
+def deepsL(s, d, p):
+    if d < DEEP:
+        r = s[p:]
+        deepsL(s[p:], d+1, p)
+        
+
 
 # hexdump(pktd)
 
 if __name__ == "__main__":
     p = fpcap()
     pktd = sniff(p)
+
+
+
+    ###########################################
+
+    pktdec = packet.Packet(1200, pktd, 0)
+
+    print pktdec
+
+    ###########################################
+
     # nb = 0
 
     # t = time.time()
@@ -70,19 +93,61 @@ if __name__ == "__main__":
 
     # print "time : ", (time.time() - a)
 
-    a = time.time()
-    for i in range(1000000):
-        res = core.network_utils.packet_decode(1200, pktd, 0)
 
-    print "dic time : ", (time.time() - a)
+    ###########################################
+
+    # ttt = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    # tt = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    
+    
+    # a = time.time()
+    # for i in range(1000000):
+    #     deeps(ttt, 0, 1)
+    # print "dic time : ", (time.time() - a)
+
+    # a = time.time()
+    # for i in range(1000000):
+    #     deepsL(ttt, 0, 1)
+    # print "dic time : ", (time.time() - a)
+
+
+    ###########################################
+
+
+    # a = time.time()
+    # for i in range(100000):
+    #     res = core.network_utils.packet_decode(1200, pktd, 0)
+
+    # print "dic time : ", (time.time() - a)
 
     
 
-    a = time.time()
-    for i in range(1000000):
-        pktdec = core.packet.Packet(1200, pktd, 0)
+    # a = time.time()
+    # for i in range(100000):
+    #     pktdec = packet.Packet(1200, pktd, 0)
 
-    print "class - time : ", (time.time() - a)
+    # print "class - time : ", (time.time() - a)
+    # print pktdec
+
+    # a = time.time()
+    # for i in range(1000000):
+    #     if res["Ethernet"]["EtherType"] == '\x08\x00':
+    #         yy = res["Ethernet"]["data"]["src"]
+
+    # print "dic time : ", (time.time() - a)
+
+    
+
+    # a = time.time()
+    # for i in range(1000000):
+    #     if pktdec.Ether.type == '\x08\x00':
+    #         yy = pktdec.Ether.payload.src
+        
+
+    # print "class - time : ", (time.time() - a)
+
+    ##########################################
+
 
     # a = time.time()
     # for i in range(100000):

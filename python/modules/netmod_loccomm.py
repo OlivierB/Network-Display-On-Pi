@@ -15,7 +15,8 @@ import time, operator, pcap
 
 import netmodule as netmod
 
-import core.network_utils
+import core.network.ethernet as ether
+import core.network.utils as netutils
 
 LOCCOMM_MAX_IP  = 1000
 
@@ -36,19 +37,19 @@ class NetModChild(netmod.NetModule):
         return val
 
     def pkt_handler(self, pkt):
-        if pkt["Ethernet"]["EtherType"] == '\x08\x00':
-
-            src = pkt["Ethernet"]["data"]["src"]
-            dst = pkt["Ethernet"]["data"]["dst"]
-            bsrc = core.network_utils.ip_is_reserved(src)
-            bdst = core.network_utils.ip_is_reserved(dst)
+        if pkt.Ether.is_type(ether.Ether_IPv4):
+            pkt_ipv4 = pkt.Ether.payload
+            src = pkt_ipv4.src
+            dst = pkt_ipv4.dst
+            bsrc = netutils.ip_is_reserved(src)
+            bdst = netutils.ip_is_reserved(dst)
 
             if bsrc and bdst:
-                self.add_loccomm(src, dst, pkt["pkt_len"])
+                self.add_loccomm(src, dst, pkt.pktlen)
             elif not bsrc and bdst:
-                self.add_loccomm(-1, dst, pkt["pkt_len"])
+                self.add_loccomm(-1, dst, pkt.pktlen)
             elif bsrc and not bdst:
-                self.add_loccomm(src, -1, pkt["pkt_len"])
+                self.add_loccomm(src, -1, pkt.pktlen)
             else:
                 print "This packet is stupid"
 

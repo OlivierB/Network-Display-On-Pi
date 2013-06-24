@@ -15,7 +15,8 @@ import time, psutil
 
 import netmodule as netmod
 
-import core.network_utils, core.network_callback
+import core.network.ethernet as ether
+import core.network.utils as netutils
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
@@ -60,18 +61,20 @@ class NetModChild(netmod.NetModule):
     def pkt_handler(self, pkt):
         self.data["pkt_nbr"] += 1
 
-        if pkt["Ethernet"]["EtherType"] == core.network_callback.Ether_IPv4:
-            src = pkt["Ethernet"]["data"]["src"]
-            dst = pkt["Ethernet"]["data"]["dst"]
-            bsrc = core.network_utils.ip_is_reserved(src)
-            bdst = core.network_utils.ip_is_reserved(dst)
+        if pkt.Ether.is_type(ether.Ether_IPv4):
+            pkt_ipv4 = pkt.Ether.payload
+            src = pkt_ipv4.src
+            dst = pkt_ipv4.dst
+            bsrc = netutils.ip_is_reserved(src)
+            bdst = netutils.ip_is_reserved(dst)
 
             if bsrc and bdst:
-                self.data["net_load_loc"] += pkt["pkt_len"]
+                self.data["net_load_loc"] += pkt.pktlen
             elif not bsrc and bdst:
-                self.data["net_load_in"] += pkt["pkt_len"]
+                self.data["net_load_in"] += pkt.pktlen
             elif bsrc and not bdst:
-                self.data["net_load_out"] += pkt["pkt_len"]
+                self.data["net_load_out"] += pkt.pktlen
+
 
     def sysState(self):
         """

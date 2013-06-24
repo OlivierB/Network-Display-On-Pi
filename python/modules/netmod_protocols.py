@@ -13,7 +13,9 @@ import time, operator
 
 import netmodule as netmod
 
-import core.network_callback
+import core.network.ethernet as ether
+import core.network.IP.ipv4 as ipv4
+import core.network.utils as netutils
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
@@ -28,12 +30,12 @@ class NetModChild(netmod.NetModule):
         res = dict()
         val = dict()
         for k in self.lEtherProtocol.keys():
-            val[core.network_callback.dEtherType[k]["protocol"]] = self.lEtherProtocol[k]
+            val[ether.dEtherType[k]["protocol"]] = self.lEtherProtocol[k]
         res["ethernet"] = sorted(val.iteritems(), key=operator.itemgetter(1), reverse=True)
 
         val = dict()
         for k in self.lIPProtocol.keys():
-            val[core.network_callback.dIPType[k]["protocol"]] = self.lIPProtocol[k]
+            val[ipv4.dIPType[k]["protocol"]] = self.lIPProtocol[k]
 
         res["ip"] = sorted(val.iteritems(), key=operator.itemgetter(1), reverse=True)
 
@@ -43,18 +45,18 @@ class NetModChild(netmod.NetModule):
 
     def pkt_handler(self, pkt):
         # List of Ethernet protocols
-        typ = pkt["Ethernet"]["EtherType"]
-        if typ in core.network_callback.dEtherType.keys():
+        typ = pkt.Ether.type
+        if typ in ether.dEtherType.keys():
             if typ in self.lEtherProtocol:
                 self.lEtherProtocol[typ] += 1
             else:
                 self.lEtherProtocol[typ] = 1
 
 
-        if typ == '\x08\x00':
+        if pkt.Ether.is_type(ether.Ether_IPv4):
             # List of IP protocols
-            typ = pkt["Ethernet"]["data"]["data_protocol"]
-            if typ in core.network_callback.dIPType.keys():
+            typ = pkt.Ether.payload.type
+            if typ in ipv4.dIPType.keys():
                 if typ in self.lIPProtocol:
                     self.lIPProtocol[typ] += 1
                 else:

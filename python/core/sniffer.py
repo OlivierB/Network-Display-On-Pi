@@ -16,9 +16,7 @@ import importlib
 import multiprocessing as mp
 import pcap
 
-import core.network_callback
-import core.network_utils
-import core.packet
+import core.network.packet as packet
 
 PCAP_PROMISCUOUS_MODE   = 1
 PCAP_SNIFFER_TIMEOUT    = 300
@@ -74,8 +72,7 @@ class Sniffer(mp.Process):
 
                 if pkt != None:
                     # Decode packet
-                    pktdec = core.network_utils.packet_decode(pkt[0], pkt[1], pkt[2])
-                    # pktdec = core.packet.Packet(pkt[0], pkt[1], pkt[2])
+                    pktdec = packet.Packet(pkt[0], pkt[1], pkt[2])
 
                     # send pkt to modules
                     for m in lmod:
