@@ -9,7 +9,7 @@
 
 
 		// $today = 0;
-		$sql = 'SELECT * FROM bandwidth  WHERE date BETWEEN (NOW( ) - INTERVAL 1 DAY) AND NOW( ) + INTERVAL 1 DAY;';
+		$sql = 'SELECT * FROM bandwidth  WHERE date BETWEEN (NOW( ) - INTERVAL 1 DAY) AND NOW();';
 
 
 

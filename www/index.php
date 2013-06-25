@@ -55,6 +55,7 @@ include 'pages/common.php';
 			?>
 		</div>
 
+				<div><?php include "modules/dailyTraffic/index.php" ?></div>
 
 
 	</div>

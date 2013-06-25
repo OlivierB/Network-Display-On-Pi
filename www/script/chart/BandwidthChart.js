@@ -1,9 +1,9 @@
-function BandwidthChart(id, initializes) {
+function BandwidthChart(id, initializes, dataLength) {
 
 	
 	this.id = id;
 
-	this.dataLength = 100; // number of dataPoints visible at any point
+	this.dataLength = dataLength; // number of dataPoints visible at any point
 	
 
 	this.local_network = []; // dataPoints
@@ -23,14 +23,13 @@ function BandwidthChart(id, initializes) {
 			this.updateChart(0,0,0,0, currentDate);
 			currentMili += 1000;
 		}
-	}else{
 	}
 
 
 
 	this.chart = new CanvasJS.Chart(this.id, {
 		title: {
-			text: "Current traffic",
+			text: "Traffic",
 			fontFamily: "ChampWoff",
 			fontSize: 30
 		},
@@ -105,7 +104,7 @@ BandwidthChart.prototype.updateChart = function(local_, inp_, outp_, global_, ti
 	});
 
 	this.xVal++;
-	if (this.outcoming.length > this.dataLength) {
+	if (this.outcoming.length > this.dataLength && this.dataLength > 0) {
 		this.local_network.shift();
 		this.incoming.shift();
 		this.outcoming.shift();
