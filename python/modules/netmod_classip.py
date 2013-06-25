@@ -13,7 +13,7 @@ import time
 
 import netmodule as netmod
 
-import core.network.ethernet as ether
+import core.network.netdata as netdata
 
 class NetModChild(netmod.NetModule):
     def __init__(self):

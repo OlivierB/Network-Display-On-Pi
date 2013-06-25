@@ -121,7 +121,7 @@ def add_mod_prot(wsdata, lmod):
 
             except Exception as e:
                 # print e
-                pass
+                raise
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ import time, operator, pcap
 
 import netmodule as netmod
 
-import core.network.ethernet as ether
+import core.network.netdata as netdata
 import core.network.utils as netutils
 
 LOCCOMM_MAX_IP  = 1000
@@ -37,7 +37,7 @@ class NetModChild(netmod.NetModule):
         return val
 
     def pkt_handler(self, pkt):
-        if pkt.Ether.is_type(ether.Ether_IPv4):
+        if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
             pkt_ipv4 = pkt.Ether.payload
             src = pkt_ipv4.src
             dst = pkt_ipv4.dst
