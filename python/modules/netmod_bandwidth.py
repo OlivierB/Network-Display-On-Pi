@@ -11,7 +11,7 @@ inherit from NetModule
 """
 
 
-import time, psutil
+import time, psutil, datetime
 
 import netmodule as netmod
 
@@ -33,9 +33,17 @@ class NetModChild(netmod.NetModule):
         self.data["net_load_in"] = 0
         self.data["net_load_out"] = 0
 
-        # init
-        self.oldValues = self.sysState()
+
+        stat = self.sysState()
         
+        # init
+        self.oldValues = stat
+        self.oldTotstats = stat
+
+        minutes = datetime.datetime.today().minute
+        self.savetime = time.time()
+        self.savewait = (minutes%30)*60
+
 
     def update(self):
         # System state update
@@ -115,18 +123,41 @@ class NetModChild(netmod.NetModule):
 
         return val
 
+    def totState(self, old, new):
+        """
+        System stats total
+        """
+        val = dict()
+
+        # # net data by packet analysis
+        val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"])
+        val["net_load_in"] = (new["net_load_in"] - old["net_load_in"])
+        val["net_load_out"] = (new["net_load_out"] - old["net_load_out"])
+
+        return val
 
 
-if __name__ == "__main__":
-    m = MyMod()
+    def __save(self):
+        req = "INSERT INTO bandwidth(global, local, incoming, outcoming) VALUES ("
 
-    m.start()
-    print "Start for 5 seconds"
-    a = time.time()
-    time.sleep(5)
-    print time.time() - a
+        new = self.sysState()
+        res = self.totState(self.oldTotstats, new)
+        self.oldTotstats = new
 
-    m.stop()
+        req += str(res["net_load_loc"]+res["net_load_in"]+res["net_load_out"]) + ","
+        req += str(res["net_load_loc"]) + ","
+        req += str(res["net_load_in"]) + ","
+        req += str(res["net_load_out"])
+
+        req += ")"
+        return req
 
 
-
+    def save(self):
+        if time.time() - self.savetime > self.savewait:
+            minutes = datetime.datetime.today().minute
+            self.savetime = time.time()
+            self.savewait = (minutes%30)*60
+            return self.__save()
+        else:
+            return None

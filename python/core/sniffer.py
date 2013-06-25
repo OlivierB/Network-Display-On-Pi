@@ -17,10 +17,12 @@ import multiprocessing as mp
 import pcap
 
 import core.network.packet as packet
+import core.mysql as mysqldata
 
 PCAP_PROMISCUOUS_MODE   = 1
 PCAP_SNIFFER_TIMEOUT    = 300
 MIN_TIME_MOD_UPDATE     = 0.5
+MIN_TIME_DB_UPDATE      = 30
 
 
 
@@ -52,7 +54,12 @@ class Sniffer(mp.Process):
         pipe = self.pipe
         lmod = load_mod(config.server.module_list)
         tb = time.time()
+        dbupdate = time.time()
         capture = False
+
+        # Mysql database
+        mydb = mysqldata.MySQLdata("192.168.1.144", "ndop", "ndop", "NDOP")
+        mydb.connection()
 
         # Get device informations if possible (IP address assigned)
         try:
@@ -90,7 +97,15 @@ class Sniffer(mp.Process):
                         if data != None:
                             ls.append((m.get_protocol(), data))
                     if len(ls) > 0:
-                        pipe.send(ls)                    
+                        pipe.send(ls)
+
+                if time.time() - dbupdate > MIN_TIME_DB_UPDATE:
+                    dbupdate = time.time()
+                    for m in lmod:
+                        data = m.save()
+                        if data != None:
+                            mydb.execute(data)
+
 
         except KeyboardInterrupt:
             print "Sniffer : Interruption"
@@ -98,6 +113,7 @@ class Sniffer(mp.Process):
             print "Sniffer : [ERROR]", e
         finally:
             if capture:
+                mydb.close()
                 print "Sniffer : Capture stopped..."
                 a, b, c = p.stats()
                 print 'Sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % p.stats(), b/(a*1.0+1)*100
