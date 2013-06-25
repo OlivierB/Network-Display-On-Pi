@@ -1,6 +1,6 @@
 function resize() {
 	$('.slide-div').height(window.innerHeight - 100);
-	$("#slides").slidesjs.width = window.innerHeight;
+	$("#screen-container").slidesjs.width = window.innerHeight;
 	// console.log('resize ' + window.innerHeight);
 }
 

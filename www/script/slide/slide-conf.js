@@ -3,7 +3,7 @@ $(function(){
 	$("#slides").slidesjs({
 		width: window.innerWidth,
 		height: window.innerHeight - 20,
-		start: 5,
+		start: 1,
 		play: {
 			active: true,
 	        // [boolean] Generate the play and stop buttons.

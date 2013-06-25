@@ -1,5 +1,5 @@
 <?php
-	include 'pages/common.php';
+include 'pages/common.php';
 ?>
 <a href=""></a>
 <!DOCTYPE html>
@@ -39,8 +39,11 @@
 
 <body>
 	<!-- All pages are included here, slideJS handle the animation -->
-	<div id="slides">
-		
+
+
+	
+	<div id="slides" >
+
 		<div><?php include "modules/traffic/index.php" ?></div>
 		<div><?php include "modules/alertBase/index.php" ?></div>
 		<div><?php include "modules/serverStat/index.php" ?></div>
@@ -51,11 +54,14 @@
 			include "modules/network3D/index.php" 
 			?>
 		</div>
-		
 
-		
+				<div><?php include "modules/dailyTraffic/index.php" ?></div>
+
+
 	</div>
+	
 	
 
 </body>
 </html>
+

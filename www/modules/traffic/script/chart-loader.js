@@ -1,5 +1,7 @@
 
-var chart = new BandwidthChart("bandwidth-chart");
+// var chart = new BandwidthChart("bandwidth-chart");
+
+var chart = new BandwidthChartWebsocket("bandwidth-chart");
 chart.connect(App.serverAddress, App.bandwidtProtocol);
 
 var chart = new BandwidthText("bandwidth-text");

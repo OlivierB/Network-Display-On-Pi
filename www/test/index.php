@@ -1,54 +1,43 @@
-<!doctype html>
-<html lang="fr">
-<head>
-	<meta charset="utf-8">
-	<title>Titre de la page</title>
+<!DOCTYPE HTML>
+<html>
+<head>  
+<script type="text/javascript">
+window.onload = function () {
+    var chart = new CanvasJS.Chart("chartContainer",
+    {
+      title:{
+        text: "Simple Date-Time Chart",
+    },
+    axisX:{
+        title: "timeline",
+        gridThickness: 1,
+    },
+    axisY: {
+        title: "Downloads",
+    },
+    data: [
+    {        
+        type: "area",
+        dataPoints: [//array
+        { x: new Date('2013-06-25 16:00:00'), y: 0},
+        { x: new Date('2013-06-25 16:30:00'), y: 150},
+        { x: new Date('2013-06-25 17:00:00'), y: 40},
+         { x: new Date('2013-06-25 17:30:00'), y: 140}
+        
 
+        ],
+    }
+    ]
+});
+    console.log(new Date('2013-06-25 16:18:20'))
+    console.log(new Date(2013, 06, 25))
+    chart.render();
+}
+</script>
+<script type="text/javascript" src="../lib/canvasjs.min.js"></script>
 </head>
 <body>
-	<?php
-	
-	// phpinfo();
-	try {
-// Nouvel objet de base SQLite 
-		$db_handle = new PDO('sqlite:test.sqlite');
-// Quelques options
-		$db_handle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-   // On prépare et éxécute la requête
-		$req = $db_handle->prepare('SELECT * FROM DaylyFlow');
-
-		$req->execute();
-
-// On change la réponse SQL en réponse PHP.
-// Ici, on transforme toute la réponse en un gros tableau
-// (au lieu de faire ligne par ligne dans une boucle while() par exemple)
-		$result = $req->fetchAll(PDO::FETCH_ASSOC);
-
-
-		echo json_encode($result);
-	} catch (Exception $e) {
-
-		die ('Erreur : '.$e->getMessage());
-	}
-// [{"date":"2013-06-24","0":"2013-06-24","id":"1","1":"1","flow":"457.15","2":"457.15"}]
-
-	?>
-
+<div id="chartContainer" style="height: 300px; width: 100%;">
+</div>
 </body>
 </html>
-
-
-<script type="text/javascript">
-
-
-
-// extension=pdo.so
-// extension=pdo_sqlite.so
-// extension=sqlite.so
-// extension=pdo_mysql.so
-
-
-
-
-
-</script>

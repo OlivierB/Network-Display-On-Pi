@@ -30,4 +30,5 @@
 		</div>
 </div>
 
+<script type="text/javascript" src="/modules/traffic/script/BandwidthChartWebsocket.js"></script>
 <script type="text/javascript" src="/modules/traffic/script/chart-loader.js"></script>
