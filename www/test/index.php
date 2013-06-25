@@ -37,18 +37,3 @@
 </body>
 </html>
 
-
-<script type="text/javascript">
-
-
-
-// extension=pdo.so
-// extension=pdo_sqlite.so
-// extension=sqlite.so
-// extension=pdo_mysql.so
-
-
-
-
-
-</script>
