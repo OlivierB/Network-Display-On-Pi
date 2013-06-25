@@ -64,17 +64,3 @@ include 'pages/common.php';
 </body>
 </html>
 
-
-<script type="text/javascript">
-
-
-
-
-
-$( window ).load(function() {
-	// $('#loading-screen').hide();
-});
-
-
-
-</script>

@@ -179,11 +179,16 @@ Scene3D.prototype.addSatellite = function(ip) {
 	// }
 
 	var style = this.infoDisplay.addIp(ip);
+	var texture, font;
+	if(style){
+		texture = style.textureColor;
+		font = style.fontColor;
+	}
 
 	if (this.detail3D > 5)
-		var sat = new Satellite3D(this.sphereGeometry, ip >>> 24, Math.random() * 150 + 100, null, style.textureColor, style.fontColor);
+		var sat = new Satellite3D(this.sphereGeometry, ip >>> 24, Math.random() * 150 + 100, null, texture, font);
 	else
-		var sat = new Satellite3D(this.cubeGeometry,  ip >>> 24, Math.random() * 150 + 100, null, style.textureColor, style.fontColor);
+		var sat = new Satellite3D(this.cubeGeometry,  ip >>> 24, Math.random() * 150 + 100, null, texture, font);
 
 
 	this.scene.add(sat);

@@ -1,45 +1,30 @@
-function BandwidthChart(id) {
+function BandwidthChart(id, initializes) {
 
-	// inheritance from WebSocketManager
-	WebSocketManager.call(this, id + '-alert');
-
+	
 	this.id = id;
-	// this.alertContainer = $('#' + this.id + '-alert');
-	this.yVal = 100;
-	this.yVal2 = 100;
-	this.updateInterval = 1000;
+
 	this.dataLength = 100; // number of dataPoints visible at any point
-	this.xVal = this.dataLength;
+	
 
 	this.local_network = []; // dataPoints
 	this.incoming = []; // dataPoints
 	this.outcoming = []; // dataPoints
 	this.global = []; // dataPoints
 
+	if(initializes){
+		
+		var currentDate = new Date();
+		var currentMili = currentDate.getTime() - (this.dataLength * 1000);
 
-	// initializes arrays to begin the display of new points at the right part of the chart
-	iter = this.dataLength;
-	while (iter--) {
-		this.incoming.push({
-			x: this.dataLength - iter,
-			y: 0,
-		});
-		this.outcoming.push({
-			x: this.dataLength - iter,
-			y: 0,
-		});
-
-		this.local_network.push({
-			x: this.dataLength - iter,
-			y: 0,
-		});
-		this.global.push({
-			x: this.dataLength - iter,
-			y: 0,
-		});
-
+		// initializes arrays to begin the display of new points at the right part of the chart
+		iter = this.dataLength;
+		while (iter--) {
+			currentDate.setTime(currentMili);
+			this.updateChart(0,0,0,0, currentDate);
+			currentMili += 1000;
+		}
+	}else{
 	}
-	this.dataLength = this.xVal;
 
 
 
@@ -59,22 +44,22 @@ function BandwidthChart(id) {
 				name: "Global",
 				color: "rgba(100,128,210, 0.2)",
 				showInLegend: false,
-				dataPoints: this.global
+				dataPoints: this.global,
 			}, {
 				type: "spline",
 				name: "Local Network",
 				dataPoints: this.local_network,
-				showInLegend: true
+				showInLegend: true,
 			}, {
 				type: "spline",
 				name: "Incoming",
 				showInLegend: true,
-				dataPoints: this.incoming
+				dataPoints: this.incoming,
 			}, {
 				type: "spline",
 				name: "Outcoming",
 				showInLegend: true,
-				dataPoints: this.outcoming
+				dataPoints: this.outcoming,
 			}
 		],
 		axisY: {
@@ -87,13 +72,13 @@ function BandwidthChart(id) {
 	this.chart.render();
 }
 
-// inheritance from WebSocketManager
-BandwidthChart.prototype = Object.create(WebSocketManager.prototype);
 
 
-BandwidthChart.prototype.updateChart = function(local_, inp_, outp_, global_) {
-
-
+BandwidthChart.prototype.updateChart = function(local_, inp_, outp_, global_, time_) {
+	if(time_)
+		this.xVal =  new Date(time_) ;
+	else
+		this.xVal = new Date();
 
 	yVal1 = local_;
 	this.local_network.push({
@@ -120,18 +105,14 @@ BandwidthChart.prototype.updateChart = function(local_, inp_, outp_, global_) {
 	});
 
 	this.xVal++;
-
 	if (this.outcoming.length > this.dataLength) {
 		this.local_network.shift();
 		this.incoming.shift();
 		this.outcoming.shift();
 		this.global.shift();
+
 	}
+	if(this.chart)
+		this.chart.render();
 
-	this.chart.render();
-
-}
-
-BandwidthChart.prototype.dataManager = function(obj) {
-	this.updateChart(obj.loc_Ko, obj.in_Ko, obj.out_Ko, obj.Ko);
 }
