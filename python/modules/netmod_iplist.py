@@ -13,7 +13,7 @@ import time, operator, pcap
 
 import netmodule as netmod
 
-import core.network.ethernet as ether
+import core.network.netdata as netdata
 import core.network.utils as netutils
 
 MAX_IP_LIST_OUTSIDE     = 1000
@@ -53,7 +53,7 @@ class NetModChild(netmod.NetModule):
 
 
     def pkt_handler(self, pkt):
-        if pkt.Ether.is_type(ether.Ether_IPv4):
+        if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
             src = pkt.Ether.payload.src
             # dst = pkt.Ether.payload.dst
             bsrc = netutils.ip_is_reserved(src)

@@ -12,7 +12,7 @@ import socket
 import struct
 import types
 
-import data
+import netdata
 
 
 def mac_to_string(data):
@@ -33,10 +33,9 @@ def ethertype_decode(v):
 
 def ip_is_reserved(ip):
     reserved = False
-    for (net, m) in data.dIPReserved:
+    for (net, m) in netdata.IP_RESERVED:
         mask = 0xffffffff >> (32-m)
         if (ip & mask) == net:
             reserved = True
             break
-
     return reserved

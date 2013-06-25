@@ -15,8 +15,8 @@ import time, psutil
 
 import netmodule as netmod
 
-import core.network.ethernet as ether
 import core.network.utils as netutils
+import core.network.netdata as netdata
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
@@ -61,7 +61,7 @@ class NetModChild(netmod.NetModule):
     def pkt_handler(self, pkt):
         self.data["pkt_nbr"] += 1
 
-        if pkt.Ether.is_type(ether.Ether_IPv4):
+        if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
             pkt_ipv4 = pkt.Ether.payload
             src = pkt_ipv4.src
             dst = pkt_ipv4.dst
