@@ -66,14 +66,16 @@ class WsServer(threading.Thread):
 
 
     def run(self):
-        print "WsServer : Server start..."
+        print "WsServer : Server started..."
         try:
             tornado.ioloop.IOLoop.instance().start()
+            print 'WsServer : Server stopped...'
+        except KeyboardInterrupt:
+            print 'WsServer : Server stopped on interruption...'
         except Exception as e:
-            print "WsServer : ", e
+            print "WsServer : [ERROR]", e
 
     def stop(self):
-        print 'WsServer : Server stop...'
         self.clientList.closeCom()
         tornado.ioloop.IOLoop.instance().stop()
 

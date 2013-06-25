@@ -3,12 +3,14 @@
 """
 Network implementation data
 
+IP protocol
+
 @author: Olivier BLIN
 """
 
 
-
 from .. import layer
+import ip
 
 import socket
 import struct
@@ -52,28 +54,6 @@ class IPv4(layer.Layer):
 
 
 
-class TCP(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="TCP")
-
-        self.sport      = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
-        self.dport      = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
-        self.header_len = ord(pktdata[12]) >> 4
-
-        self.payload = layer.Layer(pktdata[4*self.header_len:])
-
-
-class UDP(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="UDP")
-
-        self.sport      = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
-        self.dport      = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
-        self.len        = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
-
-        self.payload = layer.Layer(pktdata[8:])
-
-
 dIPType = {
     0 : { 'callback' : None, 'protocol' : 'dCCP', 'description' : 'IPv6 Hop-by-Hop Option'},
     1 : { 'callback' : None, 'protocol' : 'ICMP', 'description' : 'Internet Control Message'},
@@ -81,7 +61,7 @@ dIPType = {
     3 : { 'callback' : None, 'protocol' : 'GGP', 'description' : 'Gateway-to-Gateway'},
     4 : { 'callback' : None, 'protocol' : 'IPv4', 'description' : 'IPv4 encapsulation'},
     5 : { 'callback' : None, 'protocol' : 'ST', 'description' : 'Stream'},
-    6 : { 'callback' : TCP, 'protocol' : 'TCP', 'description' : 'Transmission Control'},
+    6 : { 'callback' : ip.TCP, 'protocol' : 'TCP', 'description' : 'Transmission Control'},
     7 : { 'callback' : None, 'protocol' : 'CBT', 'description' : 'CBT'},
     8 : { 'callback' : None, 'protocol' : 'EGP', 'description' : 'Exterior Gateway Protocol'},
     9 : { 'callback' : None, 'protocol' : 'IGP', 'description' : 'any private interior gateway (used by Cisco for their IGRP)'},
@@ -92,7 +72,7 @@ dIPType = {
     14 : { 'callback' : None, 'protocol' : 'EMCON', 'description' : 'EMCON'},
     15 : { 'callback' : None, 'protocol' : 'XNET', 'description' : 'Cross Net Debugger'},
     16 : { 'callback' : None, 'protocol' : 'CHAOS', 'description' : 'Chaos'},
-    17 : { 'callback' : UDP, 'protocol' : 'UDP', 'description' : 'User Datagram'},
+    17 : { 'callback' : ip.UDP, 'protocol' : 'UDP', 'description' : 'User Datagram'},
     18 : { 'callback' : None, 'protocol' : 'MUX', 'description' : 'Multiplexing'},
     19 : { 'callback' : None, 'protocol' : 'DCN-MEAS', 'description' : 'DCN Measurement Subsystems'},
     20 : { 'callback' : None, 'protocol' : 'HMP', 'description' : 'Host Monitoring'},

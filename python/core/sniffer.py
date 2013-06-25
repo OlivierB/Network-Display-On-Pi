@@ -46,12 +46,13 @@ class Sniffer(mp.Process):
         self.Terminated.value = 1
 
     def run(self):
-        print "Sniffer : Capture start"
+        print "Sniffer : Capture started on", self.dev
         # Init
-        term = self.Terminated.value    # little optimisation (local variable)
+        term = self.Terminated      # little optimisation (local variable)
         pipe = self.pipe
         lmod = load_mod(config.server.module_list)
         tb = time.time()
+        capture = False
 
         # Get device informations if possible (IP address assigned)
         try:
@@ -61,13 +62,14 @@ class Sniffer(mp.Process):
 
         # Create new pcap capture object
         p = pcap.pcapObject()
-        # (Dev, buffer, promiscuous mode, timeout)
-        p.open_live(self.dev, 1600, PCAP_PROMISCUOUS_MODE, PCAP_SNIFFER_TIMEOUT)
 
+        try:
+            # (Dev, buffer, promiscuous mode, timeout)
+            p.open_live(self.dev, 1600, PCAP_PROMISCUOUS_MODE, PCAP_SNIFFER_TIMEOUT)
+            capture = True
 
-        try:    
             # Handler loop
-            while not term:
+            while not term.value:
                 pkt = p.next()
 
                 if pkt != None:
@@ -90,15 +92,15 @@ class Sniffer(mp.Process):
                     if len(ls) > 0:
                         pipe.send(ls)                    
 
-
         except KeyboardInterrupt:
-            # End
-            print "Sniffer : Stopping..."
-            a, b, c = p.stats()
-            print 'Sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % p.stats(), b/(a*1.0+1)*100
+            print "Sniffer : Interruption"
         except Exception as e:
-            print "Sniffer : ", e
-            raise
+            print "Sniffer : [ERROR]", e
+        finally:
+            if capture:
+                print "Sniffer : Capture stopped..."
+                a, b, c = p.stats()
+                print 'Sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % p.stats(), b/(a*1.0+1)*100
 
 
 

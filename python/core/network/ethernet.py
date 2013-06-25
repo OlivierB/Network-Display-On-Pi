@@ -8,7 +8,7 @@ Network utils
 
 from . import layer
 
-from IP import *
+from ether import *
 
 class Ethernet(layer.Layer):
     def __init__(self, pktdata):
