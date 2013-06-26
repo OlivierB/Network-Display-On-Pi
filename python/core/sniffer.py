@@ -112,6 +112,7 @@ class Sniffer(mp.Process):
             print "Sniffer : Interruption"
         except Exception as e:
             print "Sniffer : [ERROR]", e
+            raise
         finally:
             if capture:
                 mydb.close()

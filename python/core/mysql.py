@@ -51,7 +51,12 @@ class MySQLdata():
             try:
                 with self.connect:
                     cur = self.connect.cursor()
-                    cur.execute(data)
+                    
+                    if type(data) is list:
+                        for e in data:
+                            cur.execute(e)
+                    else:
+                        cur.execute(data)
             except mdb.Error, e:
                 print "MySQLdb Error %d: %s" % (e.args[0],e.args[1])
         

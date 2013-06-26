@@ -20,7 +20,7 @@ import core.network.netdata as netdata
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
-        netmod.NetModule.__init__(self, updatetime=1, savetime=('m', 1), protocol='bandwidth')
+        netmod.NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='bandwidth')
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
@@ -80,6 +80,25 @@ class NetModChild(netmod.NetModule):
                 self.data["net_load_out"] += pkt.pktlen
 
 
+    def save(self):
+        req = "INSERT INTO bandwidth(date, global, local, incoming, outcoming) VALUES ("
+
+        new = self.sysState()
+        res = self.totState(self.oldTotstats, new)
+        self.oldTotstats = new
+
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        req += "\"" + date + "\"" + ","
+        req += str(res["net_load_loc"]+res["net_load_in"]+res["net_load_out"]) + ","
+        req += str(res["net_load_loc"]) + ","
+        req += str(res["net_load_in"]) + ","
+        req += str(res["net_load_out"])
+
+        req += ")"
+        return req
+
+
     def sysState(self):
         """
         Get system stats
@@ -126,24 +145,10 @@ class NetModChild(netmod.NetModule):
         val = dict()
 
         # # net data by packet analysis
-        val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"])
-        val["net_load_in"] = (new["net_load_in"] - old["net_load_in"])
-        val["net_load_out"] = (new["net_load_out"] - old["net_load_out"])
+        val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"]) / 1024
+        val["net_load_in"] = (new["net_load_in"] - old["net_load_in"]) / 1024
+        val["net_load_out"] = (new["net_load_out"] - old["net_load_out"]) / 1024
 
         return val
 
 
-    def save(self):
-        req = "INSERT INTO bandwidth(global, local, incoming, outcoming) VALUES ("
-
-        new = self.sysState()
-        res = self.totState(self.oldTotstats, new)
-        self.oldTotstats = new
-
-        req += str(res["net_load_loc"]+res["net_load_in"]+res["net_load_out"]) + ","
-        req += str(res["net_load_loc"]) + ","
-        req += str(res["net_load_in"]) + ","
-        req += str(res["net_load_out"])
-
-        req += ")"
-        return req
