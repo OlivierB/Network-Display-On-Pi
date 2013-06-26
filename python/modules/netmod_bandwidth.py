@@ -81,7 +81,7 @@ class NetModChild(netmod.NetModule):
 
 
     def save(self):
-        req = "INSERT INTO bandwidth(date, global, local, incoming, outcoming) VALUES ("
+        req = "INSERT INTO bandwidth(date, global, local, incoming, outcoming, dtime_s) VALUES ("
 
         new = self.sysState()
         res = self.totState(self.oldTotstats, new)
@@ -93,7 +93,8 @@ class NetModChild(netmod.NetModule):
         req += str(res["net_load_loc"]+res["net_load_in"]+res["net_load_out"]) + ","
         req += str(res["net_load_loc"]) + ","
         req += str(res["net_load_in"]) + ","
-        req += str(res["net_load_out"])
+        req += str(res["net_load_out"]) + ","
+        req += str(res["dtime"])
 
         req += ")"
         return req
@@ -143,6 +144,8 @@ class NetModChild(netmod.NetModule):
         System stats total
         """
         val = dict()
+        diff = new["time"] - old["time"]
+        val["dtime"]    = diff
 
         # # net data by packet analysis
         val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"]) / 1024

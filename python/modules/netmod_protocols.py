@@ -34,21 +34,6 @@ class NetModChild(netmod.NetModule):
 
 
     def update(self):
-        # # get data
-        # res = dict()
-        # val = dict()
-        # for k in self.lEtherProtocol.keys():
-        #     val[netdata.ETHERTYPE[k]["protocol"]] = self.lEtherProtocol[k]
-        # res["ethernet"] = sorted(val.iteritems(), key=operator.itemgetter(1), reverse=True)
-
-        # val = dict()
-        # for k in self.lIPProtocol.keys():
-        #     val[netdata.IPTYPE[k]["protocol"]] = self.lIPProtocol[k]
-
-        # res["ip"] = sorted(val.iteritems(), key=operator.itemgetter(1), reverse=True)
-
-        # # send data
-        # return res
         new = self.get_state()
         diffval = self.diff_states(self.update_oldstats, new)
         self.update_oldstats = new
@@ -60,13 +45,10 @@ class NetModChild(netmod.NetModule):
         for k in self.lEtherList:
             res["ethernet"].append((netdata.ETHERTYPE[k]["protocol"], diffval["ether"][k])) 
 
-        # res["ethernet"] = sorted(val.iteritems(), key=operator.itemgetter(1), reverse=True)
 
         res["ip"] = list()
         for k in self.lIPList:
             res["ip"].append((netdata.IPTYPE[k]["protocol"], diffval["ip"][k]))
-
-        # res["ip"] = sorted(val.iteritems(), key=operator.itemgetter(1), reverse=True)
 
         # send data
         return res
