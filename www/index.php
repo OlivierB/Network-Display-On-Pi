@@ -32,6 +32,8 @@ include 'pages/common.php';
 	<script src="/ndop.conf.js"></script>
 	<script src='/script/slide/slide-conf.js'></script>
 	<script src="/script/network/WebSocketManager.js"></script>
+	<script src="/script/network/AjaxManager.js"></script>
+	<script src="/script/text/TextFormatter.js"></script>
 	<script src="/script/resize/resize.js"></script>
 
 

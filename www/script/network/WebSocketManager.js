@@ -4,7 +4,7 @@
  * which will handle the incoming message in a JSon format.
  **/
 
-WebSocketManager = function(id_alert_container) {
+function WebSocketManager(id_alert_container) {
 	this.alertContainer = $('#' + id_alert_container);
 }
 

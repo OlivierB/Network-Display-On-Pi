@@ -1,7 +1,7 @@
-function PercentBarChart(id, id_data) {
+function BarChart(id, id_data) {
 
 	// inheritance from WebSocketManager
-	WebSocketManager.call(this, id + '-alert');
+	// WebSocketManager.call(this, id + '-alert');
 
 
 
@@ -30,7 +30,7 @@ function PercentBarChart(id, id_data) {
 		},
 
 		data: [{
-				type: "bar",
+				type: "column",
 				name: "protocol",				
 				dataPoints: this.data
 			},
@@ -43,10 +43,10 @@ function PercentBarChart(id, id_data) {
 }
 
 // inheritance from WebSocketManager
-PercentBarChart.prototype = Object.create(WebSocketManager.prototype);
+// BarChart.prototype = Object.create(WebSocketManager.prototype);
 
 
-PercentBarChart.prototype.updateChart = function(array) {
+BarChart.prototype.updateChart = function(array) {
 	this.data.length = 0;
 
 	for (var i = 0; i < array.length; i++) {
@@ -57,10 +57,14 @@ PercentBarChart.prototype.updateChart = function(array) {
 	}
 
 
-
+// 	this.data.length = 0;
+// 	console.log(array);
+// 	for (var index in array) {
+// 		this.data.push({
+// 			y: array[index],
+// 			label: index
+// 		});
+// 	}
 	this.chart.render();
 }
 
-PercentBarChart.prototype.dataManager = function(obj) {
-	this.updateChart(obj[this.id_data]);
-}

@@ -1,7 +1,5 @@
 function PercentCounterChart(id, id_data, speed) {
 
-
-
 	this.speed = speed | 100;
 
 	this.id = id;

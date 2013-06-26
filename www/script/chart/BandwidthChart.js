@@ -1,18 +1,18 @@
 function BandwidthChart(id, initializes, dataLength) {
 
-	
+
 	this.id = id;
 
 	this.dataLength = dataLength; // number of dataPoints visible at any point
-	
+
 
 	this.local_network = []; // dataPoints
 	this.incoming = []; // dataPoints
 	this.outcoming = []; // dataPoints
 	this.global = []; // dataPoints
 
-	if(initializes){
-		
+	if (initializes) {
+
 		var currentDate = new Date();
 		var currentMili = currentDate.getTime() - (this.dataLength * 1000);
 
@@ -20,7 +20,7 @@ function BandwidthChart(id, initializes, dataLength) {
 		iter = this.dataLength;
 		while (iter--) {
 			currentDate.setTime(currentMili);
-			this.updateChart(0,0,0,0, currentDate);
+			this.updateChart(0, 0, 0, 0, currentDate);
 			currentMili += 1000;
 		}
 	}
@@ -49,16 +49,19 @@ function BandwidthChart(id, initializes, dataLength) {
 				name: "Local Network",
 				dataPoints: this.local_network,
 				showInLegend: true,
+				markerSize: 0
 			}, {
 				type: "spline",
 				name: "Incoming",
 				showInLegend: true,
 				dataPoints: this.incoming,
+				markerSize: 0
 			}, {
 				type: "spline",
 				name: "Outcoming",
 				showInLegend: true,
 				dataPoints: this.outcoming,
+				markerSize: 0
 			}
 		],
 		axisY: {
@@ -74,10 +77,11 @@ function BandwidthChart(id, initializes, dataLength) {
 
 
 BandwidthChart.prototype.updateChart = function(local_, inp_, outp_, global_, time_) {
-	if(time_)
-		this.xVal =  new Date(time_) ;
+	if (time_)
+		this.xVal = new Date(time_);
 	else
 		this.xVal = new Date();
+
 
 	yVal1 = local_;
 	this.local_network.push({
@@ -111,7 +115,16 @@ BandwidthChart.prototype.updateChart = function(local_, inp_, outp_, global_, ti
 		this.global.shift();
 
 	}
-	if(this.chart)
-		this.chart.render();
+}
 
+
+BandwidthChart.prototype.clean = function() {
+	this.local_network.length = 0;
+	this.incoming.length = 0;
+	this.outcoming.length = 0;
+	this.global.length = 0;
+}
+
+BandwidthChart.prototype.refresh = function(){
+	this.chart.render();
 }

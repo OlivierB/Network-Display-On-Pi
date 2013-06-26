@@ -9,7 +9,7 @@
 
 
 		// $today = 0;
-		$sql = 'SELECT * FROM bandwidth  WHERE date BETWEEN (NOW( ) - INTERVAL 1 DAY) AND NOW() ORDER BY date;';
+		$sql = 'SELECT SUM(`global`) as Ko, SUM(`local`) as loc_Ko, SUM(`incoming`) as in_Ko, SUM(`outcoming`) as out_Ko FROM bandwidth  WHERE date BETWEEN (NOW( ) - INTERVAL 1 DAY) AND NOW( )';
 
 
 
