@@ -20,7 +20,7 @@ import core.network.netdata as netdata
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
-        netmod.NetModule.__init__(self, updatetime=1, protocol='bandwidth')
+        netmod.NetModule.__init__(self, updatetime=1, savetime=('m', 1), protocol='bandwidth')
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
@@ -39,10 +39,6 @@ class NetModChild(netmod.NetModule):
         # init
         self.oldValues = stat
         self.oldTotstats = stat
-
-        minutes = datetime.datetime.today().minute
-        self.savetime = time.time()
-        self.savewait = (minutes%30)*60
 
 
     def update(self):
@@ -137,7 +133,7 @@ class NetModChild(netmod.NetModule):
         return val
 
 
-    def __save(self):
+    def save(self):
         req = "INSERT INTO bandwidth(global, local, incoming, outcoming) VALUES ("
 
         new = self.sysState()
@@ -151,13 +147,3 @@ class NetModChild(netmod.NetModule):
 
         req += ")"
         return req
-
-
-    def save(self):
-        if time.time() - self.savetime > self.savewait:
-            minutes = datetime.datetime.today().minute
-            self.savetime = time.time()
-            self.savewait = (minutes%30)*60
-            return self.__save()
-        else:
-            return None

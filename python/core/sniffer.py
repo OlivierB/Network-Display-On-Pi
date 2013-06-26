@@ -22,7 +22,7 @@ import core.mysql as mysqldata
 PCAP_PROMISCUOUS_MODE   = 1
 PCAP_SNIFFER_TIMEOUT    = 300
 MIN_TIME_MOD_UPDATE     = 0.5
-MIN_TIME_DB_UPDATE      = 30
+MIN_TIME_DB_UPDATE      = 1
 
 
 
@@ -99,10 +99,11 @@ class Sniffer(mp.Process):
                     if len(ls) > 0:
                         pipe.send(ls)
 
+                
                 if time.time() - dbupdate > MIN_TIME_DB_UPDATE:
                     dbupdate = time.time()
                     for m in lmod:
-                        data = m.save()
+                        data = m.get_sql()
                         if data != None:
                             mydb.execute(data)
 
