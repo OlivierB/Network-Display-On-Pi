@@ -10,5 +10,6 @@ var App = {
 	'Details3D'				: 		5 /* Between 1 & 10*/,
 	'offline'				: 		true,
 	'webServerAddress'		: 		'192.168.1.144',
-	'webServerPort'			: 		'80'
+	'webServerPort'			: 		'80',
+	'dnsProtocol'			: 		'dns'
 }
