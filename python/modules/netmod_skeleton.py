@@ -15,7 +15,7 @@ import netmodule as netmod
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
-        netmod.NetModule.__init__(self, updatetime=5, protocol='classip')
+        netmod.NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='classip')
 
 
     def update(self):

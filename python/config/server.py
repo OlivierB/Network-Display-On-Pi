@@ -37,8 +37,8 @@ daemon_working_dir = "/home/student/Documents/Network-Display-On-Pi/python"
 
 # input, output and error file
 daemon_stdin 	= '/dev/null'
-daemon_stdout 	= '/tmp/out'
-daemon_stderr 	= '/tmp/err'
+daemon_stdout 	= '/tmp/ndop_out'
+daemon_stderr 	= '/tmp/ndop_err'
 
 # PID file
 daemon_pid_file = '/var/run/ndop.pid'

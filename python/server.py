@@ -7,10 +7,9 @@ NDOP
 @author: Olivier BLIN
 """
 
-# System import
+# Python lib import
 import sys, os, json, exceptions
 import argparse, cmd, time, importlib
-from multiprocessing import Pipe
 
 # project configuration import
 import config.server as config
@@ -144,6 +143,11 @@ def add_mod_prot(wsdata, lmod):
 
 
 def main():
+    """
+    main function
+
+    Command reader and ask root
+    """
     # Be root to access network device
     if os.getuid() != 0:
         print "Need to be root !"

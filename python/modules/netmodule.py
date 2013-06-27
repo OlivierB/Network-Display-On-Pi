@@ -6,9 +6,9 @@ main module for monitoring
 @author: Olivier BLIN
 """
 
+# Python lib import
 import time, datetime
 
-# import core.wsserver
 
 class NetModule():
     """
