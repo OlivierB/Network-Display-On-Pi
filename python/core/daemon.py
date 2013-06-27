@@ -91,10 +91,10 @@ class Daemon:
 			message = "pidfile %s already exist. Daemon already running?\n"
 			sys.stderr.write(message % self.pidfile)
 			sys.exit(1)
-		
-		# Start the daemon
-		self.daemonize()
-		self.run()
+		else:
+			# Start the daemon
+			self.daemonize()
+			self.run()
 
 	def stop(self):
 		"""
