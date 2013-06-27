@@ -16,6 +16,7 @@ import socket
 import struct
 import pcap
 
+import services.services as services
 
 class IPv4(layer.Layer):
     def __init__(self, pktdata):
@@ -52,6 +53,10 @@ class IPv4(layer.Layer):
         else:
             self.payload = layer.Layer(pktdata[4*self.header_len:])
 
+    def is_type(self, typ):
+        return self.type == typ
+
+
 
 
 class TCP(layer.Layer):
@@ -74,6 +79,28 @@ class UDP(layer.Layer):
         self.len        = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
 
         self.payload = layer.Layer(pktdata[8:])
+
+        self.type = -1
+
+        # IP protocol decode
+        try:
+            if self.dport in services.dUDPType.keys():
+                call = services.dUDPType[self.dport]["callback"]
+                self.type = self.dport
+            else:
+                call = services.dUDPType[self.sport]["callback"]
+                self.type = self.sport
+        except:
+            call = None
+
+
+        if call != None:
+            self.payload = call(pktdata[8:])
+        else:
+            self.payload = layer.Layer(pktdata[8:])
+
+    def is_type(self, typ):
+        return self.type == typ
 
 
 dIPType = {

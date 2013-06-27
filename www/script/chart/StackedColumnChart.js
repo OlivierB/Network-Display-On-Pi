@@ -21,14 +21,12 @@ function StackedColumnChart(id, title) {
 
 
 StackedColumnChart.prototype.updateChart = function(obj) {
-	console.log(obj);
 	this.data.length = 0;
 
 	var listProt = obj.listProt;
 	for (var j = 0; j < listProt.length; j++) {
 		var prot = listProt[j];
 		dataProt = [];
-		console.log(prot)
 		var length = obj.listValue.length;
 
 		for (i = 0; i < length; i++) {

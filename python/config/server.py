@@ -24,7 +24,7 @@ sniffer_device_mask = "255.255.255.0"
 
 ########################################
 # Modules selection
-modules_list = ["netmod_top", "netmod_iplist", "netmod_loccomm", "netmod_protocols", "netmod_bandwidth"]
+modules_list = ["netmod_top", "netmod_iplist", "netmod_loccomm", "netmod_protocols", "netmod_bandwidth", "netmod_dns"]
 # module_list = ["netmod_classip"]
 
 
@@ -55,4 +55,5 @@ db_user 	= "ndop"
 db_passwd	= "ndop"
 db_database	= "NDOP"
 db_port 	= 3306
+
 
