@@ -4,13 +4,13 @@
 var chart = new BandwidthChartWebsocket("bandwidth-chart");
 chart.connect(App.serverAddress, App.bandwidtProtocol);
 
-var chart = new BandwidthText("bandwidth-text");
+var chart = new BandwidthTextWebsocket("bandwidth-text");
 chart.connect(App.serverAddress, App.bandwidtProtocol);
 
 
 
-var protocolChart = new PercentBarChart('protocol-ethernet', 'ethernet');
+var protocolChart = new BarChartWebsocket('protocol-ethernet', 'ethernet');
 protocolChart.connect(App.serverAddress, App.protocolUseProtocol);
 
-var protocolChart = new PercentBarChart('protocol-ip', 'ip');
+var protocolChart = new BarChartWebsocket('protocol-ip', 'ip');
 protocolChart.connect(App.serverAddress, App.protocolUseProtocol);

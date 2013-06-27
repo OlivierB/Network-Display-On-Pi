@@ -32,6 +32,8 @@ include 'pages/common.php';
 	<script src="/ndop.conf.js"></script>
 	<script src='/script/slide/slide-conf.js'></script>
 	<script src="/script/network/WebSocketManager.js"></script>
+	<script src="/script/network/AjaxManager.js"></script>
+	<script src="/script/text/TextFormatter.js"></script>
 	<script src="/script/resize/resize.js"></script>
 
 
@@ -56,6 +58,8 @@ include 'pages/common.php';
 		</div>
 
 				<div><?php include "modules/dailyTraffic/index.php" ?></div>
+				<div><?php include "modules/weeklyTraffic/index.php" ?></div>
+				<div><?php include "modules/monthlyTraffic/index.php" ?></div>
 
 
 	</div>
