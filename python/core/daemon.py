@@ -1,7 +1,15 @@
-#!/usr/bin/env python
+#encoding: utf-8
+
+"""
+Daemon model class
+
+@author: Sander Marechal
+@web: http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/
+"""
 
 import sys, os, time, atexit
-from signal import SIGTERM 
+from signal import SIGTERM
+from signal import SIGINT 
 
 class Daemon:
 	"""
@@ -9,11 +17,14 @@ class Daemon:
 	
 	Usage: subclass the Daemon class and override the run() method
 	"""
-	def __init__(self, pidfile, stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
+	def __init__(self, pidfile, stdin='/dev/null', stdout='/dev/null', stderr='/dev/null', root_dir='/', working_dir='/'):
 		self.stdin = stdin
 		self.stdout = stdout
 		self.stderr = stderr
 		self.pidfile = pidfile
+
+		self.root_dir = root_dir
+		self.working_dir = working_dir
 	
 	def daemonize(self):
 		"""
@@ -31,7 +42,8 @@ class Daemon:
 			sys.exit(1)
 	
 		# decouple from parent environment
-		os.chdir("/") 
+		os.chroot(self.root_dir)
+		os.chdir(self.working_dir) 
 		os.setsid() 
 		os.umask(0) 
 	
@@ -104,7 +116,7 @@ class Daemon:
 		# Try killing the daemon process	
 		try:
 			while 1:
-				os.kill(pid, SIGTERM)
+				os.kill(pid, SIGINT)
 				time.sleep(0.1)
 		except OSError, err:
 			err = str(err)
@@ -121,6 +133,21 @@ class Daemon:
 		"""
 		self.stop()
 		self.start()
+
+	def status(self):
+		# Get the pid from the pidfile
+		try:
+			pf = file(self.pidfile,'r')
+			pid = int(pf.read().strip())
+			pf.close()
+		except IOError:
+			pid = None
+	
+		if not pid:
+			sys.stdout.write("Daemon not running\n")
+		else:
+			sys.stdout.write("Daemon running\n")
+
 
 	def run(self):
 		"""

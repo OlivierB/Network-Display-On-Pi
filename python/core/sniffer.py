@@ -8,13 +8,14 @@ Use pcap
 @author: Olivier BLIN
 """
 
-import config.server
+import config.server as config
 
 import sys, time, socket, types
 import string, struct, operator
 import importlib
 import multiprocessing as mp
 import pcap
+from multiprocessing import Pipe
 
 import core.network.packet as packet
 import core.mysql as mysqldata
@@ -34,7 +35,7 @@ class Sniffer(mp.Process):
     This class some modules which analyse packets and make stats
     """
     number = 0
-    def __init__(self, pipe, dev="eth0"):
+    def __init__(self, dev="eth0"):
         mp.Process.__init__(self)
 
         # stop condition
@@ -42,7 +43,11 @@ class Sniffer(mp.Process):
 
         # Var
         self.dev = dev
-        self.pipe = pipe
+        # communication between packet capture (pcap) and webserver (tornado) [2 process]
+        self.pipe_receiver, self.pipe_sender  = Pipe(duplex=False)
+
+    def get_data(self):
+        return self.pipe_receiver.recv()
 
     def stop(self):
         self.Terminated.value = 1
@@ -51,15 +56,16 @@ class Sniffer(mp.Process):
         print "Sniffer : Capture started on", self.dev
         # Init
         term = self.Terminated      # little optimisation (local variable)
-        pipe = self.pipe
-        lmod = load_mod(config.server.module_list)
+        pipe = self.pipe_sender
+        lmod = load_mod(config.modules_list)
         tb = time.time()
         dbupdate = time.time()
         capture = False
 
         # Mysql database
-        mydb = mysqldata.MySQLdata("192.168.1.144", "ndop", "ndop", "NDOP")
-        mydb.connection()
+        mydb = mysqldata.MySQLdata(config.db_host, config.db_user, config.db_passwd, config.db_database)
+        if config.db_sql_on:
+            mydb.connection()
 
         # Get device informations if possible (IP address assigned)
         try:
@@ -99,13 +105,13 @@ class Sniffer(mp.Process):
                     if len(ls) > 0:
                         pipe.send(ls)
 
-                
-                if time.time() - dbupdate > MIN_TIME_DB_UPDATE:
-                    dbupdate = time.time()
-                    for m in lmod:
-                        data = m.get_sql()
-                        if data != None:
-                            mydb.execute(data)
+                if config.db_sql_on:
+                    if time.time() - dbupdate > MIN_TIME_DB_UPDATE:
+                        dbupdate = time.time()
+                        for m in lmod:
+                            data = m.get_sql()
+                            if data != None:
+                                mydb.execute(data)
 
 
         except KeyboardInterrupt:
