@@ -58,6 +58,8 @@ include 'pages/common.php';
 		</div>
 
 				<div><?php include "modules/dailyTraffic/index.php" ?></div>
+				<div><?php include "modules/weeklyTraffic/index.php" ?></div>
+				<div><?php include "modules/monthlyTraffic/index.php" ?></div>
 
 
 	</div>

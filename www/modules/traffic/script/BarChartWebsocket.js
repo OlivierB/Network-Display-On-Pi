@@ -4,9 +4,10 @@ BarChartWebsocket = function(id, id_data) {
 	WebSocketManager.call(this, id + '-alert');
 
 	// inheritance from WebSocketManager
-	BarChart.call(this, id, id_data);
+	BarChart.call(this, id);
 
 	this.id = id;
+	this.id_data = id_data;
 	this.container = $('#' + this.id);
 }
 

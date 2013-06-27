@@ -41,7 +41,7 @@
 
 <body>
 	<!-- All pages are included here, slideJS handle the animation -->
-	<div><?php include "modules/dailyTraffic/index.php" ?></div>
+	<div><?php include "modules/monthlyTraffic/index.php" ?></div>
 
 </body>
 </html>

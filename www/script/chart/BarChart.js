@@ -1,12 +1,6 @@
-function BarChart(id, id_data) {
-
-	// inheritance from WebSocketManager
-	// WebSocketManager.call(this, id + '-alert');
-
-
+function BarChart(id) {
 
 	this.id = id;
-	this.id_data = id_data;
 
 	this.data = [];
 
@@ -42,8 +36,6 @@ function BarChart(id, id_data) {
 	this.chart.render();
 }
 
-// inheritance from WebSocketManager
-// BarChart.prototype = Object.create(WebSocketManager.prototype);
 
 
 BarChart.prototype.updateChart = function(array) {
@@ -55,16 +47,6 @@ BarChart.prototype.updateChart = function(array) {
 			label: array[i][0]
 		});
 	}
-
-
-// 	this.data.length = 0;
-// 	console.log(array);
-// 	for (var index in array) {
-// 		this.data.push({
-// 			y: array[index],
-// 			label: index
-// 		});
-// 	}
 	this.chart.render();
 }
 

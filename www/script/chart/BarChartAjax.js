@@ -1,0 +1,3 @@
+function BarChartAjax (id) {
+
+}
