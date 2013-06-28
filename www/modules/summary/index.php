@@ -13,12 +13,11 @@
 
 
 
-			</div>
 		</div>
 	</div>
-
-	
 </div>
 
- <script type="text/javascript" src="/modules/summary/script/SummaryCanvas.js"></script>
+
+
+<script type="text/javascript" src="/modules/summary/script/SummaryCanvas.js"></script>
 <script type="text/javascript" src="/modules/summary/script/loader.js"></script>
