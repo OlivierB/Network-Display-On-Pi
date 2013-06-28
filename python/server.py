@@ -12,6 +12,8 @@ import sys, os, time
 import argparse
 import importlib
 import datetime
+import logging
+import logging.handlers
 
 # Project configuration file
 import config.server as config
@@ -79,10 +81,11 @@ class ServeurNDOP(daemon.Daemon):
         Stand by Loop
         """
 
-        print "####################################"
-        print "# Network Sniffer with web display #"
-        print "####################################"
-        print "#", datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        # Get logger
+        logger = logging.getLogger()
+
+        logger.info(">>>>>>>>>>>>>>>>>>>> Network Sniffer with web display")
+        logger.info("# " + datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
 
         # Init websocket server (tornado)
         ws = core.wsserver.WsServer(self.args.websocket_port)
@@ -117,9 +120,8 @@ class ServeurNDOP(daemon.Daemon):
                 for r in recv:
                     wsdata.send(r[0], r[1])
 
-                # print "stats : ", sniff.stats()
         except KeyboardInterrupt:
-            print "Stopping..."
+            logger.info("Stopping...")
         finally:
             # Sniffer stop
             sniff.stop()
@@ -127,8 +129,9 @@ class ServeurNDOP(daemon.Daemon):
             # Webserver stop
             ws.stop()
             ws.join()
+            logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
                 
-        return 0
+        exit(0)
 
 
 def add_mod_prot(wsdata, lmod):
@@ -154,19 +157,61 @@ def add_mod_prot(wsdata, lmod):
                 pass
 
 
+def conf_logger(consol=False, debug=False):
+
+    # create a file handler
+    file_handler = logging.handlers.RotatingFileHandler(config.log_file,'a', 1000000)
+    # output handler
+    stdout_handler = logging.StreamHandler(sys.stdout)
+
+    # create a logging format
+    file_formatter = logging.Formatter('[%(levelname)s] : %(asctime)s - %(message)s')
+    file_handler.setFormatter(file_formatter)
+
+    stdout_formatter = logging.Formatter('[%(levelname)s] -> %(message)s')
+    stdout_handler.setFormatter(stdout_formatter)
+
+    # Get logger
+    logger = logging.getLogger()
+
+
+    if debug:
+        mod = logging.DEBUG
+    else:
+        mod = logging.INFO
+
+    #  Set mode
+    logger.setLevel(mod)
+    file_handler.setLevel(mod)
+    stdout_handler.setLevel(mod)
+
+
+    # add the handlers to the logger
+    logger.addHandler(file_handler)
+    if consol:
+        logger.addHandler(stdout_handler)
+
+
 def main():
     """
     main function
 
     Command reader and ask root
     """
-    # Be root to access network device
-    if os.getuid() != 0:
-        print "Need to be root !"
-        exit(2)
 
     # Get command line arguments
     args = ServerArgumentParser().parse_args()
+    
+    # Configure logger
+    conf_logger('run' == args.daemon_cmd)
+    # Get logger
+    logger = logging.getLogger()
+
+    # Be root to access network device
+    if os.getuid() != 0:
+        logger.warning("Can't start NDOP, need to be root !")
+        exit(2)
+
 
     # Get daemon class
     daemon = ServeurNDOP(args)
@@ -180,12 +225,10 @@ def main():
         daemon.restart()
     elif 'run' == args.daemon_cmd:
         daemon.run()
-    elif 'status' == args.daemon_cmd:
-        daemon.status()
-    else:
-        print "Unknown command"
-        sys.exit(2)
+
     sys.exit(0)
+
+
 
 
 if __name__ == "__main__":

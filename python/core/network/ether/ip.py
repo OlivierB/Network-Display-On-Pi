@@ -23,16 +23,16 @@ class IPv4(layer.Layer):
         layer.Layer.__init__(self, protocol="IPv4")
         
 
-        self.version    = (ord(pktdata[0]) & 0xf0) >> 4
+        # self.version    = (ord(pktdata[0]) & 0xf0) >> 4
         self.header_len = ord(pktdata[0]) & 0x0f
-        self.tos        = ord(pktdata[1])
+        # self.tos        = ord(pktdata[1])
         self.total_len  = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
-        self.id         = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
-        self.flags      = (ord(pktdata[6]) & 0xe0) >> 5
-        self.fragment_offset = socket.ntohs(struct.unpack('H', pktdata[6:8])[0] & 0x1f)
-        self.ttl        = ord(pktdata[8])
+        # self.id         = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
+        # self.flags      = (ord(pktdata[6]) & 0xe0) >> 5
+        # self.fragment_offset = socket.ntohs(struct.unpack('H', pktdata[6:8])[0] & 0x1f)
+        # self.ttl        = ord(pktdata[8])
         self.type       = ord(pktdata[9])
-        self.checksum   = socket.ntohs(struct.unpack('H', pktdata[10:12])[0])
+        # self.checksum   = socket.ntohs(struct.unpack('H', pktdata[10:12])[0])
         self.src        = struct.unpack('I', pktdata[12:16])[0]
         self.dst        = struct.unpack('I', pktdata[16:20])[0]
 

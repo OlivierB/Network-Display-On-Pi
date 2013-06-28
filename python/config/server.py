@@ -29,6 +29,12 @@ modules_list = ["netmod_top", "netmod_iplist", "netmod_loccomm", "netmod_protoco
 
 
 ########################################
+# Network information
+
+log_file = "/var/log/ndop"
+
+
+########################################
 # Daemon parameters
 
 # directories modifications

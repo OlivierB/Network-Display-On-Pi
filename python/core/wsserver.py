@@ -14,6 +14,7 @@ Use python tornado webserver
 
 import threading, multiprocessing
 import time, types
+import logging
 
 import tornado.httpserver
 import tornado.websocket
@@ -69,16 +70,18 @@ class WsServer(threading.Thread):
         self.http_server.listen(port)
         self.clientList = ClientsList()
 
+        self.log = logging.getLogger()
+
 
     def run(self):
-        print "WsServer : Server started..."
+        self.log.info("WsServer : Server started...")
         try:
             tornado.ioloop.IOLoop.instance().start()
-            print 'WsServer : Server stopped...'
+            self.log.info('WsServer : Server stopped...')
         except KeyboardInterrupt:
-            print 'WsServer : Server stopped on interruption...'
+            self.log.info('WsServer : Server stopped on interruption signal...')
         except Exception as e:
-            print "WsServer : [ERROR]", e
+            self.log.error("WsServer : ", exc_info=True)
 
     def stop(self):
         self.clientList.closeCom()
@@ -149,13 +152,8 @@ class ClientsList(object):
         """
         try:
             client.write_message(data)
-        except IOError:
-            print "WsServer Error : Send IOError"
         except Exception as e:
-            # print "WsServer Error : ", e
             pass
-
-        return
 
 
     def send(self, proto, data):

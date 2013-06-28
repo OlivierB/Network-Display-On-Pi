@@ -13,6 +13,7 @@ import sys, time, socket, types, os
 import string, struct, operator
 import multiprocessing as mp
 import importlib, pcap
+import logging
 
 # Project configuration file
 import config.server as config
@@ -60,7 +61,10 @@ class Sniffer(mp.Process):
         self.Terminated.value = 1
 
     def run(self):
-        print "Sniffer : Capture started on", self.dev
+        # Get logger
+        logger = logging.getLogger()
+        logger.info("Sniffer : Capture started on " + self.dev)
+
         # Init
         term = self.Terminated      # little optimisation (local variable)
         pipe = self.pipe_sender
@@ -123,29 +127,28 @@ class Sniffer(mp.Process):
 
 
         except KeyboardInterrupt:
-            print "Sniffer : Interruption"
+            logger.info("Sniffer : Interruption signal")
         except Exception as e:
-            print "Sniffer : [ERROR]", e
-            raise
+            logger.error("Sniffer : ", exc_info=True)
         finally:
             if capture:
                 mydb.close()
-                print "Sniffer : Capture stopped..."
+                logger.info("Sniffer : Capture stopped...")
                 a, b, c = p.stats()
                 if a > 0: res = b/(a*1.0)*100
                 else: res = 0.0
-                print 'Sniffer : %i packets received, %i packets dropped, %i packets dropped by interface - %d%%' % (a, b, c, res)
-
+                logger.info('Sniffer : %i packets received, %i packets dropped, %i packets dropped by interface - %d%%' % (a, b, c, res))
 
 def load_mod(lmod):
         """
         Load modules
         """
+        # Get logger
+        logger = logging.getLogger()
 
         l_modules = list()
 
         if len(lmod) > 0:
-            print "------------------------------"
             for m in lmod:
                 try:
                     # import module
@@ -159,10 +162,9 @@ def load_mod(lmod):
 
                     # add module to the list
                     l_modules.append(modclass)
-                    print "Load module", m, "(protocol:",modclass.protocol ,")"
+                    logger.info("Load module " + m + " (protocol:" + modclass.protocol + ")")
 
                 except Exception as e:
-                    print m, ":", e
-            print "------------------------------"
+                    logger.error(m + " : ", exc_info=True)
 
         return l_modules
