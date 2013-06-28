@@ -8,8 +8,10 @@ NDOP
 """
 
 # Python lib import
-import sys, os, json, exceptions
-import argparse, cmd, time, importlib
+import sys, os, time
+import argparse
+import importlib
+import datetime
 
 # Project configuration file
 import config.server as config
@@ -80,6 +82,7 @@ class ServeurNDOP(daemon.Daemon):
         print "####################################"
         print "# Network Sniffer with web display #"
         print "####################################"
+        print "#", datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
 
         # Init websocket server (tornado)
         ws = core.wsserver.WsServer(self.args.websocket_port)
@@ -97,7 +100,7 @@ class ServeurNDOP(daemon.Daemon):
         except:
             ws.stop()
             exit(2)
-        
+
         try:
             sniff.start()
             time.sleep(0.5)

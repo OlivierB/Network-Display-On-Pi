@@ -42,8 +42,16 @@ class Daemon:
 			sys.exit(1)
 	
 		# decouple from parent environment
-		os.chroot(self.root_dir)
-		os.chdir(self.working_dir) 
+		try:
+			os.chroot(self.root_dir)
+		except:
+			sys.stderr.write("fail to change root directory\n")
+			sys.exit(1) 
+		try:
+			os.chdir(self.working_dir) 
+		except:
+			sys.stderr.write("fail to change working directory\n")
+			sys.exit(1) 
 		os.setsid() 
 		os.umask(0) 
 	
