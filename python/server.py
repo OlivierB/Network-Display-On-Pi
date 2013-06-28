@@ -11,10 +11,10 @@ NDOP
 import sys, os, json, exceptions
 import argparse, cmd, time, importlib
 
-# project configuration import
+# Project configuration file
 import config.server as config
 
-# project import
+# Project import file
 import core.sniffer, core.wsserver
 import core.daemon as daemon
 
@@ -91,11 +91,21 @@ class ServeurNDOP(daemon.Daemon):
         sniff = core.sniffer.Sniffer(dev=self.args.sniffer_device)
 
         # Start services
-        ws.start()
-        time.sleep(0.5)
-        sniff.start()
-        time.sleep(0.5)
+        try:
+            ws.start()
+            time.sleep(0.5)
+        except:
+            ws.stop()
+            exit(2)
         
+        try:
+            sniff.start()
+            time.sleep(0.5)
+        except:
+            ws.stop()
+            sniff.stop()
+            exit(2)
+
 
         # Loop
         try:
@@ -108,7 +118,6 @@ class ServeurNDOP(daemon.Daemon):
         except KeyboardInterrupt:
             print "Stopping..."
         finally:
-            print "------------------------------"
             # Sniffer stop
             sniff.stop()
             sniff.join()
@@ -136,7 +145,7 @@ def add_mod_prot(wsdata, lmod):
                 # Create an instance
                 modclass = module.NetModChild()
                 # Add protocol for the webserver
-                wsdata.addProtocol(modclass.get_protocol())
+                wsdata.addProtocol(modclass.protocol)
 
             except:
                 pass

@@ -43,9 +43,10 @@ class NetModChild(netmod.NetModule):
 
     def save(self):
         """
-        Called to save module data
-
-        heavy task
+        Called to save module data in sql database every savetime
+        
+        return a list of sql request to save module content
+            else return None
 
         """
         return None

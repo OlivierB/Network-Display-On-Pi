@@ -36,6 +36,11 @@ class WSHandler_main(tornado.websocket.WebSocketHandler):
         cl.delClient(self)
 
     def select_subprotocol(self, subprotocols):
+        """
+        Subprotocol defined the type of connection
+
+        If no protocol is given, the connection is closed
+        """
         cl = ClientsList()
         prot = cl.addClient(self, subprotocols)
         if prot in cl.getProtocols():
@@ -186,8 +191,8 @@ class ClientsList(object):
 
 
     def addProtocol(self, prot):
-        # print prot
-        self.protocols_list.append(prot)
+        if prot != None:
+            self.protocols_list.append(prot)
 
     def getProtocols(self):
         return self.protocols_list
