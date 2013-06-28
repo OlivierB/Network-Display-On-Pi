@@ -1,0 +1,17 @@
+.big-table{
+	font-size: 40px;
+	margin: auto;
+
+}
+
+.big-table td{
+	text-align: center;
+	line-height: 45px
+}
+
+.big-table th{
+	text-align: center;
+	line-height: 45px;
+	background-color: #2F2F2F;
+	color: white;
+}

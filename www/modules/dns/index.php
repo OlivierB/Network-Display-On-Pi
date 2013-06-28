@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/modules/dns/style/dns.css">
 
-<?php header_display('Live DNS request'); ?>
+<?php header_display('DNS request'); ?>
 
 <div class='slide-div'>
 	<div class='row-fluid'>
