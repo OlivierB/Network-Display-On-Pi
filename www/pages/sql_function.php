@@ -1,8 +1,16 @@
 <?php
 
 function getProtocol($connection, $date_begin, $date_end, $table){
+
+	if($date_begin != '' && $date_end != ''){
+		$where_statement = '`  WHERE date BETWEEN ('. $date_begin .') AND ('. $date_end .')';
+	}else{
+		$where_statement = '';
+	}
+
+
 	// request the protocol list
-	$sql = 'SELECT distinct `protocol` FROM `'.$table.'`  WHERE date BETWEEN ('. $date_begin .') AND ('. $date_end .')';
+	$sql = 'SELECT distinct `protocol` FROM `'.$table.'` '.$where_statement;
 
 	$req = $connection->prepare($sql);
 	$req->execute();
@@ -23,7 +31,7 @@ function getProtocol($connection, $date_begin, $date_end, $table){
 
 
 	// request the protocol use
-	$sql = 'SELECT * FROM `'.$table.'`  WHERE date BETWEEN ('. $date_begin .') AND ('. $date_end .')';
+	$sql = 'SELECT * FROM `'.$table.'` '.$where_statement;
 
 	$req = $connection->prepare($sql);
 	$req->execute();
@@ -67,8 +75,15 @@ function getSubProtocolIpv4($connection, $date_begin, $date_end){
 
 
 function getBandwidth($connection, $date_begin, $date_end){
+
+	if($date_begin != '' && $date_end != ''){
+		$where_statement = 'WHERE date BETWEEN ('.$date_begin.') AND ( '.$date_end.')';
+	}else{
+		$where_statement = '';
+	}
+
 	// request average flow for each entry in teh table between the two date
-	$sql = 'SELECT `global`/`dtime_s` as global, `local`/`dtime_s` as local,`incoming`/`dtime_s` as incoming,`outcoming`/`dtime_s` as outcoming, date  FROM bandwidth  WHERE date BETWEEN ('.$date_begin.') AND ( '.$date_end.')';
+	$sql = 'SELECT `global`/`dtime_s` as global, `local`/`dtime_s` as local,`incoming`/`dtime_s` as incoming,`outcoming`/`dtime_s` as outcoming, date  FROM bandwidth  '.$where_statement;
 
 	$req = $connection->prepare($sql);
 	$req->execute();
@@ -78,8 +93,15 @@ function getBandwidth($connection, $date_begin, $date_end){
 }
 
 function getTotalBandwidth($connection, $date_begin, $date_end){
+
+	if($date_begin != '' && $date_end != ''){
+		$where_statement = 'WHERE date BETWEEN ('.$date_begin.') AND ('.$date_end.')';
+	}else{
+		$where_statement = '';
+	}
+
 	// request the sum of the bandwidth between the two date
-	$sql = 'SELECT SUM(`global`) as Ko, SUM(`local`) as loc_Ko, SUM(`incoming`) as in_Ko, SUM(`outcoming`) as out_Ko FROM bandwidth  WHERE date BETWEEN ('.$date_begin.') AND ('.$date_end.')';
+	$sql = 'SELECT SUM(`global`) as Ko, SUM(`local`) as loc_Ko, SUM(`incoming`) as in_Ko, SUM(`outcoming`) as out_Ko FROM bandwidth  '.$where_statement;
 	$req = $connection->prepare($sql);
 	$req->execute();
 	$result = $req->fetchAll(PDO::FETCH_ASSOC);

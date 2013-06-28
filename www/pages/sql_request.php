@@ -1,6 +1,6 @@
 <?php
 
-	require 'sql_function.php';
+require 'sql_function.php';
 try {
 	// server connection
 	$dns = 'mysql:host=192.168.1.144;dbname=NDOP';
@@ -12,18 +12,26 @@ try {
 
 	if(isset($_GET['request'])){
 
-		if(isset($_GET['day_before_begin'])){
-			$date_begin = 'NOW( ) - INTERVAL '.$_GET['day_before_begin'].' DAY';
+		if(!isset($_GET['day_before_begin']) && !isset($_GET['day_before_end'])){
+			$date_begin = '';
+			$date_end = '';
 		}else{
-			$date_begin = 'NOW( ) - INTERVAL 1 DAY';
+			
+			if(isset($_GET['day_before_begin'])){
+				$date_begin = 'NOW( ) - INTERVAL '.$_GET['day_before_begin'].' DAY';
+			}else{
+				$date_begin = 'NOW( ) - INTERVAL 1 DAY';
+			}
+
+			if(isset($_GET['day_before_end'])){
+				$date_end = 'NOW( ) - INTERVAL '.$_GET['day_before_end'].' DAY';
+			}else{
+				$date_end = 'NOW( )';
+			}
+
 		}
 
-		if(isset($_GET['day_before_end'])){
-			$date_end = 'NOW( ) - INTERVAL '.$_GET['day_before_end'].' DAY';
-		}else{
-			$date_end = 'NOW( )';
-		}
-
+		
 
 		if ($_GET['request'] == 'subprotocol_ipv4')
 		{
