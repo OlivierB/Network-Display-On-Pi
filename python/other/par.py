@@ -9,6 +9,8 @@ main module for monitoring
 import threading, time, Queue
 import multiprocessing as mp
 
+import log, logging
+
 # import core.wsserver
 
 class Mod(threading.Thread):
@@ -36,7 +38,9 @@ class Mod(threading.Thread):
             if (time.time() - self.lastupdate) > self.time:
                 self.Terminated = True
 
-        print "-%i-" % nb
+        logger = logging.getLogger(__name__)
+        logger.info("-%i-" % nb)
+
 
 class Mod1(threading.Thread):
     """
@@ -64,6 +68,7 @@ class Mod1(threading.Thread):
                 self.Terminated = True
 
         print "-%i-" % nb
+        
 
 
 
@@ -73,54 +78,66 @@ class ModP(mp.Process):
     Module main class
     Define most usefull inherit functions
     """
-    number = 0
+
     def __init__(self):
         mp.Process.__init__(self)
 
         # stop condition
         self.Terminated = mp.Value('i', 0)
 
+
     def stop(self):
         self.Terminated.value = 1
 
     def run(self):
+        logger = logging.getLogger(__name__)
+        
         a = time.time()
         term = self.Terminated
         nb = 0
         while not term.value:
             nb += 1
+            # logger.info("nb : %i" % nb)
 
-
-        print "-%i-" % nb
-        print "time : ", time.time() - a
+        logger.info("nb : %i - time : %d" % (nb, time.time() - a))
+        # print "-%i-" % nb
+        # print "time : ", time.time() - a
 
 
 if __name__ == "__main__":
-    m = ModP()
+    log.conf_logger()
+    logger = logging.getLogger(__name__)
 
+    # m = ModP()
 
-    print "start"
-    m.start()
-    time.sleep(5)
+    # logger.info("start")
 
-    m.stop()
-    m.join()
+    # m.start()
+    # time.sleep(5)
 
-    print "stop"
+    # m.stop()
+    # m.join()
+
+    # logger.info("stop")
 
 
     # TEST 8 * SAME THREAD
-    # nbth = 8
-    # l = list()
-    # for i in range(nbth):
-    #     l.append(Mod())
+    nbth = 8
+    l = list()
+    for i in range(nbth):
+        l.append(ModP())
 
 
-    # print "start"
-    # for i in range(nbth):
-    #     l[i].start()
+    logger.info("start")
+    for i in range(nbth):
+        l[i].start()
 
-    # for i in range(nbth):
-    #     l[i].join()
+    time.sleep(5)
 
-    # print "stop"
+    for i in range(nbth):
+        l[i].stop()
+
+    for i in range(nbth):
+        l[i].join()
+
+    logger.info("stop")

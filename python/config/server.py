@@ -29,6 +29,12 @@ modules_list = ["netmod_top", "netmod_iplist", "netmod_loccomm", "netmod_protoco
 
 
 ########################################
+# Network information
+
+log_file = "/var/log/ndop"
+
+
+########################################
 # Daemon parameters
 
 # directories modifications
@@ -38,7 +44,7 @@ daemon_working_dir = "/home/student/Documents/Network-Display-On-Pi/python"
 # input, output and error file
 daemon_stdin 	= '/dev/null'
 daemon_stdout 	= '/tmp/ndop_out'
-daemon_stderr 	= '/tmp/ndop_err'
+daemon_stderr 	= '/dev/null'
 
 # PID file
 daemon_pid_file = '/var/run/ndop.pid'

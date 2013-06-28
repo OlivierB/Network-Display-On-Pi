@@ -1,7 +1,9 @@
 #encoding: utf-8
 
 """
-main module for monitoring
+Main module class
+
+New submodule need to override some of these methods
 
 @author: Olivier BLIN
 """
@@ -17,25 +19,22 @@ class NetModule():
     """
     def __init__(self, updatetime=10, savetime=('m', 30), protocol=None):
 
-        # intern variable
+        # protocol (or module name)
         self.protocol       = protocol
+
+        # Time management for update function
         self.updatetime     = updatetime
         self.lastupdate     = 0
 
+        # Time management for save function
         self.save_timecode(savetime)
         self.save_timewait()
 
 
-    def update(self):
-        return None
-
-    def pkt_handler(self, pkt):
-        pass
-
-    def get_protocol(self):
-        return self.protocol
-
     def get_data(self):
+        """
+        Manage call to update method with updatetime
+        """
         if (time.time() - self.lastupdate) > self.updatetime:
             self.lastupdate = time.time()
             return self.update()
@@ -43,6 +42,9 @@ class NetModule():
             return None
 
     def get_sql(self):
+        """
+        Manage call to save method with savetime
+        """
         if time.time() - self.savetime > self.savewait:
             self.save_timewait()
             return self.save()
@@ -50,6 +52,9 @@ class NetModule():
             return None
 
     def save_timewait(self):
+        """
+        Calculate new time to wait before call to save method
+        """
         if self.savecode[0] == 'm':
             d = datetime.datetime.today()
             self.savetime = time.time()
@@ -65,6 +70,9 @@ class NetModule():
 
 
     def save_timecode(self, savetime):
+        """
+        Check savetime value and correct it if necessary
+        """
         if type(savetime) is tuple and len(savetime) == 2:
             if savetime[0] == 'h':
                 # hours management
@@ -86,9 +94,42 @@ class NetModule():
             # default if error
             self.savecode = ('m', 30)
 
+    def update(self):
+        """
+        Refresh method called every updatetime
+
+        Return values to send to clients (websockets)
+        automatically convert in json
+
+        override this method
+        """
+        return None
+
+    def pkt_handler(self, pkt):
+        """
+        Called by sniffer when a new packet arrive
+
+        pkt is formated with Packet class
+
+        override this method
+        """
+        pass
 
     def reset(self):
+        """
+        Clalled to reset module
+
+        override this method
+        """
         pass
 
     def save(self):
+        """
+        Called to save module data in sql database every savetime
+        
+        return a list of sql request to save module content
+            else return None
+
+        override this method
+        """
         pass

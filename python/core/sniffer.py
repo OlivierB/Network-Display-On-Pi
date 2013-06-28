@@ -8,23 +8,31 @@ Use pcap
 @author: Olivier BLIN
 """
 
+# Python lib import
+import sys, time, socket, types, os
+import string, struct, operator
+import multiprocessing as mp
+import importlib, pcap
+import logging
+
+# Project configuration file
 import config.server as config
 
-import sys, time, socket, types
-import string, struct, operator
-import importlib
-import multiprocessing as mp
-import pcap
-from multiprocessing import Pipe
-
+# Project import file
 import core.network.packet as packet
 import core.mysql as mysqldata
 
-PCAP_PROMISCUOUS_MODE   = 1
-PCAP_SNIFFER_TIMEOUT    = 300
-MIN_TIME_MOD_UPDATE     = 0.5
-MIN_TIME_DB_UPDATE      = 1
 
+# Accept all packet or not
+PCAP_PROMISCUOUS_MODE   = 1
+# Waiting time for new packet
+PCAP_SNIFFER_TIMEOUT    = 300
+# Packet max length for capture
+PCAP_PACKET_MAX_LEN     = 1514
+# Time to check modules update
+MIN_TIME_MOD_UPDATE     = 0.5
+# Time to check modules SQL database saving
+MIN_TIME_DB_UPDATE      = 1
 
 
 
@@ -44,7 +52,7 @@ class Sniffer(mp.Process):
         # Var
         self.dev = dev
         # communication between packet capture (pcap) and webserver (tornado) [2 process]
-        self.pipe_receiver, self.pipe_sender  = Pipe(duplex=False)
+        self.pipe_receiver, self.pipe_sender  = mp.Pipe(duplex=False)
 
     def get_data(self):
         return self.pipe_receiver.recv()
@@ -53,13 +61,16 @@ class Sniffer(mp.Process):
         self.Terminated.value = 1
 
     def run(self):
-        print "Sniffer : Capture started on", self.dev
+        # Get logger
+        logger = logging.getLogger()
+        logger.info("Sniffer : Capture started on " + self.dev)
+
         # Init
         term = self.Terminated      # little optimisation (local variable)
         pipe = self.pipe_sender
         lmod = load_mod(config.modules_list)
-        tb = time.time()
-        dbupdate = time.time()
+        last_update_t = time.time()
+        last_save_t = time.time()
         capture = False
 
         # Mysql database
@@ -78,7 +89,7 @@ class Sniffer(mp.Process):
 
         try:
             # (Dev, buffer, promiscuous mode, timeout)
-            p.open_live(self.dev, 1600, PCAP_PROMISCUOUS_MODE, PCAP_SNIFFER_TIMEOUT)
+            p.open_live(self.dev, PCAP_PACKET_MAX_LEN, PCAP_PROMISCUOUS_MODE, PCAP_SNIFFER_TIMEOUT)
             capture = True
 
             # Handler loop
@@ -88,26 +99,27 @@ class Sniffer(mp.Process):
                 if pkt != None:
                     # Decode packet
                     pktdec = packet.Packet(pkt[0], pkt[1], pkt[2])
-                    # print pktdec
 
                     # send pkt to modules
                     for m in lmod:
                         m.pkt_handler(pktdec)
 
-                # Module update
-                if time.time() - tb > MIN_TIME_MOD_UPDATE:
-                    tb = time.time()
+                # Modules update call
+                if time.time() - last_update_t > MIN_TIME_MOD_UPDATE:
+                    last_update_t = time.time()
                     ls = list()
                     for m in lmod:
                         data = m.get_data()
                         if data != None:
-                            ls.append((m.get_protocol(), data))
+                            ls.append((m.protocol, data))
+                    # Data to send with websocket
                     if len(ls) > 0:
                         pipe.send(ls)
 
+                # Modules save call
                 if config.db_sql_on:
-                    if time.time() - dbupdate > MIN_TIME_DB_UPDATE:
-                        dbupdate = time.time()
+                    if time.time() - last_save_t > MIN_TIME_DB_UPDATE:
+                        last_save_t = time.time()
                         for m in lmod:
                             data = m.get_sql()
                             if data != None:
@@ -115,30 +127,28 @@ class Sniffer(mp.Process):
 
 
         except KeyboardInterrupt:
-            print "Sniffer : Interruption"
+            logger.info("Sniffer : Interruption signal")
         except Exception as e:
-            print "Sniffer : [ERROR]", e
-            raise
+            logger.error("Sniffer : ", exc_info=True)
         finally:
             if capture:
                 mydb.close()
-                print "Sniffer : Capture stopped..."
+                logger.info("Sniffer : Capture stopped...")
                 a, b, c = p.stats()
-                print 'Sniffer : %d packets received, %d packets dropped, %d packets dropped by interface -' % p.stats(), b/(a*1.0+1)*100
-
-
-
-        
+                if a > 0: res = b/(a*1.0)*100
+                else: res = 0.0
+                logger.info('Sniffer : %i packets received, %i packets dropped, %i packets dropped by interface - %d%%' % (a, b, c, res))
 
 def load_mod(lmod):
         """
         Load modules
         """
-        # Singeton Webserver data (for websocket)
+        # Get logger
+        logger = logging.getLogger()
+
         l_modules = list()
 
         if len(lmod) > 0:
-            print "------------------------------"
             for m in lmod:
                 try:
                     # import module
@@ -152,14 +162,9 @@ def load_mod(lmod):
 
                     # add module to the list
                     l_modules.append(modclass)
-                    print "Load module", m
+                    logger.info("Load module " + m + " (protocol:" + modclass.protocol + ")")
 
-                    # except ImportError as e:
-                    #     print m, ":", e
-                    # except AttributeError as e:
-                    #     print m, ":", e
                 except Exception as e:
-                    print m, ":", e
-            print "------------------------------"
+                    logger.error(m + " : ", exc_info=True)
 
         return l_modules
