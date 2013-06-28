@@ -48,11 +48,14 @@ class ServerArgumentParser(argparse.ArgumentParser):
         self.add_argument("-i", "--interface", default=config.sniffer_device, dest="sniffer_device", 
             help="Network device for sniffing (default: %s)" % config.sniffer_device)
 
-        self.add_argument("-m", "--mask", default=config.sniffer_device_mask, dest="sniffer_mask", 
-            help="Local network mask (default: %s)" % config.sniffer_device_mask)
+        self.add_argument("-d", "--debug", action='store_true',
+            help="Pass in debug mode")
 
-        self.add_argument("-n", "--net", default=config.sniffer_device_net, dest="sniffer_net", 
-            help="Local network address (default: %s)" % config.sniffer_device_net)
+        # self.add_argument("-m", "--mask", default=config.sniffer_device_mask, dest="sniffer_mask", 
+        #     help="Local network mask (default: %s)" % config.sniffer_device_mask)
+
+        # self.add_argument("-n", "--net", default=config.sniffer_device_net, dest="sniffer_net", 
+        #     help="Local network address (default: %s)" % config.sniffer_device_net)
 
 
 
@@ -157,7 +160,7 @@ def add_mod_prot(wsdata, lmod):
                 pass
 
 
-def conf_logger(consol=False, debug=False):
+def conf_logger(args):
 
     # create a file handler
     file_handler = logging.handlers.RotatingFileHandler(config.log_file,'a', 1000000)
@@ -174,13 +177,12 @@ def conf_logger(consol=False, debug=False):
     # Get logger
     logger = logging.getLogger()
 
-
-    if debug:
+    # Set debub mode or not
+    if args.debug:
         mod = logging.DEBUG
     else:
         mod = logging.INFO
 
-    #  Set mode
     logger.setLevel(mod)
     file_handler.setLevel(mod)
     stdout_handler.setLevel(mod)
@@ -188,7 +190,7 @@ def conf_logger(consol=False, debug=False):
 
     # add the handlers to the logger
     logger.addHandler(file_handler)
-    if consol:
+    if args.daemon_cmd == 'run':
         logger.addHandler(stdout_handler)
 
 
@@ -203,7 +205,7 @@ def main():
     args = ServerArgumentParser().parse_args()
     
     # Configure logger
-    conf_logger('run' == args.daemon_cmd)
+    conf_logger(args)
     # Get logger
     logger = logging.getLogger()
 
