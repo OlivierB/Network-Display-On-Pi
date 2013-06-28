@@ -51,16 +51,12 @@ include 'pages/common.php';
 		<div><?php include "modules/serverStat/index.php" ?></div>
 		<div><?php include "modules/map/index.php" ?></div>
 
-		<div>
-			<?php 
-			include "modules/network3D/index.php" 
-			?>
-		</div>
+		<div><?php include "modules/network3D/index.php" ?></div>
 
-				<div><?php include "modules/dailyTraffic/index.php" ?></div>
-				<div><?php include "modules/weeklyTraffic/index.php" ?></div>
-				<div><?php include "modules/monthlyTraffic/index.php" ?></div>
-
+		<div><?php include "modules/dailyTraffic/index.php" ?></div>
+		<div><?php include "modules/weeklyTraffic/index.php" ?></div>
+		<div><?php include "modules/monthlyTraffic/index.php" ?></div>
+		<div><?php include "modules/dns/index.php" ?></div>
 
 	</div>
 	
