@@ -20,7 +20,6 @@ DnsDisplayer.prototype.dataManager = function(obj) {
 
 	var i = obj.list_dns_name.length;
 	for (; i--;) {
-		console.log(obj.list_dns_name[i])
 
 		if (this.elems.length > 0 && obj.list_dns_name[i] == this.elems[this.elems.length - 1].dnsName) {
 			this.elems[this.elems.length - 1] = {
