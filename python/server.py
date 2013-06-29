@@ -200,19 +200,19 @@ def main():
 
     Command reader and ask root
     """
+    
+    # Be root to access network device
+    if os.getuid() != 0:
+        print("Can't start NDOP, need to be root !")
+        exit(2)
 
     # Get command line arguments
     args = ServerArgumentParser().parse_args()
-    
+
     # Configure logger
     conf_logger(args)
     # Get logger
     logger = logging.getLogger()
-
-    # Be root to access network device
-    if os.getuid() != 0:
-        logger.warning("Can't start NDOP, need to be root !")
-        exit(2)
 
 
     # Get daemon class
