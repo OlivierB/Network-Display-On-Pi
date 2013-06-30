@@ -6,6 +6,7 @@ Network utils
 @author: Olivier BLIN
 """
 
+# Python lib import
 from . import ethernet as ether
 
 
@@ -21,4 +22,3 @@ class Packet():
         tor += " " + self.Ether.__str__()
         tor += " >"
         return tor
-

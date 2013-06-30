@@ -8,18 +8,21 @@ NDOP
 """
 
 # Python lib import
-import sys, os, time
+import sys
+import os
+import time
 import argparse
 import importlib
-import datetime
 import logging
 import logging.handlers
+import datetime as dt
 
 # Project configuration file
 import config.server as config
 
-# Project import file
-import core.sniffer, core.wsserver
+# Project file import
+import core.sniffer
+import core.wsserver
 import core.daemon as daemon
 
 
@@ -34,29 +37,23 @@ class ServerArgumentParser(argparse.ArgumentParser):
     """
     def __init__(self):
         super(ServerArgumentParser, self).__init__()
-        
+
         # init
         self.description = "%s Version %s" % (__description__, __version__)
-        
-        # daemon server command. 'run' to avoid daemon mode
-        self.add_argument(choices=['start', 'stop', 'restart', 'status', 'run'], dest='daemon_cmd',
-            help="Daemon commands control (use 'run' for consol mode)" )
 
-        self.add_argument("-p", "--port", default=config.websocket_port, type=int, dest="websocket_port", 
+        # daemon server command. 'run' to avoid daemon mode
+        self.add_argument(choices=['start', 'stop', 'restart', 'status', 'run'],
+            dest='daemon_cmd', help="Daemon commands control (use 'run' for consol mode)")
+
+        self.add_argument("-p", "--port",
+            default=config.websocket_port, type=int, dest="websocket_port",
             help="Websocket server port (default: %i)" % config.websocket_port)
 
-        self.add_argument("-i", "--interface", default=config.sniffer_device, dest="sniffer_device", 
+        self.add_argument("-i", "--interface",
+            default=config.sniffer_device, dest="sniffer_device",
             help="Network device for sniffing (default: %s)" % config.sniffer_device)
 
-        self.add_argument("-d", "--debug", action='store_true',
-            help="Pass in debug mode")
-
-        # self.add_argument("-m", "--mask", default=config.sniffer_device_mask, dest="sniffer_mask", 
-        #     help="Local network mask (default: %s)" % config.sniffer_device_mask)
-
-        # self.add_argument("-n", "--net", default=config.sniffer_device_net, dest="sniffer_net", 
-        #     help="Local network address (default: %s)" % config.sniffer_device_net)
-
+        self.add_argument("-d", "--debug", action='store_true', help="Pass in debug mode")
 
 
 class ServeurNDOP(daemon.Daemon):
@@ -88,10 +85,10 @@ class ServeurNDOP(daemon.Daemon):
         logger = logging.getLogger()
 
         logger.info(">>>>>>>>>>>>>>>>>>>> Network Sniffer with web display")
-        logger.info("# " + datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+        logger.info("# " + dt.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
 
         # Init websocket server (tornado)
-        ws = core.wsserver.WsServer(self.args.websocket_port)
+        ws_serv = core.wsserver.WsServer(self.args.websocket_port)
         # Init websocket data
         wsdata = core.wsserver.ClientsList()
         add_mod_prot(wsdata, config.modules_list)
@@ -101,27 +98,26 @@ class ServeurNDOP(daemon.Daemon):
 
         # Start services
         try:
-            ws.start()
+            ws_serv.start()
             time.sleep(0.5)
         except:
-            ws.stop()
+            ws_serv.stop()
             exit(2)
 
         try:
             sniff.start()
             time.sleep(0.5)
         except:
-            ws.stop()
+            ws_serv.stop()
             sniff.stop()
             exit(2)
-
 
         # Loop
         try:
             while 1:
                 recv = sniff.get_data()
-                for r in recv:
-                    wsdata.send(r[0], r[1])
+                for r_data in recv:
+                    wsdata.send(r_data[0], r_data[1])
 
         except KeyboardInterrupt:
             logger.info("Stopping...")
@@ -130,8 +126,8 @@ class ServeurNDOP(daemon.Daemon):
             sniff.stop()
             sniff.join()
             # Webserver stop
-            ws.stop()
-            ws.join()
+            ws_serv.stop()
+            ws_serv.join()
             logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
                 
         exit(0)
@@ -143,10 +139,10 @@ def add_mod_prot(wsdata, lmod):
     """
 
     if len(lmod) > 0:
-        for m in lmod:
+        for mod in lmod:
             try:
                 # import module
-                module = importlib.import_module("modules." + m)
+                module = importlib.import_module("modules." + mod)
 
                 # Check module main class
                 getattr(module, "NetModChild")
@@ -156,14 +152,16 @@ def add_mod_prot(wsdata, lmod):
                 # Add protocol for the webserver
                 wsdata.addProtocol(modclass.protocol)
 
-            except:
+            except Exception:
                 pass
 
 
 def conf_logger(args):
-
+    """
+    Configure general logger parameters
+    """
     # create a file handler
-    file_handler = logging.handlers.RotatingFileHandler(config.log_file,'a', 1000000)
+    file_handler = logging.handlers.RotatingFileHandler(config.log_file, 'a', 1000000)
     # output handler
     stdout_handler = logging.StreamHandler(sys.stdout)
 
@@ -186,7 +184,6 @@ def conf_logger(args):
     logger.setLevel(mod)
     file_handler.setLevel(mod)
     stdout_handler.setLevel(mod)
-
 
     # add the handlers to the logger
     logger.addHandler(file_handler)
@@ -211,26 +208,21 @@ def main():
 
     # Configure logger
     conf_logger(args)
-    # Get logger
-    logger = logging.getLogger()
-
 
     # Get daemon class
-    daemon = ServeurNDOP(args)
-    
+    daemon_serv = ServeurNDOP(args)
 
+    # arguments management
     if 'start' == args.daemon_cmd:
-        daemon.start()
+        daemon_serv.start()
     elif 'stop' == args.daemon_cmd:
-        daemon.stop()
+        daemon_serv.stop()
     elif 'restart' == args.daemon_cmd:
-        daemon.restart()
+        daemon_serv.restart()
     elif 'run' == args.daemon_cmd:
-        daemon.run()
+        daemon_serv.run()
 
     sys.exit(0)
-
-
 
 
 if __name__ == "__main__":

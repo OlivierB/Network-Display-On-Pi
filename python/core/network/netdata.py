@@ -6,11 +6,6 @@ Network implementation data
 @author: Olivier BLIN
 """
 
-
-
-
-import pcap
-
 ########################################
 # ETHERNET PROTOCOL
 # File : core.network.ethernet.py

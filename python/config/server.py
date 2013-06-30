@@ -42,9 +42,9 @@ daemon_root_dir = "/"
 daemon_working_dir = "/home/student/Documents/Network-Display-On-Pi/python"
 
 # input, output and error file
-daemon_stdin 	= '/dev/null'
-daemon_stdout 	= '/tmp/ndop_out'
-daemon_stderr 	= '/dev/null'
+daemon_stdin = '/dev/null'
+daemon_stdout = '/tmp/ndop_out'
+daemon_stderr = '/dev/null'
 
 # PID file
 daemon_pid_file = '/var/run/ndop.pid'
@@ -54,12 +54,10 @@ daemon_pid_file = '/var/run/ndop.pid'
 # SQL Database connection
 
 # Disabled SQL Database
-db_sql_on	= True
+db_sql_on = False
 
-db_host 	= "192.168.1.144"
-db_user 	= "ndop"
-db_passwd	= "ndop"
-db_database	= "NDOP"
-db_port 	= 3306
-
-
+db_host = "192.168.1.144"
+db_user = "ndop"
+db_passwd = "ndop"
+db_database = "NDOP"
+db_port = 3306

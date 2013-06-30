@@ -10,10 +10,13 @@ inherit from NetModule
 @author: Olivier BLIN
 """
 
+# Python lib import
+import time
+import psutil
 
-import time, psutil
-
+# Project file import
 import netmodule as netmod
+
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
@@ -34,30 +37,28 @@ class NetModChild(netmod.NetModule):
 
         # get data
         val = dict()
-        val["mem_load"]     = self.state["mem"]
-        val["proc_load"]    = self.state["cpu"]
-        val["swap_load"]    = self.state["swap"]
+        val["mem_load"] = self.state["mem"]
+        val["proc_load"] = self.state["cpu"]
+        val["swap_load"] = self.state["swap"]
         val["pkt_tot"], val["pkt_lost"] = 0, 0
 
         # send data
         return val
-
 
     def sysState(self):
         """
         Get system stats
         """
         val = dict()
-        val["time"]     = time.time()
-        val["mem"]      = psutil.virtual_memory()[2]
-        val["swap"]     = psutil.swap_memory()[3]
-        val["cpu"]      = psutil.cpu_percent(interval=0)
-        val["sniff_stats"] = 0,0,0 #self.sniffer.stats() # nbp, plost with pcap, plost with device
-
+        val["time"] = time.time()
+        val["mem"] = psutil.virtual_memory()[2]
+        val["swap"] = psutil.swap_memory()[3]
+        val["cpu"] = psutil.cpu_percent(interval=0)
+        val["sniff_stats"] = 0, 0, 0  # self.sniffer.stats() # nbp, plost with pcap, plost with device
+        
         # # Disk data collect
         # val["io_read"]  = psutil.disk_io_counters(perdisk=False)[2]
         # val["io_write"] = psutil.disk_io_counters(perdisk=False)[3]
-
         return val
 
     def diffState(self, old, new):
@@ -71,13 +72,13 @@ class NetModChild(netmod.NetModule):
             diff = 1
 
         # time in second.microsec
-        val["time"]     = new["time"]
-        val["dtime"]    = diff
+        val["time"] = new["time"]
+        val["dtime"] = diff
 
         # sys data in %
-        val["mem"]      = new["mem"]
-        val["cpu"]      = new["cpu"]
-        val["swap"]     = new["swap"]
+        val["mem"] = new["mem"]
+        val["cpu"] = new["cpu"]
+        val["swap"] = new["swap"]
 
         # Packet stats
         ptot = (new["sniff_stats"][0] - old["sniff_stats"][0])
@@ -93,6 +94,3 @@ class NetModChild(netmod.NetModule):
         # val["disk_speed_write"] = (new["io_write"] - old["io_write"]) / diff
 
         return val
-
-
-

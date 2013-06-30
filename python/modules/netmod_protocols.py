@@ -8,21 +8,21 @@ inherit from NetModule
 @author: Olivier BLIN
 """
 
+# Python lib import
+import datetime
 
-import time, operator, datetime
-
+# Project file import
 import netmodule as netmod
-
 import core.network.netdata as netdata
-import core.network.utils as netutils
+
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
         netmod.NetModule.__init__(self, updatetime=30, savetime=('m', 30), protocol='protocols')
 
         # packet data
-        self.lEtherProtocol = dict() # list protocol ethernet
-        self.lIPProtocol = dict() # list protocol ip
+        self.lEtherProtocol = dict()  # list protocol ethernet
+        self.lIPProtocol = dict()  # list protocol ip
 
         self.lEtherList = list()
         self.lIPList = list()
@@ -32,19 +32,16 @@ class NetModChild(netmod.NetModule):
         self.save_oldstats = val
         self.update_oldstats = val
 
-
     def update(self):
         new = self.get_state()
         diffval = self.diff_states(self.update_oldstats, new)
         self.update_oldstats = new
 
-
         # get data
         res = dict()
         res["ethernet"] = list()
         for k in self.lEtherList:
-            res["ethernet"].append((netdata.ETHERTYPE[k]["protocol"], diffval["ether"][k])) 
-
+            res["ethernet"].append((netdata.ETHERTYPE[k]["protocol"], diffval["ether"][k]))
 
         res["ip"] = list()
         for k in self.lIPList:
@@ -52,7 +49,6 @@ class NetModChild(netmod.NetModule):
 
         # send data
         return res
-
 
     def pkt_handler(self, pkt):
         # List of Ethernet protocols
@@ -63,7 +59,6 @@ class NetModChild(netmod.NetModule):
             else:
                 self.lEtherProtocol[typ] = 1
                 self.lEtherList.append(typ)
-
 
         if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
             # List of IP protocols
@@ -93,7 +88,6 @@ class NetModChild(netmod.NetModule):
                 req += ");"
                 lreq.append(req)
 
-
         for k in self.lIPList:
             if diffval["ip"][k] > 0:
                 req = "INSERT INTO protocols_ip(date, protocol, number) VALUES ("
@@ -104,7 +98,6 @@ class NetModChild(netmod.NetModule):
                 lreq.append(req)
 
         return lreq
-
 
     def get_state(self):
         val = dict()
@@ -125,7 +118,7 @@ class NetModChild(netmod.NetModule):
             for k in new[key].keys():
                 if k in old[key].keys():
                     val[key][k] = new[key][k] - old[key][k]
-                else :
+                else:
                     val[key][k] = new[key][k]
 
         return val

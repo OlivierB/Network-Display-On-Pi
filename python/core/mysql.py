@@ -7,7 +7,6 @@ Use MySQLdb
 """
 
 # Python lib import
-import sys, time
 import logging
 import MySQLdb as mdb
 
@@ -28,25 +27,22 @@ class MySQLdata():
         # Get logger
         self.logger = logging.getLogger()
 
-
     def connection(self):
-        while (not self.connect) and  (self.nbrtry < self.maxtry):
+        while (not self.connect) and (self.nbrtry < self.maxtry):
             self.nbrtry += 1
             try:
                 self.connect = mdb.connect(
-                    host=self.host, 
+                    host=self.host,
                     port=self.port,
-                    user=self.user, 
-                    passwd=self.passwd, 
+                    user=self.user,
+                    passwd=self.passwd,
                     db=self.database)
             except mdb.Error, e:
-                self.logger.error("Try %i - MySQLdb Error %d: %s" % (self.nbrtry, e.args[0],e.args[1]))
+                self.logger.error("Try %i - MySQLdb Error %d: %s" % (self.nbrtry, e.args[0], e.args[1]))
             finally:
                 if self.connect:
                     self.logger.debug("MySQLdb connection OK")
                     self.nbrtry = 0
-
-
 
     def execute(self, data):
         if self.connect:
@@ -60,12 +56,9 @@ class MySQLdata():
                     else:
                         cur.execute(data)
             except mdb.Error, e:
-                self.logger.error("MySQLdb Error %d: %s" % (e.args[0],e.args[1]))
+                self.logger.error("MySQLdb Error %d: %s" % (e.args[0], e.args[1]))
         
-
     def close(self):
         if self.connect:
             self.connect.close
             self.logger.debug("MySQLdb close")
-
-

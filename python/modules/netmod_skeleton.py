@@ -9,14 +9,13 @@ inherit from NetModule
 @author: Olivier BLIN
 """
 
-import time
-
+# Project file import
 import netmodule as netmod
+
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
         netmod.NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='classip')
-
 
     def update(self):
         """
@@ -50,4 +49,3 @@ class NetModChild(netmod.NetModule):
 
         """
         return None
-

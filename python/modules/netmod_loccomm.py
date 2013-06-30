@@ -10,15 +10,16 @@ inherit from NetModule
 @author: Olivier BLIN
 """
 
+# Python lib import
+import pcap
 
-import time, operator, pcap
-
+# Project file import
 import netmodule as netmod
-
 import core.network.netdata as netdata
 import core.network.utils as netutils
 
-LOCCOMM_MAX_IP  = 1000
+LOCCOMM_MAX_IP = 1000
+
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
@@ -28,7 +29,6 @@ class NetModChild(netmod.NetModule):
         self.dIP_loccomm = dict()
         self.oldIPList = set()
         
-
     def update(self):
         # get data
         val = self.get_loc_comm()
@@ -52,7 +52,6 @@ class NetModChild(netmod.NetModule):
                 self.add_loccomm(src, -1, pkt.pktlen)
             else:
                 print "This packet is stupid"
-
 
     def add_loccomm(self, src, dst, size):
         key = (src, dst)
@@ -78,7 +77,7 @@ class NetModChild(netmod.NetModule):
         l_ip = set()
         l_comm = list()
         for s, d in comm.keys():
-            elem = comm[(s,d)]
+            elem = comm[(s, d)]
             ss = self.ip_to_s(s)
             sd = self.ip_to_s(d)
             val = dict()

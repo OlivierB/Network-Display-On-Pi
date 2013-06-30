@@ -10,13 +10,16 @@ inherit from NetModule
 @author: Olivier BLIN
 """
 
+# Python lib import
+import time
+import psutil
+import datetime
 
-import time, psutil, datetime
-
+# Project file import
 import netmodule as netmod
-
 import core.network.utils as netutils
 import core.network.netdata as netdata
+
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
@@ -25,7 +28,6 @@ class NetModChild(netmod.NetModule):
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
 
-        
         # packet data
         self.data = dict()
         self.data["pkt_nbr"] = 0
@@ -33,13 +35,11 @@ class NetModChild(netmod.NetModule):
         self.data["net_load_in"] = 0
         self.data["net_load_out"] = 0
 
-
         stat = self.sysState()
         
         # init
         self.oldValues = stat
         self.oldTotstats = stat
-
 
     def update(self):
         # System state update
@@ -49,18 +49,17 @@ class NetModChild(netmod.NetModule):
 
         # get data
         val = dict()
-        val["tot_in_Ko"]    = self.state["net_speed_in"] / 1024
-        val["tot_out_Ko"]   = self.state["net_speed_out"]  / 1024
+        val["tot_in_Ko"] = self.state["net_speed_in"] / 1024
+        val["tot_out_Ko"] = self.state["net_speed_out"] / 1024
 
-        val["in_Ko"]    = self.state["net_load_in"] / 1024
-        val["out_Ko"]   = self.state["net_load_out"]  / 1024
+        val["in_Ko"] = self.state["net_load_in"] / 1024
+        val["out_Ko"] = self.state["net_load_out"] / 1024
 
-        val["loc_Ko"]   = self.state["net_load_loc"] / 1024
-        val["Ko"]       = val["in_Ko"] + val["out_Ko"] + val["loc_Ko"]
+        val["loc_Ko"] = self.state["net_load_loc"] / 1024
+        val["Ko"] = val["in_Ko"] + val["out_Ko"] + val["loc_Ko"]
 
         # send data
         return val
-
 
     def pkt_handler(self, pkt):
         self.data["pkt_nbr"] += 1
@@ -78,7 +77,6 @@ class NetModChild(netmod.NetModule):
                 self.data["net_load_in"] += pkt.pktlen
             elif bsrc and not bdst:
                 self.data["net_load_out"] += pkt.pktlen
-
 
     def save(self):
         req = "INSERT INTO bandwidth(date, global, local, incoming, outcoming, dtime_s) VALUES ("
@@ -99,18 +97,17 @@ class NetModChild(netmod.NetModule):
         req += ")"
         return req
 
-
     def sysState(self):
         """
         Get system stats
         """
 
         val = dict()
-        val["time"]     = time.time()
+        val["time"] = time.time()
         val["net_sent"] = psutil.network_io_counters(pernic=False)[0]
         val["net_recv"] = psutil.network_io_counters(pernic=False)[1]
         val["net_load_loc"] = self.data["net_load_loc"]
-        val["net_load_in"]  = self.data["net_load_in"]
+        val["net_load_in"] = self.data["net_load_in"]
         val["net_load_out"] = self.data["net_load_out"]
 
         return val
@@ -126,12 +123,12 @@ class NetModChild(netmod.NetModule):
             diff = 1
 
         # time in second.microsec
-        val["time"]     = new["time"]
-        val["dtime"]    = diff
+        val["time"] = new["time"]
+        val["dtime"] = diff
 
         #  net data on device in o/sec
-        val["net_speed_out"]    = (new["net_sent"] - old["net_sent"]) / diff
-        val["net_speed_in"]     = (new["net_recv"] - old["net_recv"]) / diff
+        val["net_speed_out"] = (new["net_sent"] - old["net_sent"]) / diff
+        val["net_speed_in"] = (new["net_recv"] - old["net_recv"]) / diff
         # # net data by packet analysis
         val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"]) / diff
         val["net_load_in"] = (new["net_load_in"] - old["net_load_in"]) / diff
@@ -145,7 +142,7 @@ class NetModChild(netmod.NetModule):
         """
         val = dict()
         diff = new["time"] - old["time"]
-        val["dtime"]    = diff
+        val["dtime"] = diff
 
         # # net data by packet analysis
         val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"]) / 1024
@@ -153,5 +150,3 @@ class NetModChild(netmod.NetModule):
         val["net_load_out"] = (new["net_load_out"] - old["net_load_out"]) / 1024
 
         return val
-
-

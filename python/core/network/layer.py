@@ -13,10 +13,10 @@ class Layer():
         self.payload = pktdata
 
     def __str__(self):
-        if self.protocol == None:
+        if self.protocol is None:
             return "-> ROW"
         else:
-            if self.payload != None:
+            if self.payload is not None:
                 return "-> "+self.protocol+" "+self.payload.__str__()
             else:
                 return "-> "+self.protocol
@@ -26,4 +26,3 @@ class Layer():
 
     def get_data(self):
         return self.payload
-

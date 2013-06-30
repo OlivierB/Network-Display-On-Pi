@@ -8,9 +8,8 @@ Services list
 @author: Olivier BLIN
 """
 
+# Python lib import
 from ... import layer
-import struct
-import socket
 
 
 class DNS(layer.Layer):
@@ -56,6 +55,7 @@ class DNS(layer.Layer):
         #     print 'erreur', self.transaction_id
 
         # print 'nb reponses', socket.ntohs(struct.unpack('H', pktdata[6:8])[0])
+
 
 dUDPType = {
     53: {'callback': DNS, 'protocol': 'DNS', 'description': 'DNS'}

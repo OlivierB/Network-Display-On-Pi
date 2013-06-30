@@ -8,17 +8,20 @@ inherit from NetModule
 @author: Olivier BLIN
 """
 
+# Python lib import
+import time
+import operator
+import pcap
 
-import time, operator, pcap
-
+# Project file import
 import netmodule as netmod
-
 import core.network.netdata as netdata
 import core.network.utils as netutils
 
-MAX_IP_LIST_OUTSIDE     = 1000
-MAX_IP_LIST_SEND        = 20
-MAX_TIME_IP_LIST        = 600
+MAX_IP_LIST_OUTSIDE = 1000
+MAX_IP_LIST_SEND = 20
+MAX_TIME_IP_LIST = 600
+
 
 class NetModChild(netmod.NetModule):
     def __init__(self):
@@ -30,7 +33,6 @@ class NetModChild(netmod.NetModule):
 
         self.lIP_tosend = self.get_ipout()
         self.lIP_next_start = 0
-
 
     def update(self):
         # Check if we need to update IP send list
@@ -51,7 +53,6 @@ class NetModChild(netmod.NetModule):
             # send data
             return val
 
-
     def pkt_handler(self, pkt):
         if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
             src = pkt.Ether.payload.src
@@ -60,7 +61,6 @@ class NetModChild(netmod.NetModule):
             # bdst = netutils.ip_is_reserved(dst)
             if not bsrc:
                 self.add_ip_list_outside(src, pkt.timestamp)
-
 
     def add_ip_list_outside(self, ip, timestamp):
         if len(self.lIPOut) < MAX_IP_LIST_OUTSIDE:
@@ -91,14 +91,13 @@ class NetModChild(netmod.NetModule):
     def __cleaniplist(self, ip, t, lt, limit):
         diff = t - lt
         elem = self.lIPOut[ip]
-        if not(((t - elem["time"]) < diff/2.0)\
-            or (elem["nbr"] > limit and (t - elem["time"]) < MAX_TIME_IP_LIST)):
+        if not(((t - elem["time"]) < diff/2.0) or (elem["nbr"] > limit and (t - elem["time"]) < MAX_TIME_IP_LIST)):
             self.lIPOut.pop(ip)
 
     def get_ipout(self):
         return map(pcap.ntoa, self.lIPOut.keys())
 
-    def get_ipout_top(self, maxip = 20):
+    def get_ipout_top(self, maxip=20):
         l = list()
         nbip = 0
         sorted_l = sorted(self.lIPOut.iteritems(), key=operator.itemgetter(1), reverse=True)

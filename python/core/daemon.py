@@ -8,12 +8,16 @@ Daemon model class
 """
 
 # Python lib import
-import sys, os, time, atexit
+import sys
+import os
+import time
+import atexit
 import logging
-from signal import SIGTERM, SIGINT 
+from signal import SIGINT
 
 # stop timeout (in second)
 MAX_SIGINT_WAIT = 15
+
 
 class Daemon:
     """
@@ -31,19 +35,18 @@ class Daemon:
         self.working_dir = working_dir
         self.log = logging.getLogger()
 
-    
     def daemonize(self):
         """
-        do the UNIX double-fork magic, see Stevens' "Advanced 
+        do the UNIX double-fork magic, see Stevens' "Advanced
         Programming in the UNIX Environment" for details (ISBN 0201563177)
         http://www.erlenstar.demon.co.uk/unix/faq_2.html#SEC16
         """
-        try: 
-            pid = os.fork() 
+        try:
+            pid = os.fork()
             if pid > 0:
                 # exit first parent
-                sys.exit(0) 
-        except OSError, e: 
+                sys.exit(0)
+        except OSError, e:
             self.log.error("fork #1 failed: %d (%s)\n" % (e.errno, e.strerror))
             sys.exit(1)
     
@@ -52,24 +55,24 @@ class Daemon:
             os.chroot(self.root_dir)
         except:
             self.log.error("fail to change root directory\n")
-            sys.exit(1) 
+            sys.exit(1)
         try:
-            os.chdir(self.working_dir) 
+            os.chdir(self.working_dir)
         except:
             self.log.error("fail to change working directory\n")
-            sys.exit(1) 
-        os.setsid() 
-        os.umask(0) 
+            sys.exit(1)
+        os.setsid()
+        os.umask(0)
     
         # do second fork
-        try: 
-            pid = os.fork() 
+        try:
+            pid = os.fork()
             if pid > 0:
                 # exit from second parent
-                sys.exit(0) 
-        except OSError, e: 
+                sys.exit(0)
+        except OSError, e:
             self.log.error("fork #2 failed: %d (%s)\n" % (e.errno, e.strerror))
-            sys.exit(1) 
+            sys.exit(1)
     
         # redirect standard file descriptors
         sys.stdout.flush()
@@ -84,7 +87,7 @@ class Daemon:
         # write pidfile
         atexit.register(self.delpid)
         pid = str(os.getpid())
-        file(self.pidfile,'w+').write("%s\n" % pid)
+        file(self.pidfile, 'w+').write("%s\n" % pid)
     
     def delpid(self):
         os.remove(self.pidfile)
@@ -96,7 +99,7 @@ class Daemon:
 
         # Check for a pidfile to see if the daemon already runs
         try:
-            pf = file(self.pidfile,'r')
+            pf = file(self.pidfile, 'r')
             pid = int(pf.read().strip())
             pf.close()
         except IOError:
@@ -117,7 +120,7 @@ class Daemon:
         """
         # Get the pid from the pidfile
         try:
-            pf = file(self.pidfile,'r')
+            pf = file(self.pidfile, 'r')
             pid = int(pf.read().strip())
             pf.close()
         except IOError:
@@ -126,7 +129,7 @@ class Daemon:
         if not pid:
             message = "pidfile %s does not exist. Daemon not running?\n"
             self.log.error(message % self.pidfile)
-            return # not an error in a restart
+            return  # not an error in a restart
 
         # Try killing the daemon process
         st_t = time.time()
@@ -153,7 +156,6 @@ class Daemon:
         """
         self.stop()
         self.start()
-
 
     def run(self):
         """

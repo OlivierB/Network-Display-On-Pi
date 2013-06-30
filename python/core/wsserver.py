@@ -11,11 +11,10 @@ Use python tornado webserver
 @author: Olivier BLIN
 """
 
-
-import threading, multiprocessing
-import time, types
+# Python lib import
+import threading
+import time
 import logging
-
 import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
@@ -72,7 +71,6 @@ class WsServer(threading.Thread):
 
         self.log = logging.getLogger()
 
-
     def run(self):
         self.log.info("WsServer : Server started...")
         try:
@@ -80,13 +78,12 @@ class WsServer(threading.Thread):
             self.log.info('WsServer : Server stopped...')
         except KeyboardInterrupt:
             self.log.info('WsServer : Server stopped on interruption signal...')
-        except Exception as e:
+        except Exception:
             self.log.error("WsServer : ", exc_info=True)
 
     def stop(self):
         self.clientList.closeCom()
         tornado.ioloop.IOLoop.instance().stop()
-
 
 
 class ClientsList(object):
@@ -96,17 +93,16 @@ class ClientsList(object):
 
     # Singleton creation
     _instance = None
+
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(ClientsList, cls).__new__(
-                                cls, *args, **kwargs)
+            cls._instance = super(ClientsList, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
     #  class values
     cli_list = dict()
     protocols_list = list()
     mutex = threading.Lock()
-
 
     def addClient(self, client, subprotocols):
         """
@@ -123,8 +119,6 @@ class ClientsList(object):
                 self.cli_list[prot] = [client]
             self.mutex.release()
         return prot
-
-
 
     def delClient(self, client):
         """
@@ -152,9 +146,8 @@ class ClientsList(object):
         """
         try:
             client.write_message(data)
-        except Exception as e:
+        except Exception:
             pass
-
 
     def send(self, proto, data):
         """
@@ -164,7 +157,7 @@ class ClientsList(object):
         proto = StirngTyp list  -> Send to all protols in the list
         """
         self.mutex.acquire()
-        if type(proto) is type(None):
+        if type(proto) is None:
             for p in self.cli_list.keys():
                 for c in self.cli_list[p]:
                     self.__send(c, data)
@@ -187,9 +180,8 @@ class ClientsList(object):
     def getData(self):
         return self.cli_list
 
-
     def addProtocol(self, prot):
-        if prot != None:
+        if prot is not None:
             self.protocols_list.append(prot)
 
     def getProtocols(self):

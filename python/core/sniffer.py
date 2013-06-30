@@ -9,31 +9,30 @@ Use pcap
 """
 
 # Python lib import
-import sys, time, socket, types, os
-import string, struct, operator
-import multiprocessing as mp
-import importlib, pcap
+import time
+import importlib
+import pcap
 import logging
+import multiprocessing as mp
 
 # Project configuration file
 import config.server as config
 
-# Project import file
+# Project file import
 import core.network.packet as packet
 import core.mysql as mysqldata
 
 
 # Accept all packet or not
-PCAP_PROMISCUOUS_MODE   = 1
+PCAP_PROMISCUOUS_MODE = 1
 # Waiting time for new packet
-PCAP_SNIFFER_TIMEOUT    = 300
+PCAP_SNIFFER_TIMEOUT = 300
 # Packet max length for capture
-PCAP_PACKET_MAX_LEN     = 1514
+PCAP_PACKET_MAX_LEN = 1514
 # Time to check modules update
-MIN_TIME_MOD_UPDATE     = 0.5
+MIN_TIME_MOD_UPDATE = 0.5
 # Time to check modules SQL database saving
-MIN_TIME_DB_UPDATE      = 1
-
+MIN_TIME_DB_UPDATE = 1
 
 
 class Sniffer(mp.Process):
@@ -42,23 +41,24 @@ class Sniffer(mp.Process):
 
     This class some modules which analyse packets and make stats
     """
-    number = 0
+    
     def __init__(self, dev="eth0"):
         mp.Process.__init__(self)
 
         # stop condition
-        self.Terminated = mp.Value('i', 0)
+        self.terminated = mp.Value('i', 0)
 
         # Var
         self.dev = dev
-        # communication between packet capture (pcap) and webserver (tornado) [2 process]
-        self.pipe_receiver, self.pipe_sender  = mp.Pipe(duplex=False)
+        # communication between packet capture (pcap) and webserver
+        # (tornado) [2 process]
+        self.pipe_receiver, self.pipe_sender = mp.Pipe(duplex=False)
 
     def get_data(self):
         return self.pipe_receiver.recv()
 
     def stop(self):
-        self.Terminated.value = 1
+        self.terminated.value = 1
 
     def run(self):
         # Get logger
@@ -66,7 +66,7 @@ class Sniffer(mp.Process):
         logger.info("Sniffer : Capture started on " + self.dev)
 
         # Init
-        term = self.Terminated      # little optimisation (local variable)
+        term = self.terminated      # little optimisation (local variable)
         pipe = self.pipe_sender
         lmod = load_mod(config.modules_list)
         last_update_t = time.time()
@@ -80,7 +80,7 @@ class Sniffer(mp.Process):
 
         # Get device informations if possible (IP address assigned)
         try:
-            net, mask = pcap.lookupnet(dev)
+            net, mask = pcap.lookupnet(self.dev)
         except:
             net, mask = "192.168.1.0", "255.255.255.0"
 
@@ -96,75 +96,78 @@ class Sniffer(mp.Process):
             while not term.value:
                 pkt = p.next()
 
-                if pkt != None:
+                if pkt is not None:
                     # Decode packet
                     pktdec = packet.Packet(pkt[0], pkt[1], pkt[2])
 
                     # send pkt to modules
-                    for m in lmod:
-                        m.pkt_handler(pktdec)
+                    for mod in lmod:
+                        mod.pkt_handler(pktdec)
 
                 # Modules update call
                 if time.time() - last_update_t > MIN_TIME_MOD_UPDATE:
                     last_update_t = time.time()
-                    ls = list()
-                    for m in lmod:
-                        data = m.get_data()
-                        if data != None:
-                            ls.append((m.protocol, data))
+                    l_res = list()
+                    for mod in lmod:
+                        data = mod.get_data()
+                        if data is not None:
+                            l_res.append((mod.protocol, data))
                     # Data to send with websocket
-                    if len(ls) > 0:
-                        pipe.send(ls)
+                    if len(l_res) > 0:
+                        pipe.send(l_res)
 
                 # Modules save call
                 if config.db_sql_on:
                     if time.time() - last_save_t > MIN_TIME_DB_UPDATE:
                         last_save_t = time.time()
-                        for m in lmod:
-                            data = m.get_sql()
-                            if data != None:
+                        for mod in lmod:
+                            data = mod.get_sql()
+                            if data is not None:
                                 mydb.execute(data)
-
 
         except KeyboardInterrupt:
             logger.info("Sniffer : Interruption signal")
-        except Exception as e:
+        except Exception:
             logger.error("Sniffer : ", exc_info=True)
         finally:
             if capture:
                 mydb.close()
                 logger.info("Sniffer : Capture stopped...")
-                a, b, c = p.stats()
-                if a > 0: res = b/(a*1.0)*100
-                else: res = 0.0
-                logger.info('Sniffer : %i packets received, %i packets dropped, %i packets dropped by interface - %d%%' % (a, b, c, res))
+                pkt_recv, pkt_drop, pkt_devdrop = p.stats()
+                if pkt_recv > 0:
+                    lost = pkt_drop / (pkt_recv * 1.0) * 100
+                else:
+                    lost = 0.0
+                logger.info('Sniffer : %i packets received, %i packets dropped, %i packets dropped by interface - %d%%'
+                % (pkt_recv, pkt_drop, pkt_devdrop, lost))
+
 
 def load_mod(lmod):
-        """
-        Load modules
-        """
-        # Get logger
-        logger = logging.getLogger()
+    """
+    Load modules
+    """
+    # Get logger
+    logger = logging.getLogger()
 
-        l_modules = list()
+    l_modules = list()
 
-        if len(lmod) > 0:
-            for m in lmod:
-                try:
-                    # import module
-                    module = importlib.import_module("modules." + m)
+    if len(lmod) > 0:
+        for mod in lmod:
+            try:
+                # import module
+                module = importlib.import_module("modules." + mod)
 
-                    # Check module main class
-                    getattr(module, "NetModChild")
+                # Check module main class
+                getattr(module, "NetModChild")
 
-                    # Create an instance
-                    modclass = module.NetModChild()
+                # Create an instance
+                modclass = module.NetModChild()
 
-                    # add module to the list
-                    l_modules.append(modclass)
-                    logger.info("Load module " + m + " (protocol:" + modclass.protocol + ")")
+                # add module to the list
+                l_modules.append(modclass)
+                logger.info("Load module " + mod + " (protocol:" + modclass.protocol + ")")
 
-                except Exception as e:
-                    logger.error(m + " : ", exc_info=True)
+            except Exception:
+                logger.error(mod + " : ", exc_info=True)
 
-        return l_modules
+    return l_modules

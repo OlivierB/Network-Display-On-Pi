@@ -9,7 +9,8 @@ New submodule need to override some of these methods
 """
 
 # Python lib import
-import time, datetime
+import time
+import datetime
 
 
 class NetModule():
@@ -20,16 +21,15 @@ class NetModule():
     def __init__(self, updatetime=10, savetime=('m', 30), protocol=None):
 
         # protocol (or module name)
-        self.protocol       = protocol
+        self.protocol = protocol
 
         # Time management for update function
-        self.updatetime     = updatetime
-        self.lastupdate     = 0
+        self.updatetime = updatetime
+        self.lastupdate = 0
 
         # Time management for save function
         self.save_timecode(savetime)
         self.save_timewait()
-
 
     def get_data(self):
         """
@@ -58,16 +58,15 @@ class NetModule():
         if self.savecode[0] == 'm':
             d = datetime.datetime.today()
             self.savetime = time.time()
-            self.savewait = (self.savecode[1] - (d.minute % self.savecode[1]) ) * 60 - d.second
+            self.savewait = (self.savecode[1] - (d.minute % self.savecode[1])) * 60 - d.second
         elif self.savecode[0] == 'h':
             d = datetime.datetime.today()
             self.savetime = time.time()
-            self.savewait = (self.savecode[1] - (d.hour % self.savecode[1]) ) * 3600 - (d.minute*60) - d.second
+            self.savewait = (self.savecode[1] - (d.hour % self.savecode[1])) * 3600 - (d.minute*60) - d.second
         else:
             self.savetime = time.time()
             self.savewait = 30*60
             print "NetModule : Time save error"
-
 
     def save_timecode(self, savetime):
         """
