@@ -39,11 +39,11 @@ log_file = "/var/log/ndop"
 
 # directories modifications
 daemon_root_dir = "/"
-daemon_working_dir = "/home/student/Documents/Network-Display-On-Pi/python"
+daemon_working_dir = "/"
 
 # input, output and error file
 daemon_stdin = '/dev/null'
-daemon_stdout = '/tmp/ndop_out'
+daemon_stdout = '/dev/null'
 daemon_stderr = '/dev/null'
 
 # PID file

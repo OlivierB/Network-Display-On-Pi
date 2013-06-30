@@ -43,7 +43,7 @@ class Ethernet(layer.Layer):
 
 # EtherType list
 dEtherType = {
-    '\x08\x00': {'callback': ip.IPv4, 'protocl': 'IPv4', 'description': 'Internet Protocol version 4'},
+    '\x08\x00': {'callback': ip.IPv4, 'protocol': 'IPv4', 'description': 'Internet Protocol version 4'},
     '\x08\x06': {'callback': None, 'protocol': 'ARP', 'description': 'Address Resolution Protocol'},
     '\x08\x42': {'callback': None, 'protocol': 'WoL', 'description': 'Wake on LAN'},
     '\x22\xF3': {'callback': None, 'protocol': 'IETF TRILL Protocol', 'description': 'Transparent Interconnection of Lots of Links - IETF Standard (Routing Bridges or TRILL Switches)'},
