@@ -57,7 +57,7 @@ daemon_pid_file = '/var/run/ndop.pid'
 # SQL Database connection
 
 # Disabled SQL Database
-db_sql_on = False
+db_sql_on = True
 
 db_host = "192.168.1.144"
 db_user = "ndop"
