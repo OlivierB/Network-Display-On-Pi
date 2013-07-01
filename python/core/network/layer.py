@@ -22,7 +22,6 @@ class Layer():
             else:
                 return "-> "+self.protocol
 
-
     def get_data(self):
         return self.payload
 
@@ -49,7 +48,7 @@ class Layer():
                 return None
         elif len(args) == 1:
             if args[0] == "*" or args[0] == self.protocol:
-                return self.payload
+                return self
             else:
                 return None
         else:

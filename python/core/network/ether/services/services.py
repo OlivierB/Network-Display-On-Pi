@@ -61,7 +61,22 @@ class HTTP(layer.Layer):
     def __init__(self, pktdata):
         layer.Layer.__init__(self, protocol="HTTP")
 
-        self.payload = layer.Layer(pktdata)
+        stype = ""
+        cnt = 0
+        dlen = min(len(pktdata), 10)
+        if dlen > 0:
+            while cnt < dlen and not (pktdata[cnt] == "/" or pktdata[cnt] == " "):
+                stype += pktdata[cnt]
+                # print pktdata[cnt]
+                cnt += 1
+        
+        if stype in ["HTTP", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH"]:
+            self.type = stype
+        else:
+            self.type = ""
+
+        self.payload = pktdata
+
 
 class HTTPS(layer.Layer):
     def __init__(self, pktdata):

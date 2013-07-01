@@ -65,7 +65,7 @@ class TCP(layer.Layer):
         self.dport = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.header_len = ord(pktdata[12]) >> 4
 
-        self.payload = layer.Layer(pktdata[4*self.header_len:])
+        # self.payload = layer.Layer(pktdata[4*self.header_len:])
 
         self.type = -1
 
@@ -81,9 +81,9 @@ class TCP(layer.Layer):
             call = None
 
         if call is not None:
-            self.payload = call(pktdata[8:])
+            self.payload = call(pktdata[4*self.header_len:])
         else:
-            self.payload = layer.Layer(pktdata[8:])
+            self.payload = layer.Layer(pktdata[4*self.header_len:])
 
     def is_type(self, typ):
         return self.type == typ
