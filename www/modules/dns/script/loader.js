@@ -1,2 +1,2 @@
-var display = new DnsDisplayer("dns-display");
+var display = new DnsDisplayerText("dns-display");
 display.connect(App.serverAddress, App.dnsProtocol);
