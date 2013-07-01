@@ -21,7 +21,8 @@ function SummaryCanvas(id) {
 
 	this.context = this.canvas.getContext('2d');
 
-
+	// used to make sure the legend fit in the bar
+	this.minHeight = -1;
 }
 
 // inheritance from BandwidthChart
@@ -29,36 +30,46 @@ SummaryCanvas.prototype = Object.create(AjaxManager.prototype);
 
 // method called by AjaxManager
 SummaryCanvas.prototype.dataManager = function(obj) {
+	// in order to redraw the data whe the window is resized
 	this.save = obj[0];
+
 	this.drawFromData(obj[0]);
 }
 
 SummaryCanvas.prototype.drawFromData = function(data) {
+	// clear the context
 	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 
-	this.addRectangle(data.out_Ko, data.Ko, 0, 'rgb(69, 194, 197)');
-	this.addRectangle(data.in_Ko, data.Ko, 1, 'rgb(247, 141, 63)');
-	this.addRectangle(data.loc_Ko, data.Ko, 2, 'rgb(16, 46, 55)');
+	this.addBar(data.out_Ko, data.Ko, 0, 'rgb(69, 194, 197)');
+	this.addBar(data.in_Ko, data.Ko, 1, 'rgb(247, 141, 63)');
+	this.addBar(data.loc_Ko, data.Ko, 2, 'rgb(16, 46, 55)');
 
 	this.drawLegend();
 }
 
 
-SummaryCanvas.prototype.addRectangle = function(value, global, position, color) {
+SummaryCanvas.prototype.addBar = function(value, global, position, color) {
 	var ratio = value / global;
 
+	// values correspond to the disposition on the page
 	var x = 1 / 6 + 3 / 12 * position;
 	var y = 1 / 8 + (1 - ratio) * (1 / 2);
 
 	var width = 1 / 6;
 	var height = ratio * 1 / 2 + (1 / 35);
 
+	// keep the smallest height of bars
+	if(this.minHeight == -1 || this.minHeight > height)
+		this.minHeight = height;
+
+	// draw bars
 	this.context.beginPath();
 	this.context.rect(this.ratioX(x), this.ratioY(y), this.ratioX(width), this.ratioY(height));
 	this.context.fillStyle = color;
 	this.context.fill();
 
+	// draw value on top of the bar
 	this.drawText(TextFormatter.formatNumber(value), this.ratioX(x + 1 / 12), this.ratioY(y - 1 / 35), color, this.ratioX(1 / 35), '');
 }
 
@@ -76,6 +87,7 @@ SummaryCanvas.prototype.resize = function() {
 	this.canvas.width = $('#' + this.id).width();
 	this.canvas.height = $('#' + this.id).height();
 
+	// redraw from the saved data
 	if (this.save != null) {
 		this.drawFromData(this.save);
 		this.drawLegend();
@@ -93,8 +105,20 @@ SummaryCanvas.prototype.ratioY = function(value) {
 
 SummaryCanvas.prototype.drawLegend = function() {
 	var y = 5 / 8 + 1 / 70;
+	var color1 = 'black';
+	var color2 = '#9A9A9A';
 
-	this.drawText('UP', this.ratioX(3 / 12), this.ratioY(y), 'black', this.ratioX(1 / 30), 'bold');
-	this.drawText('DOWN', this.ratioX(6 / 12), this.ratioY(y), 'black', this.ratioX(1 / 30), 'bold');
-	this.drawText('LOCAL', this.ratioX(9 / 12), this.ratioY(y), '#9A9A9A', this.ratioX(1 / 30), 'bold');
+	// if the smallest bar is smaller than the size of font, the text goes out of the bar
+	if(this.minHeight > -1 && this.minHeight < 1/30 * this.canvas.width/this.canvas.height + 1/70){
+		y += 1/30 * this.canvas.width/this.canvas.height + 1/70;
+		color2 = 'black';
+	}
+		
+
+	
+
+	this.drawText('UP', this.ratioX(3 / 12), this.ratioY(y), color1, this.ratioX(1 / 30), 'bold');
+	this.drawText('DOWN', this.ratioX(6 / 12), this.ratioY(y), color1, this.ratioX(1 / 30), 'bold');
+	this.drawText('LOCAL', this.ratioX(9 / 12), this.ratioY(y), color2, this.ratioX(1 / 30), 'bold');
 }
+
