@@ -22,8 +22,8 @@ LOCCOMM_MAX_IP = 1000
 
 
 class NetModChild(netmod.NetModule):
-    def __init__(self):
-        netmod.NetModule.__init__(self, updatetime=1, protocol='local_communication')
+    def __init__(self, *args, **kwargs):
+        netmod.NetModule.__init__(self, updatetime=1, protocol='local_communication', *args, **kwargs)
 
         # packet data
         self.dIP_loccomm = dict()

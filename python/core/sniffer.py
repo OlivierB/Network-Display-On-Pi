@@ -141,7 +141,7 @@ class Sniffer(mp.Process):
         # Init
         term = self.terminated      # little optimisation (local variable)
         pipe = self.pipe_sender
-        lmod = load_mod(self.lmod, pre="Sniffer %i : " % self.id)
+        lmod = load_mod(self.lmod, self.dev, pre="Sniffer %i : " % self.id)
         last_update_t = time.time()
         last_save_t = time.time()
         capture = False
@@ -215,7 +215,7 @@ class Sniffer(mp.Process):
                 % (self.id, pkt_recv, pkt_drop, pkt_devdrop, lost))
 
 
-def load_mod(lmod, pre=""):
+def load_mod(lmod, dev, pre=""):
     """
     Load modules
     """
@@ -234,7 +234,7 @@ def load_mod(lmod, pre=""):
                 getattr(module, "NetModChild")
 
                 # Create an instance
-                modclass = module.NetModChild()
+                modclass = module.NetModChild(dev=dev)
 
                 # add module to the list
                 l_modules.append(modclass)

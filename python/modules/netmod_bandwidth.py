@@ -22,8 +22,8 @@ import core.network.netdata as netdata
 
 
 class NetModChild(netmod.NetModule):
-    def __init__(self):
-        netmod.NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='bandwidth')
+    def __init__(self, *args, **kwargs):
+        netmod.NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='bandwidth', *args, **kwargs)
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"

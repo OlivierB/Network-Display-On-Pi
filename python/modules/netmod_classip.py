@@ -14,8 +14,8 @@ import netmodule as netmod
 import os
 
 class NetModChild(netmod.NetModule):
-    def __init__(self):
-        netmod.NetModule.__init__(self, protocol='classip')
+    def __init__(self, *args, **kwargs):
+        netmod.NetModule.__init__(self, protocol='classip', *args, **kwargs)
 
     	self.nbp = 0
 

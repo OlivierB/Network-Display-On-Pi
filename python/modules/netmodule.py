@@ -18,7 +18,7 @@ class NetModule():
     Module main class
     Define most usefull inheritance functions
     """
-    def __init__(self, updatetime=10, savetime=('m', 30), protocol=None):
+    def __init__(self, updatetime=10, savetime=('m', 30), protocol=None, dev="lo"):
 
         # protocol (or module name)
         self.protocol = protocol
@@ -31,7 +31,7 @@ class NetModule():
         self.save_timecode(savetime)
         self.save_timewait()
 
-        self.dev = "eth0"
+        self.dev = dev
 
     def get_data(self):
         """
