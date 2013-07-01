@@ -31,5 +31,7 @@
 	
 </div>
 
-<script type="text/javascript" src="/modules/dns/script/DnsDisplayer.js"></script>
+<script type="text/javascript" src="/script/dns/DnsDisplayer.js"></script>
+
+<script type="text/javascript" src="/modules/dns/script/DnsDisplayerText.js"></script>
 <script type="text/javascript" src="/modules/dns/script/loader.js"></script>

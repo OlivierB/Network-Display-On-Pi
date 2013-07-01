@@ -15,8 +15,8 @@ TotalBandwidthText.prototype = Object.create(AjaxManager.prototype);
 
 TotalBandwidthText.prototype.dataManager = function(obj) {
 
-	var obj =(obj[0])
-	// console.log(obj)
+	var obj =obj.list;
+
 	var res = '<table><thead><tr><th colspan="2">Total traffic</th></tr></thead>'
 
 	res += '<tr><td>Global</td>  <td><span class="bandwidth-number">' + TextFormatter.formatNumber(obj.Ko) + ' </span></td></tr>';
