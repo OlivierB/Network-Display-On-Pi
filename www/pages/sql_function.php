@@ -95,7 +95,7 @@ function getBandwidth($connection, $date_begin, $date_end){
 function getTotalBandwidth($connection, $date_begin, $date_end){
 
 	if($date_begin != '' && $date_end != ''){
-		$where_statement = 'WHERE date BETWEEN ('.$date_begin.') AND ('.$date_end.')';
+		$where_statement = ' WHERE date BETWEEN ('.$date_begin.') AND ('.$date_end.')';
 	}else{
 		$where_statement = '';
 	}
@@ -104,7 +104,18 @@ function getTotalBandwidth($connection, $date_begin, $date_end){
 	$sql = 'SELECT SUM(`global`) as Ko, SUM(`local`) as loc_Ko, SUM(`incoming`) as in_Ko, SUM(`outcoming`) as out_Ko FROM bandwidth  '.$where_statement;
 	$req = $connection->prepare($sql);
 	$req->execute();
-	$result = $req->fetchAll(PDO::FETCH_ASSOC);
+	$array = $req->fetchAll(PDO::FETCH_ASSOC)[0];
+
+	$result['list'] = $array;
+	
+	$sql = 'SELECT `date` FROM `bandwidth` '.$where_statement.' ORDER BY `date` LIMIT 1';
+	// echo $sql;
+	$req = $connection->prepare($sql);
+	$req->execute();
+	$date_begin = $req->fetch(PDO::FETCH_ASSOC)['date'];
+	
+	
+	$result['date_begin'] = $date_begin;
 	return $result;
 }
 

@@ -31,21 +31,24 @@ SummaryCanvas.prototype = Object.create(AjaxManager.prototype);
 // method called by AjaxManager
 SummaryCanvas.prototype.dataManager = function(obj) {
 	// in order to redraw the data whe the window is resized
-	this.save = obj[0];
+	this.save = obj;
 
-	this.drawFromData(obj[0]);
+	this.drawFromData(obj);
 }
 
 SummaryCanvas.prototype.drawFromData = function(data) {
 	// clear the context
 	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+	var list = data.list;
+	this.addBar(list.out_Ko, list.Ko, 0, 'rgb(69, 194, 197)');
+	this.addBar(list.in_Ko, list.Ko, 1, 'rgb(247, 141, 63)');
+	this.addBar(list.loc_Ko, list.Ko, 2, 'rgb(16, 46, 55)');
 
-	this.addBar(data.out_Ko, data.Ko, 0, 'rgb(69, 194, 197)');
-	this.addBar(data.in_Ko, data.Ko, 1, 'rgb(247, 141, 63)');
-	this.addBar(data.loc_Ko, data.Ko, 2, 'rgb(16, 46, 55)');
+	this.drawDate(data.date_begin);
 
 	this.drawLegend();
+	
 }
 
 
@@ -122,3 +125,8 @@ SummaryCanvas.prototype.drawLegend = function() {
 	this.drawText('LOCAL', this.ratioX(9 / 12), this.ratioY(y), color2, this.ratioX(1 / 30), 'bold');
 }
 
+SummaryCanvas.prototype.drawDate = function(date) {
+	var y = 6 / 8 + 1 / 30;
+
+	this.drawText('Since ' + date, this.ratioX(3 / 12), this.ratioY(y), 'black', this.ratioX(1 / 40), 'bold');
+}
