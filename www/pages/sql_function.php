@@ -119,6 +119,27 @@ function getTotalBandwidth($connection, $date_begin, $date_end){
 	return $result;
 }
 
+function getPacketLoss($connection, $date_begin, $date_end){
+
+	if($date_begin != '' && $date_end != ''){
+		$where_statement = ' WHERE date BETWEEN ('.$date_begin.') AND ('.$date_end.')';
+	}else{
+		$where_statement = '';
+	}
+
+	// request the sum of the bandwidth between the two date
+	$sql = 'SELECT * FROM packet_loss  '.$where_statement;
+	// echo $sql;
+	$req = $connection->prepare($sql);
+	$req->execute();
+	$array = $req->fetchAll(PDO::FETCH_ASSOC);
+
+	
+	
+	
+	return $array;
+}
+
 
 
 

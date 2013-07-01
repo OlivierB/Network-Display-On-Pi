@@ -49,6 +49,10 @@ try {
 		{
 			echo json_encode(getTotalBandwidth($connection, $date_begin, $date_end) );
 		}
+		elseif ($_GET['request'] == 'packet_loss') 
+		{
+			echo json_encode(getPacketLoss($connection, $date_begin, $date_end) );
+		}
 
 	}
 	
