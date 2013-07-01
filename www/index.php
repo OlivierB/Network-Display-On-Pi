@@ -58,6 +58,7 @@ include 'pages/common.php';
 		<div><?php include "modules/monthlyTraffic/index.php" ?></div>
 		<div><?php include "modules/dns/index.php" ?></div>
 		<div><?php include "modules/summary/index.php" ?></div>
+		<div><?php include "modules/dnsBubble/index.php" ?></div>
 
 	</div>
 	
