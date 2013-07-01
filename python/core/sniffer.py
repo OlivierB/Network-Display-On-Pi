@@ -131,6 +131,7 @@ class Sniffer(mp.Process):
 
     def stop(self):
         self.terminated.value = 1
+        self.pipe_sender.send(None)
 
     def run(self):
         # Get logger
@@ -202,7 +203,6 @@ class Sniffer(mp.Process):
         except Exception:
             logger.error("Sniffer %i : " % self.id, exc_info=True)
         finally:
-            pipe.send(None)
             if capture:
                 mydb.close()
                 logger.info("Sniffer %i : Capture stopped..." % self.id)
