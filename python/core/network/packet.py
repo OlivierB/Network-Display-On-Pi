@@ -22,3 +22,9 @@ class Packet():
         tor += " " + self.Ether.__str__()
         tor += " >"
         return tor
+
+    def is_protocol(self, *args):
+        return self.Ether.is_protocol(*args)
+
+    def get_protocol(self, *args):
+        return self.Ether.get_protocol(*args)

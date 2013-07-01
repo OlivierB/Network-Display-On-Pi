@@ -2,7 +2,6 @@
 
 """
 Skeleton
-Module base
 
 inherit from NetModule
 
@@ -11,11 +10,12 @@ inherit from NetModule
 
 # Project file import
 import netmodule as netmod
+# import core.network.netdata as netdata
 
 
 class NetModChild(netmod.NetModule):
     def __init__(self, *args, **kwargs):
-        netmod.NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='skeleton', *args, **kwargs)
+        netmod.NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='http', *args, **kwargs)
 
     def update(self):
         """
@@ -32,6 +32,10 @@ class NetModChild(netmod.NetModule):
 
         pkt is formated with Packet class
         """
+        res = pkt.get_protocol("Ethernet", "IPv4", "TCP", "HTTPS")
+        if res is not None:
+            print pkt
+            print "----------------------------------------------------------------"
         pass
 
     def reset(self):

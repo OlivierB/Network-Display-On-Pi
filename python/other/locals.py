@@ -10,9 +10,9 @@ import types
 import time
 import copy
 
-import core.network_callback
-import core.network_utils
+
 import core.network.packet as packet
+import core.network.netdata as netdata
 
 def fpcap():
     p = pcap.pcapObject()
@@ -157,3 +157,22 @@ if __name__ == "__main__":
 
 
 
+    ##########################################
+
+    # a = time.time()
+    # for i in range(100000):
+    #     if pktdec.Ether.is_type(netdata.ETHERTYPE_IPv4):
+    #         if pktdec.Ether.payload.is_type(netdata.IPTYPE_TCP):
+    #             if pktdec.Ether.payload.payload.is_type(netdata.TCPTYPE_HTTP):
+    #                 pass
+    # print "class - time : ", (time.time() - a)
+
+
+    # a = time.time()
+    # for i in range(100000):
+    #     if pktdec.is_protocol("Ethernet", "IPv4", "TCP"):
+    #         pass
+    # print "class - time : ", (time.time() - a)
+
+    
+    # 

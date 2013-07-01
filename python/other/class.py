@@ -47,4 +47,21 @@ class Child(Parent):
         print 'd', d
         
 
-test = Child(1,2,8)
+# test = Child(1,2,8)
+def is_ok(a):
+    if a in ["Ethernet", "IPv4", "TCP", "HTTP", "DNS"]:
+        return True
+    else:
+        return False
+
+def is_protocol(*args):
+        if len(args) > 0:
+            print args[0]
+            if args[0] == "*" or is_ok(args[0]):
+                return is_protocol(*args[1:])
+            else:
+                return False
+        else:
+            return True
+
+print is_protocol("Ethernet", "IPv4", "*", "DNS")

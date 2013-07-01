@@ -57,6 +57,24 @@ class DNS(layer.Layer):
         # print 'nb reponses', socket.ntohs(struct.unpack('H', pktdata[6:8])[0])
 
 
+class HTTP(layer.Layer):
+    def __init__(self, pktdata):
+        layer.Layer.__init__(self, protocol="HTTP")
+
+        self.payload = layer.Layer(pktdata)
+
+class HTTPS(layer.Layer):
+    def __init__(self, pktdata):
+        layer.Layer.__init__(self, protocol="HTTPS")
+
+        self.payload = layer.Layer(pktdata)
+
+
 dUDPType = {
     53: {'callback': DNS, 'protocol': 'DNS', 'description': 'DNS'}
+}
+
+dTCPType = {
+    80: {'callback': HTTP, 'protocol': 'HTTP', 'description': 'HTTP'},
+    443: {'callback': HTTPS, 'protocol': 'HTTPS', 'description': 'HTTPS'}
 }

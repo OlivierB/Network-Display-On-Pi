@@ -25,6 +25,7 @@ sniffer_device_mask = "255.255.255.0"
 ########################################
 # Modules selection
 modules_list = [
+    # ["netmod_http"],
     ["netmod_top", "netmod_iplist", "netmod_loccomm", "netmod_protocols", "netmod_bandwidth", "netmod_dns"]
     ]
 # module_list = ["netmod_classip"]

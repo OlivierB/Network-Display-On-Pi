@@ -67,6 +67,27 @@ class TCP(layer.Layer):
 
         self.payload = layer.Layer(pktdata[4*self.header_len:])
 
+        self.type = -1
+
+        # IP protocol decode
+        try:
+            if self.dport in services.dTCPType.keys():
+                call = services.dTCPType[self.dport]["callback"]
+                self.type = self.dport
+            else:
+                call = services.dTCPType[self.sport]["callback"]
+                self.type = self.sport
+        except:
+            call = None
+
+        if call is not None:
+            self.payload = call(pktdata[8:])
+        else:
+            self.payload = layer.Layer(pktdata[8:])
+
+    def is_type(self, typ):
+        return self.type == typ
+
 
 class UDP(layer.Layer):
     def __init__(self, pktdata):
