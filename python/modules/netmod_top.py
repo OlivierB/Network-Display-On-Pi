@@ -19,8 +19,8 @@ import netmodule as netmod
 
 
 class NetModChild(netmod.NetModule):
-    def __init__(self):
-        netmod.NetModule.__init__(self, updatetime=1, protocol='server_stat')
+    def __init__(self, *args, **kwargs):
+        netmod.NetModule.__init__(self, updatetime=1, protocol='server_stat', *args, **kwargs)
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"

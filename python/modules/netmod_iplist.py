@@ -24,8 +24,8 @@ MAX_TIME_IP_LIST = 600
 
 
 class NetModChild(netmod.NetModule):
-    def __init__(self):
-        netmod.NetModule.__init__(self, updatetime=5, protocol='iplist')
+    def __init__(self, *args, **kwargs):
+        netmod.NetModule.__init__(self, updatetime=5, protocol='iplist', *args, **kwargs)
 
         # packet data
         self.lIPOut = dict()

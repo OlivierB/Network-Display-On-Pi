@@ -17,8 +17,8 @@ import core.network.netdata as netdata
 
 
 class NetModChild(netmod.NetModule):
-    def __init__(self):
-        netmod.NetModule.__init__(self, updatetime=30, savetime=('m', 30), protocol='protocols')
+    def __init__(self, *args, **kwargs):
+        netmod.NetModule.__init__(self, updatetime=30, savetime=('m', 30), protocol='protocols', *args, **kwargs)
 
         # packet data
         self.lEtherProtocol = dict()  # list protocol ethernet
