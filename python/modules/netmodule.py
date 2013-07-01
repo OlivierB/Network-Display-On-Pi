@@ -31,6 +31,8 @@ class NetModule():
         self.save_timecode(savetime)
         self.save_timewait()
 
+        self.dev = "eth0"
+
     def get_data(self):
         """
         Manage call to update method with updatetime

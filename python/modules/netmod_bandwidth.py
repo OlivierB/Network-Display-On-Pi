@@ -44,22 +44,12 @@ class NetModChild(netmod.NetModule):
     def update(self):
         # System state update
         new = self.sysState()
-        self.state = self.diffState(self.oldValues, new)
+        state = self.diffState(self.oldValues, new)
         self.oldValues = new
 
-        # get data
-        val = dict()
-        val["tot_in_Ko"] = self.state["net_speed_in"] / 1024
-        val["tot_out_Ko"] = self.state["net_speed_out"] / 1024
-
-        val["in_Ko"] = self.state["net_load_in"] / 1024
-        val["out_Ko"] = self.state["net_load_out"] / 1024
-
-        val["loc_Ko"] = self.state["net_load_loc"] / 1024
-        val["Ko"] = val["in_Ko"] + val["out_Ko"] + val["loc_Ko"]
-
+        # print state["net_lost"]
         # send data
-        return val
+        return state
 
     def pkt_handler(self, pkt):
         self.data["pkt_nbr"] += 1
@@ -104,11 +94,18 @@ class NetModChild(netmod.NetModule):
 
         val = dict()
         val["time"] = time.time()
-        val["net_sent"] = psutil.network_io_counters(pernic=False)[0]
-        val["net_recv"] = psutil.network_io_counters(pernic=False)[1]
         val["net_load_loc"] = self.data["net_load_loc"]
         val["net_load_in"] = self.data["net_load_in"]
         val["net_load_out"] = self.data["net_load_out"]
+
+        val["net_nbpkt_handle"] = self.data["pkt_nbr"]
+
+        res_net = psutil.network_io_counters(pernic=True)
+        # bytes_sent, bytes_recv, packets_sent, packets_recv, errin, errout, dropin, dropout
+        if self.dev in res_net.keys():
+            val["net"] = res_net[self.dev]
+        else:
+            val["net"] = psutil.network_io_counters(pernic=False)
 
         return val
 
@@ -126,14 +123,26 @@ class NetModChild(netmod.NetModule):
         val["time"] = new["time"]
         val["dtime"] = diff
 
-        #  net data on device in o/sec
-        val["net_speed_out"] = (new["net_sent"] - old["net_sent"]) / diff
-        val["net_speed_in"] = (new["net_recv"] - old["net_recv"]) / diff
         # # net data by packet analysis
-        val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"]) / diff
-        val["net_load_in"] = (new["net_load_in"] - old["net_load_in"]) / diff
-        val["net_load_out"] = (new["net_load_out"] - old["net_load_out"]) / diff
+        val["loc_Ko"] = (new["net_load_loc"] - old["net_load_loc"]) / diff / 1024
+        val["in_Ko"] = (new["net_load_in"] - old["net_load_in"]) / diff / 1024
+        val["out_Ko"] = (new["net_load_out"] - old["net_load_out"]) / diff / 1024
+        val["Ko"] = val["in_Ko"] + val["out_Ko"] + val["loc_Ko"]
 
+        #  net data on device in o/sec
+        val["tot_out_Ko"] = (new["net"][0] - old["net"][0]) / diff / 1024
+        val["tot_in_Ko"] = (new["net"][1] - old["net"][1]) / diff / 1024
+
+        pkt_handle = new["net_nbpkt_handle"] - old["net_nbpkt_handle"]
+
+        totpkt = (new["net"][2] + new["net"][3]) - (old["net"][2] + old["net"][3])
+        totpkt = max(totpkt, pkt_handle)
+        if totpkt > 0:
+            val["net_lost"] = (totpkt - pkt_handle) / (totpkt * 1.0) * 100
+        else:
+            val["net_lost"] = 0
+
+        # print "BW-1:", pkt_handle, totpkt, val["net_lost"]
         return val
 
     def totState(self, old, new):

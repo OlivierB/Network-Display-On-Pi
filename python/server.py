@@ -94,7 +94,7 @@ class ServeurNDOP(daemon.Daemon):
         add_mod_prot(wsdata, config.modules_list)
 
         # init packet capture system
-        sniff = core.sniffer.Sniffer(dev=self.args.sniffer_device)
+        sniff = core.sniffer.SnifferManager(dev=self.args.sniffer_device)
 
         # Start services
         try:
@@ -106,7 +106,6 @@ class ServeurNDOP(daemon.Daemon):
 
         try:
             sniff.start()
-            time.sleep(0.5)
         except:
             ws_serv.stop()
             sniff.stop()
@@ -115,9 +114,7 @@ class ServeurNDOP(daemon.Daemon):
         # Loop
         try:
             while 1:
-                recv = sniff.get_data()
-                for r_data in recv:
-                    wsdata.send(r_data[0], r_data[1])
+                time.sleep(1)
 
         except KeyboardInterrupt:
             logger.info("Stopping...")
@@ -200,7 +197,7 @@ def main():
     
     # Be root to access network device
     if os.getuid() != 0:
-        print("Can't start NDOP, need to be root !")
+        print("Need to be root !")
         exit(2)
 
     # Get command line arguments
