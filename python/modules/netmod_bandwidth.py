@@ -133,16 +133,6 @@ class NetModChild(netmod.NetModule):
         val["tot_out_Ko"] = (new["net"][0] - old["net"][0]) / diff / 1024
         val["tot_in_Ko"] = (new["net"][1] - old["net"][1]) / diff / 1024
 
-        pkt_handle = new["net_nbpkt_handle"] - old["net_nbpkt_handle"]
-
-        totpkt = (new["net"][2] + new["net"][3]) - (old["net"][2] + old["net"][3])
-        totpkt = max(totpkt, pkt_handle)
-        if totpkt > 0:
-            val["net_lost"] = (totpkt - pkt_handle) / (totpkt * 1.0) * 100
-        else:
-            val["net_lost"] = 0
-
-        # print "BW-1:", pkt_handle, totpkt, val["net_lost"]
         return val
 
     def totState(self, old, new):
