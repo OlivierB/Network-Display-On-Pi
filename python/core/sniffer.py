@@ -251,7 +251,7 @@ def load_mod(lmod, dev, pre=""):
 
 class GetSniffer(object):
     """
-    Singleton class to collect client data
+    Singleton class to access to one process sniffer
     """
 
     # Singleton creation

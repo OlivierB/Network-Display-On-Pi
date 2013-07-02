@@ -45,7 +45,7 @@ class NetModChild(netmod.NetModule):
             #     print h.split(": ")
 
             if res.type == "POST":
-                print res.payload
+                print res.data
 
                 print "----------"
 

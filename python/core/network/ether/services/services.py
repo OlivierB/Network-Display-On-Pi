@@ -75,7 +75,7 @@ class HTTP(layer.Layer):
         else:
             self.type = ""
 
-        self.payload = pktdata
+        self.data = pktdata 
 
 
 class HTTPS(layer.Layer):

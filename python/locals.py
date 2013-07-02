@@ -9,6 +9,8 @@ import pcap
 import types
 import time
 import copy
+import json
+import base64
 
 
 import core.network.packet as packet
@@ -33,7 +35,26 @@ def sniff(p):
 
     return pktd
 
+def put_file(name, nb=10):
+    p = fpcap()
+    cnt = 0
+    lst = list()
+    while cnt < nb:
+        cnt += 1
+        pktd = sniff(p)
+        lst.append(base64.b64encode(pktd))
+    f = open(name, 'w')
+    f.write(json.dumps(lst))
+    f.close()
 
+def get_file(name):
+    f = open(name, 'r')
+    res = f.read()
+    lst = list()
+    res = json.loads(res)
+    for r in res:
+        lst.append(base64.b64decode(r))
+    return lst
 
 DEEP=6
 def deeps(s, d, p):
@@ -61,6 +82,34 @@ if __name__ == "__main__":
     pktdec = packet.Packet(1200, pktd, 0)
 
     print pktdec
+
+    ##########################################
+    
+    # #  X Packet capture
+    # isFile = True
+    # try:
+    #     with open('ListPackets'): pass
+    # except IOError:
+    #     isFile = False
+
+    # if not isFile:
+    #     put_file("ListPackets", nb=1000)
+    #     print "create"
+    
+    # fres = open('ResFile', 'a')
+    # lpkt = get_file("ListPackets")
+    # nbpkt = len(lpkt)
+    # loop = 100
+
+    # fres.write("Test with " + str(nbpkt)+" packets. Loop : "+str(loop)+" Time : ")
+    # a = time.time()
+    # for i in range(loop):
+    #     for ppkt in lpkt:
+    #         pktdec = packet.Packet(1200, ppkt, 0)
+
+    # e = (time.time() - a)
+    # print "File - time : ", e
+    # fres.write(str(e)+"\n")
 
     ###########################################
 
@@ -174,5 +223,3 @@ if __name__ == "__main__":
     #         pass
     # print "class - time : ", (time.time() - a)
 
-    
-    # 
