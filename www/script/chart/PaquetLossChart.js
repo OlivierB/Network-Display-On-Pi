@@ -34,7 +34,7 @@ function PaquetLossChart(id, initializes, dataLength) {
 			titleFontWeight: "bold",
 		},
 		axisY: {
-			title: "Global flow (MB/s)",
+			title: "Packets received (unity)",
 			titleFontFamily: "ChampWoff",
 			titleFontWeight: "bold",
 		},
@@ -44,7 +44,7 @@ function PaquetLossChart(id, initializes, dataLength) {
 		data: [{
 				type: "spline",
 				showInLegend: true,
-				legendText: "Global flow (MB/s)",
+				legendText: "Number of packets received",
 				dataPoints: this.number_paquets_total
 			}, {
 				type: "spline",
@@ -63,23 +63,26 @@ function PaquetLossChart(id, initializes, dataLength) {
 
 
 
-PaquetLossChart.prototype.updateChart = function(total_, loss_, time_) {
+PaquetLossChart.prototype.updateChart = function(total_, handled_, time_) {
 
 	if (time_){
 		this.xVal = new Date(time_);
-		console.log('p '+this.xVal)
+		// console.log('p '+this.xVal)
 	}
 	else
 		this.xVal = new Date();
-
-
+	if(total_ != 0)
+		var percent_loss = ((total_ - handled_)/total_)*100;
+	else
+		var percent_loss = 0;
+	
 	yVal1 = total_;
 	this.number_paquets_total.push({
 		x: this.xVal,
 		y: yVal1,
 	});
 
-	yVal2 = loss_;
+	yVal2 = percent_loss;
 	this.number_paquets_loss.push({
 		x: this.xVal,
 		y: yVal2,

@@ -13,7 +13,7 @@ PaquetLossChartWebsocket.prototype = Object.create(WebSocketManager.prototype);
 
 // method needed to make the PaquetLossChartWebsocket inheritance works
 PaquetLossChartWebsocket.prototype.dataManager = function(obj) {
-	this.updateChart(obj.packet_received, obj.packet_handled);
+	this.updateChart(parseInt(obj.packet_received), parseInt(obj.packet_handled));
 	this.refresh();
 }
 
