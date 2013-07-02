@@ -45,9 +45,7 @@
 
 <body>
 	<!-- All pages are included here, slideJS handle the animation -->
-	<div><?php include "modules/traffic/index.php" ?></div>
+	<div><?php include "modules/stressServer/index.php" ?></div>
 
 </body>
 </html>
-
-<script src='/script/network/connect.js'></script>

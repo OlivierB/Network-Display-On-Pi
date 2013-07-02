@@ -1,28 +1,42 @@
-function DataDispatcher() {
+/**
+ * Handle the connection with the server programm and dispatch the data to each module
+ * which subscribes to the corresponding protocol.
+ *
+ * @author Matrat Erwan
+ **/
+
+function DataDispatcher(serverAddress) {
 	this.websocketManagers = [];
 	this.connections = [];
+	this.serverAddress = serverAddress;
 }
 
+/**
+ * Register a module (which inherits from WebsocketManager) with the protocol it requires.
+ * When this protocol will receive a data, this data will be sent to this module.
+ * If the protocol has never been suscribed at, a new connection to the server will be
+ * attempted using the protocol.
+ **/
 DataDispatcher.prototype.register = function(websocketManager, protocol) {
-	if (this.websocketManagers[protocol] == null)
+	if (this.websocketManagers[protocol] == null) {
+
 		this.websocketManagers[protocol] = [];
+		this.connectToProt(this.serverAddress, protocol);
+	}
 
 	this.websocketManagers[protocol].push(websocketManager)
 }
 
 
-DataDispatcher.prototype.connect = function(serverAddress) {
-	for (var prot in this.websocketManagers) {
-		this.connectToProt(serverAddress, prot);
-	}
-
-}
-
+/**
+ * Try to connect to the server and construct callbacks which will handle the differents
+ * scenarii and dispatch the data to the suscribing modules.
+ **/
 DataDispatcher.prototype.connectToProt = function(serverAddress, prot) {
 
 	var connection = new WebSocket(serverAddress, prot);
 
-	// When the connection is open, send some data to the server
+	// When the connection is open, informs all the modules
 	connection.onopen = function() {
 		console.log("Main connexion");
 		for (var i = 0; i < this.websocketManagers[prot].length; i++) {
@@ -40,7 +54,7 @@ DataDispatcher.prototype.connectToProt = function(serverAddress, prot) {
 		this.protocolNotSupported = true;
 	}.bind(this);
 
-	// dispatch messages from the server
+	// dispatch messages from the server to the corresponding modules
 	connection.onmessage = function(e) {
 		var obj = JSON.parse(e.data);
 		for (var i = 0; i < this.websocketManagers[prot].length; i++) {

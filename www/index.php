@@ -63,6 +63,7 @@ include 'pages/common.php';
 		<div><?php include "modules/dns/index.php" ?></div>
 		<div><?php include "modules/summary/index.php" ?></div>
 		<div><?php include "modules/dnsBubble/index.php" ?></div>
+		<div><?php include "modules/stressServer/index.php" ?></div>
 
 	</div>
 	
@@ -70,5 +71,3 @@ include 'pages/common.php';
 
 </body>
 </html>
-
-<script src='/script/network/connect.js'></script>

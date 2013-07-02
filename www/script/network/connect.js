@@ -1,1 +1,0 @@
-dispatcher.connect(App.serverAddress);
