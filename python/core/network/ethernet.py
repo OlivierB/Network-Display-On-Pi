@@ -8,13 +8,12 @@ Network utils
 
 # Project file import
 from . import layer
-from ether import *
+from ether import ip
 
 
 class Ethernet(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="Ethernet")
-        
+
+    def decode(self, pktdata):
         self.src = pktdata[0:6]
         self.dst = pktdata[6:12]
         self.type = pktdata[12:14]
@@ -22,20 +21,16 @@ class Ethernet(layer.Layer):
         # Ethernet protocol decode
         try:
             call = dEtherType[self.type]["callback"]
-        except:
-            call = None
-
-        if call is not None:
-            self.payload = call(pktdata[14:])
-        else:
-            self.payload = layer.Layer(pktdata[14:])
+            if call is not None:
+                self.payload = call(self, pktdata[14:], protocol=dEtherType[self.type]["protocol"])
+            else:
+                self.payload = layer.Layer(self, pktdata[14:], protocol=dEtherType[self.type]["protocol"])
+        except Exception:
+            self.payload = layer.Layer(self, pktdata[14:])
 
     def __str__(self):
         tor = "[Ethernet " + self.payload.__str__() + "]"
         return tor
-
-    def is_type(self, typ):
-        return self.type == typ
 
     def mac_to_string(self, data):
         return ':'.join('%02x' % ord(b) for b in data)

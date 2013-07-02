@@ -11,26 +11,17 @@ inherit from NetModule
 # Project file import
 import netmodule as netmod
 
-import os
 
 class NetModChild(netmod.NetModule):
     def __init__(self, *args, **kwargs):
         netmod.NetModule.__init__(self, protocol='classip', *args, **kwargs)
 
-    	self.nbp = 0
-
     def update(self):
-        print "UP - %i" % os.getpid()
-        return ('me', 5)
+        return None
 
     def pkt_handler(self, pkt):
-    	self.nbp +=1
-    	# print pkt
-        """
-        Called by sniffer when a new packet arrive
-
-        pkt is formated with Packet class
-        """
+        if pkt.is_protocol("Ethernet", "*"):
+            print pkt.Ether
         pass
 
     def reset(self):

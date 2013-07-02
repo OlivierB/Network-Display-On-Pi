@@ -27,6 +27,7 @@ sniffer_device_mask = "255.255.255.0"
 modules_list = [
     # ["netmod_http"],
     ["netmod_top", "netmod_iplist", "netmod_loccomm", "netmod_protocols", "netmod_bandwidth", "netmod_dns", "netmod_pktstats"]
+    # ["netmod_classip"]
 ]
 # module_list = ["netmod_classip"]
 
@@ -57,7 +58,7 @@ daemon_pid_file = '/var/run/ndop.pid'
 # SQL Database connection
 
 # Disabled SQL Database
-db_sql_on = True
+db_sql_on = False
 
 db_host = "192.168.1.144"
 db_user = "ndop"

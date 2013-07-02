@@ -8,10 +8,13 @@ Network Layer
 
 
 class Layer():
-    def __init__(self, pktdata=None, protocol=None):
+    def __init__(self, underlayer, pktdata, protocol=None):
+        self.underlayer = underlayer
+        self.payload = None
         self.protocol = protocol
-        self.payload = pktdata
         self.type = -1
+
+        self.decode(pktdata)
 
     def __str__(self):
         if self.protocol is None:
@@ -22,13 +25,13 @@ class Layer():
             else:
                 return "-> "+self.protocol
 
-    def get_data(self):
-        return self.payload
+    def decode(self, pktdata):
+        self.data = pktdata
 
     def is_protocol(self, *args):
         if len(args) > 0:
             if args[0] == "*" or args[0] == self.protocol:
-                if self.protocol is not None:
+                if self.payload is not None:
                     return self.payload.is_protocol(*args[1:])
                 else:
                     return False
@@ -53,3 +56,6 @@ class Layer():
                 return None
         else:
             return None
+
+    def is_type(self, typ):
+        return self.type == typ
