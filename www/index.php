@@ -30,6 +30,10 @@ include 'pages/common.php';
 
 	<!-- Personnal JS -->
 	<script src="/ndop.conf.js"></script>
+
+	<script src='/script/network/DataDispatcher.js'></script>
+	<script src='/script/network/loader.js'></script>
+	
 	<script src='/script/slide/slide-conf.js'></script>
 	<script src="/script/network/WebSocketManager.js"></script>
 	<script src="/script/network/AjaxManager.js"></script>
@@ -67,3 +71,4 @@ include 'pages/common.php';
 </body>
 </html>
 
+<script src='/script/network/connect.js'></script>

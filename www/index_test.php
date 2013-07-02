@@ -30,6 +30,10 @@
 
 	<!-- Personnal JS -->
 	<script src="/ndop.conf.js"></script>
+
+	<script src='/script/network/DataDispatcher.js'></script>
+	<script src='/script/network/loader.js'></script>
+
 	<script src='/script/slide/slide-conf.js'></script>
 	<script src="/script/network/WebSocketManager.js"></script>
 	<script src="/script/network/AjaxManager.js"></script>
@@ -41,8 +45,9 @@
 
 <body>
 	<!-- All pages are included here, slideJS handle the animation -->
-	<div><?php include "modules/dnsBubble/index.php" ?></div>
+	<div><?php include "modules/traffic/index.php" ?></div>
 
 </body>
 </html>
 
+<script src='/script/network/connect.js'></script>
