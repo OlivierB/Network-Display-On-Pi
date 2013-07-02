@@ -30,6 +30,10 @@ include 'pages/common.php';
 
 	<!-- Personnal JS -->
 	<script src="/ndop.conf.js"></script>
+
+	<script src='/script/network/DataDispatcher.js'></script>
+	<script src='/script/network/loader.js'></script>
+	
 	<script src='/script/slide/slide-conf.js'></script>
 	<script src="/script/network/WebSocketManager.js"></script>
 	<script src="/script/network/AjaxManager.js"></script>
@@ -58,6 +62,8 @@ include 'pages/common.php';
 		<div><?php include "modules/monthlyTraffic/index.php" ?></div>
 		<div><?php include "modules/dns/index.php" ?></div>
 		<div><?php include "modules/summary/index.php" ?></div>
+		<div><?php include "modules/dnsBubble/index.php" ?></div>
+		<div><?php include "modules/stressServer/index.php" ?></div>
 
 	</div>
 	
@@ -65,4 +71,3 @@ include 'pages/common.php';
 
 </body>
 </html>
-

@@ -7,42 +7,63 @@
     var chart = new CanvasJS.Chart("chartContainer",
     {
       title:{
-      text: "Coal Reserves of Countries",   
+        text: "Paquet Loss",    
       },
-      axisY:{
-        title:"Coal (mn tonnes)",   
+      axisY2: {
+        title:"% Paquet loss",
+        minimum: 0,
+        maximum: 100,    
+      },
+      axisY: {
+        title: "Global flow (MB/s)"
+      },
+      legend: {
+        verticalAlign: "bottom",
       },
       data: [
-      {        
-        type: "stackedColumn100",
-        toolTipContent: "{label}<br/><span style='\"'color: {color};'\"'><strong>{name}</strong></span>: {y}mn tonnes",
-        name: "Anthracite and Bituminous",
-        showInLegend: "true",
-        dataPoints: [
-        {  y: 111338 , label: "6h"},
-        {  y: 49088, label: "7h" },
-        {  y: 62200, label: "8h" },
 
+         {      
+      type: "splineArea",  
+        showInLegend: true, 
+        legendText: "Global flow (MB/s)",
+        dataPoints: [      
         
+        { x: 10, y:11150000 },
+        { x: 20, y:10210000},
+        { x: 30, y:9023000 },
+        { x: 40, y:4231000 },
+        { x: 50, y:4073000},
+        { x: 60, y:3592000},
+        { x: 70, y:3087000},
+        { x: 80, y:2453000}
+
+
         ]
-      },  {        
-        type: "stackedColumn100",
-        toolTipContent: "{label}<br/><span style='\"'color: {color};'\"'><strong>{name}</strong></span>: {y}mn tonnes",
-        name: "SubBituminous and Lignite",
-        showInLegend: "true",
-        dataPoints: [
-        {  y: 135305 , label: "6h"},
-        {  y: 107922, label: "7h" },
-        {  y: 52300, label: "9h" },
-      
-       
+      },
+      {          
+        type: "spline",  
+        axisYType: "secondary",
+        showInLegend: true,
+        legendText: "% Paquet loss",
+        dataPoints: [      
+        { x: 10, y: 10},
+        { x: 20, y: 45},
+        { x: 30, y: 78},
+        { x: 40, y: 66},
+        { x: 50, y: 20},
+        { x: 60, y: 10},
+        { x: 70, y: 52},
+        { x: 80, y: 77}
+
+
+        ]
         
-        ]
-      },            
+      }
+
       ]
     });
 
-    chart.render();
+chart.render();
   }
   </script>
  <script type="text/javascript" src="/lib/canvasjs.min.js"></script></head>

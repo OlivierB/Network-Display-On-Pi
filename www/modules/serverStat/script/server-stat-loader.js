@@ -5,4 +5,4 @@ serverStat.add('memory', 'mem_load', 100);
 serverStat.add('swap', 'swap_load', 100);
 serverStat.add('loss', 'pkt_lost', 100);
 
-serverStat.connect(App.serverAddress, App.serverStatProtocol);
+serverStat.connect(dispatcher, App.serverStatProtocol);

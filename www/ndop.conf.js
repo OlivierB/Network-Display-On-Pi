@@ -12,5 +12,6 @@ var App = {
 	'webServerAddress'		: 		'192.168.1.144',
 	'webServerPort'			: 		'80',
 	'dnsProtocol'			: 		'dns',
-	'NumberItemDNSList'		: 		15
+	'NumberItemDNSList'		: 		15,
+	'packetLossProtocol'	: 		'packet_loss'
 }
