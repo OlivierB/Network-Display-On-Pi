@@ -41,3 +41,8 @@ UDPTYPE = services.dUDPType
 # Local variable
 for typ in services.dUDPType.keys():
     locals()["UDPTYPE_"+services.dUDPType[typ]["protocol"].replace(" ", "_")] = typ
+
+TCPTYPE = services.dTCPType
+# Local variable
+for typ in services.dTCPType.keys():
+    locals()["TCPTYPE_"+services.dTCPType[typ]["protocol"].replace(" ", "_")] = typ

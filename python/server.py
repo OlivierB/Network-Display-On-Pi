@@ -131,27 +131,28 @@ class ServeurNDOP(daemon.Daemon):
         exit(0)
 
 
-def add_mod_prot(wsdata, lmod):
+def add_mod_prot(wsdata, llmod):
     """
     Load modules to get protocols list
     """
 
-    if len(lmod) > 0:
-        for mod in lmod:
-            try:
-                # import module
-                module = importlib.import_module("modules." + mod)
+    if len(llmod) > 0:
+        for lmod in llmod:
+            for mod in lmod:
+                try:
+                    # import module
+                    module = importlib.import_module("modules." + mod)
 
-                # Check module main class
-                getattr(module, "NetModChild")
+                    # Check module main class
+                    getattr(module, "NetModChild")
 
-                # Create an instance
-                modclass = module.NetModChild()
-                # Add protocol for the webserver
-                wsdata.addProtocol(modclass.protocol)
+                    # Create an instance
+                    modclass = module.NetModChild()
+                    # Add protocol for the webserver
+                    wsdata.addProtocol(modclass.protocol)
 
-            except Exception:
-                pass
+                except Exception:
+                    pass
 
 
 def conf_logger(args):

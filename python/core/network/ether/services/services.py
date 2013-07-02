@@ -57,6 +57,39 @@ class DNS(layer.Layer):
         # print 'nb reponses', socket.ntohs(struct.unpack('H', pktdata[6:8])[0])
 
 
+class HTTP(layer.Layer):
+    def __init__(self, pktdata):
+        layer.Layer.__init__(self, protocol="HTTP")
+
+        stype = ""
+        cnt = 0
+        dlen = min(len(pktdata), 10)
+        if dlen > 0:
+            while cnt < dlen and not (pktdata[cnt] == "/" or pktdata[cnt] == " "):
+                stype += pktdata[cnt]
+                # print pktdata[cnt]
+                cnt += 1
+        
+        if stype in ["HTTP", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH"]:
+            self.type = stype
+        else:
+            self.type = ""
+
+        self.payload = pktdata
+
+
+class HTTPS(layer.Layer):
+    def __init__(self, pktdata):
+        layer.Layer.__init__(self, protocol="HTTPS")
+
+        self.payload = layer.Layer(pktdata)
+
+
 dUDPType = {
     53: {'callback': DNS, 'protocol': 'DNS', 'description': 'DNS'}
+}
+
+dTCPType = {
+    80: {'callback': HTTP, 'protocol': 'HTTP', 'description': 'HTTP'},
+    443: {'callback': HTTPS, 'protocol': 'HTTPS', 'description': 'HTTPS'}
 }
