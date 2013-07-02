@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "2185e64e39b0f7874b3a01d3ccc0713d",
+    "packages": [
+        {
+            "name": "atomik/atomik",
+            "version": "3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/maximebf/atomik.git",
+                "reference": "3.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/maximebf/atomik/zipball/3.1",
+                "reference": "3.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "framework",
+            "autoload": {
+                "psr-0": {
+                    "Atomik": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Maxime Bouroumeau-Fuseau",
+                    "email": "maxime.bouroumeau@gmail.com",
+                    "homepage": "http://maximebf.com"
+                }
+            ],
+            "description": "Micro framework for PHP5.3+",
+            "homepage": "https://github.com/maximebf/atomik",
+            "time": "2013-05-22 04:46:35"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": [
+
+    ],
+    "platform": {
+        "php": ">=5.3.0"
+    },
+    "platform-dev": [
+
+    ]
+}
