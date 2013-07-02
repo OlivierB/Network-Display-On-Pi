@@ -1,9 +1,9 @@
-function PaquetLossChart(id, initializes, dataLength) {
+function PacketLossChart(id, initializes, dataLength) {
 
 	this.id = id;
 
-	this.number_paquets_total = [];
-	this.number_paquets_loss = [];
+	this.number_packets_total = [];
+	this.number_packets_loss = [];
 	this.dataLength = dataLength; // number of dataPoints visible at any point
 
 	if (initializes) {
@@ -23,11 +23,11 @@ function PaquetLossChart(id, initializes, dataLength) {
 
 	this.chart = new CanvasJS.Chart(this.id, {
 		title: {
-			text: "Paquet Loss",
+			text: "Packet Loss",
 			titleFontFamily: "ChampWoff",
 		},
 		axisY2: {
-			title: "% Paquet loss",
+			title: "% Packet loss",
 			minimum: 0,
 			maximum: 100,
 			titleFontFamily: "ChampWoff",
@@ -45,13 +45,13 @@ function PaquetLossChart(id, initializes, dataLength) {
 				type: "spline",
 				showInLegend: true,
 				legendText: "Number of packets received",
-				dataPoints: this.number_paquets_total
+				dataPoints: this.number_packets_total
 			}, {
 				type: "spline",
 				axisYType: "secondary",
 				showInLegend: true,
-				legendText: "% Paquet loss",
-				dataPoints: this.number_paquets_loss
+				legendText: "% Packet loss",
+				dataPoints: this.number_packets_loss
 
 			}
 
@@ -63,7 +63,7 @@ function PaquetLossChart(id, initializes, dataLength) {
 
 
 
-PaquetLossChart.prototype.updateChart = function(total_, handled_, time_) {
+PacketLossChart.prototype.updateChart = function(total_, handled_, time_) {
 
 	if (time_){
 		this.xVal = new Date(time_);
@@ -77,13 +77,13 @@ PaquetLossChart.prototype.updateChart = function(total_, handled_, time_) {
 		var percent_loss = 0;
 	
 	yVal1 = total_;
-	this.number_paquets_total.push({
+	this.number_packets_total.push({
 		x: this.xVal,
 		y: yVal1,
 	});
 
 	yVal2 = percent_loss;
-	this.number_paquets_loss.push({
+	this.number_packets_loss.push({
 		x: this.xVal,
 		y: yVal2,
 	});
@@ -91,19 +91,19 @@ PaquetLossChart.prototype.updateChart = function(total_, handled_, time_) {
 
 
 	this.xVal++;
-	if (this.number_paquets_total.length > this.dataLength && this.dataLength > 0) {
-		this.number_paquets_total.shift();
-		this.number_paquets_loss.shift();
+	if (this.number_packets_total.length > this.dataLength && this.dataLength > 0) {
+		this.number_packets_total.shift();
+		this.number_packets_loss.shift();
 	}
 
 }
 
 
-PaquetLossChart.prototype.clean = function() {
-	this.number_paquets_total.length = 0;
-	this.number_paquets_loss.length = 0;
+PacketLossChart.prototype.clean = function() {
+	this.number_packets_total.length = 0;
+	this.number_packets_loss.length = 0;
 }
 
-PaquetLossChart.prototype.refresh = function() {
+PacketLossChart.prototype.refresh = function() {
 	this.chart.render();
 }

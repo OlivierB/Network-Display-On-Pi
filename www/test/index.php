@@ -7,10 +7,10 @@
     var chart = new CanvasJS.Chart("chartContainer",
     {
       title:{
-        text: "Paquet Loss",    
+        text: "Packet Loss",    
       },
       axisY2: {
-        title:"% Paquet loss",
+        title:"% Packet loss",
         minimum: 0,
         maximum: 100,    
       },
@@ -44,7 +44,7 @@
         type: "spline",  
         axisYType: "secondary",
         showInLegend: true,
-        legendText: "% Paquet loss",
+        legendText: "% Packet loss",
         dataPoints: [      
         { x: 10, y: 10},
         { x: 20, y: 45},
