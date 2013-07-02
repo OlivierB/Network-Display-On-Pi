@@ -1,5 +1,5 @@
 var App = {
-	'serverAddress' 		: 		'ws://192.168.1.144:9000',
+	'serverAddress' 		: 		'ws://192.168.1.137:9000',
 	'bandwidtProtocol' 		: 		'bandwidth',
 	'ipListProtocol' 		: 		'iplist',
 	'serverStatProtocol'	: 		'server_stat',
