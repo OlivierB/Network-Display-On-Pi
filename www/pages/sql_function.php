@@ -3,7 +3,7 @@
 function getProtocol($connection, $date_begin, $date_end, $table){
 
 	if($date_begin != '' && $date_end != ''){
-		$where_statement = '`  WHERE date BETWEEN ('. $date_begin .') AND ('. $date_end .')';
+		$where_statement = '  WHERE date BETWEEN ('. $date_begin .') AND ('. $date_end .')';
 	}else{
 		$where_statement = '';
 	}
@@ -32,7 +32,6 @@ function getProtocol($connection, $date_begin, $date_end, $table){
 
 	// request the protocol use
 	$sql = 'SELECT * FROM `'.$table.'` '.$where_statement;
-
 	$req = $connection->prepare($sql);
 	$req->execute();
 
