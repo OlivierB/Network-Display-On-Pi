@@ -17,9 +17,7 @@ PaquetLossChartAjax.prototype.dataManager = function(obj) {
 	
 	for (var i = 0; i < obj.length; i++) {
 		var tmp = obj[i];
-		console.log(tmp)
-		var percent_loss = ((parseInt(tmp.packet_received) - parseInt(tmp.packet_handled))/parseInt(tmp.packet_received))*100;
-		this.updateChart(parseInt(tmp.packet_received), percent_loss, (tmp.date));
+		this.updateChart(parseInt(tmp.packet_received), parseInt(tmp.packet_handled), (tmp.date));
 	}
 	this.refresh();
 	this.clean();
