@@ -27,20 +27,18 @@ class NetModChild(netmod.NetModule):
 
         # packet data
         self.oldValues = self.sysState()
-        self.state = None
 
     def update(self):
         # System state update
         new = self.sysState()
-        self.state = self.diffState(self.oldValues, new)
+        state = self.diffState(self.oldValues, new)
         self.oldValues = new
 
         # get data
         val = dict()
-        val["mem_load"] = self.state["mem"]
-        val["proc_load"] = self.state["cpu"]
-        val["swap_load"] = self.state["swap"]
-        val["pkt_tot"], val["pkt_lost"] = 0, 0
+        val["mem_load"] = state["mem"]
+        val["proc_load"] = state["cpu"]
+        val["swap_load"] = state["swap"]
 
         # send data
         return val
@@ -54,11 +52,7 @@ class NetModChild(netmod.NetModule):
         val["mem"] = psutil.virtual_memory()[2]
         val["swap"] = psutil.swap_memory()[3]
         val["cpu"] = psutil.cpu_percent(interval=0)
-        val["sniff_stats"] = 0, 0, 0  # self.sniffer.stats() # nbp, plost with pcap, plost with device
         
-        # # Disk data collect
-        # val["io_read"]  = psutil.disk_io_counters(perdisk=False)[2]
-        # val["io_write"] = psutil.disk_io_counters(perdisk=False)[3]
         return val
 
     def diffState(self, old, new):
@@ -79,18 +73,5 @@ class NetModChild(netmod.NetModule):
         val["mem"] = new["mem"]
         val["cpu"] = new["cpu"]
         val["swap"] = new["swap"]
-
-        # Packet stats
-        ptot = (new["sniff_stats"][0] - old["sniff_stats"][0])
-        plost = (new["sniff_stats"][1] - old["sniff_stats"][1])
-        if ptot > 0:
-            val["sniff_stats_ploss"] = plost/(ptot*1.0)*100
-        else:
-            val["sniff_stats_ploss"] = 0
-        val["sniff_stats_ptot"] = new["sniff_stats"][0]
-
-        # #  disk data in o/sec
-        # val["disk_speed_read"]  = (new["io_read"] - old["io_read"]) / diff
-        # val["disk_speed_write"] = (new["io_write"] - old["io_write"]) / diff
 
         return val

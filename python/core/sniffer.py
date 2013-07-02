@@ -159,10 +159,13 @@ class Sniffer(mp.Process):
 
         # Create new pcap capture object
         p = pcap.pcapObject()
+        
 
         try:
             # (Dev, buffer, promiscuous mode, timeout)
             p.open_live(self.dev, PCAP_PACKET_MAX_LEN, PCAP_PROMISCUOUS_MODE, PCAP_SNIFFER_TIMEOUT)
+            # keep it in an available object
+            GetSniffer().set_sniffer(p)
             capture = True
 
             # Handler loop
@@ -244,3 +247,30 @@ def load_mod(lmod, dev, pre=""):
                 logger.error(pre + "Load module " + mod + " : ", exc_info=True)
 
     return l_modules
+
+
+class GetSniffer(object):
+    """
+    Singleton class to collect client data
+    """
+
+    # Singleton creation
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(GetSniffer, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    #  class value
+    sniffer = None
+
+    def set_sniffer(self, sniffer):
+        if self.sniffer is None:
+            self.sniffer = sniffer
+
+    def get_stats(self):
+        if self.sniffer is not None:
+            return self.sniffer.stats()
+        else:
+            return None

@@ -35,16 +35,19 @@ class NetModChild(netmod.NetModule):
         res = pkt.get_protocol("Ethernet", "IPv4", "TCP", "HTTP")
         if res is not None and res.type != "":
             
-            header_end = res.payload.find("\n\r")
-            pos_start = res.payload.find("\n", 0, header_end)
+            # header_end = res.payload.find("\n\r")
+            # pos_start = res.payload.find("\n", 0, header_end)
 
-            head = res.payload[0:pos_start].split(" ")
+            # head = res.payload[0:pos_start].split(" ")
             # print head
-            header = res.payload[pos_start+1:header_end].split("\n")
+            # header = res.payload[pos_start+1:header_end].split("\n")
             # for h in header:
             #     print h.split(": ")
 
-            # print "----------"
+            if res.type == "POST":
+                print res.payload
+
+                print "----------"
 
     def reset(self):
         """
