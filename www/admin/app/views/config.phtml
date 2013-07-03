@@ -6,59 +6,45 @@
 		<?php if($database_connection){ ?>
 		Your database is correctly configured, you can continue.
 		<?php }elseif($database_info){ ?>
-		Infomations you provide to access the database are not correct, please retry.
+		Infomations you provided to access the database are not correct, please retry.
 		<?php }else{ ?>
 		Please fill in the form.
 		<?php } ?>
 
-		
-		
 
 		<div class="accordion" id="accordion2">
 			<div class="accordion-group">
-				<form>
-					<fieldset>
-						<div class="accordion-heading">
-							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-								<legend>Database form</legend>
-							</a>
-						</div>
-						<div id="collapseOne" class="accordion-body collapse <?php if(!$database_connection){echo 'in';} ?>">
-							<div class="accordion-inner">
-								<label>Adress</label>
-								<input type="text" placeholder="Ip of your database server" value='asd'>
-								<span class="help-block">Ex: 192.168.1.15 or http://myhostname.com</span>
-
-								<label>Login</label>
-								<input type="text" placeholder="Login of your database server">
-								<span class="help-block">Ex: mydatabaselogin</span>
-
-								<label>Password</label>
-								<input type="text" placeholder="Password of your database server">
-								<span class="help-block">Ex: mydatabasepassword</span>
-
-								<button type="submit" class="btn">Submit</button>
-							</div>
-						</div>
-					</fieldset>
-				</form>
-			</div>
-			<div class="accordion-group">
-				<div class="accordion-heading">
-					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-						Collapsible Group Item #2
-					</a>
-				</div>
-				<div id="collapseTwo" class="accordion-body collapse">
-					<div class="accordion-inner">
-						Anim pariatur cliche...
+				<form action="<?= $this->url('config_database') ?>" method="POST">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+							Database form
+						</a>
 					</div>
-				</div>
+					<div id="collapseOne" class="accordion-body collapse <?php if(!$database_connection){echo 'in';} ?>">
+						<div class="accordion-inner">
+							<label>Adress</label>
+							<input name="database_address" type="text" placeholder="Ip of your database server" value='<?= $database_address ?>'>
+							<span class="help-block">Ex: 192.168.1.15 or www.myhostname.com</span>
+
+							<label>Login</label>
+							<input name="database_login"type="text" placeholder="Login of your database server" value='<?= $database_login ?>'>
+							<span class="help-block">Ex: mydatabaselogin</span>
+
+							<label>Password</label>
+							<input name="database_password"type="password" placeholder="Password of your database server" value='<?= $database_password ?>'>
+							<span class="help-block">Ex: mydatabasepassword</span>
+
+							<button type="submit" class="btn">Submit</button>
+						</div>
+					</div>
+				</form>
 			</div>
 		</div>
 
 
 	</div>
+
+	<h2>Servers configuration</h2>
 
 
 </div>
