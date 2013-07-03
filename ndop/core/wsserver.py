@@ -49,10 +49,26 @@ class WSHandler_main(tornado.websocket.WebSocketHandler):
             self.close()
             return None
  
+class WSHandler_online(tornado.web.RequestHandler):
+    """
+    handler for main server page ("/")
+    """
+    def open(self):
+        pass
+
+    def get(self):
+        self.write("ndop")
+
+    def on_message(self, message):
+        pass
+
+    def on_close(self):
+        pass
 
 # associate handler function and page
 application = tornado.web.Application([
-    (r'/', WSHandler_main)
+    (r'/', WSHandler_main),
+    (r'/online', WSHandler_online)
 ])
 
 
