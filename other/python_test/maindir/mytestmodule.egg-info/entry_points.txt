@@ -1,3 +1,0 @@
-[console_scripts]
-mymodule = mymodule.mainmodule:main
-

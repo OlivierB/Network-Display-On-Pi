@@ -3,7 +3,6 @@ from mymodule.subdir import submodule
 # import mymodule.subdir2.submodule2 as subdir2
 
 
-
 def main():
     print "++in mainmodule"
     print submodule.teststring

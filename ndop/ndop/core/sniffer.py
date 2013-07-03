@@ -17,12 +17,12 @@ import threading
 import multiprocessing as mp
 
 # Project configuration file
-from config import server_conf
+from ndop.config import server_conf
 
 # Project file import
-from core.wsserver import ClientsList
-from core.network.packet import Packet
-from core.mysql import MySQLdata
+from ndop.core.wsserver import ClientsList
+from ndop.core.network.packet import Packet
+from ndop.core.mysql import MySQLdata
 
 
 # Accept all packet or not
@@ -231,7 +231,7 @@ def load_mod(lmod, dev, pre=""):
         for mod in lmod:
             try:
                 # import module
-                module = importlib.import_module("modules." + mod)
+                module = importlib.import_module("ndop.modules." + mod)
 
                 # Check module main class
                 getattr(module, "NetModChild")

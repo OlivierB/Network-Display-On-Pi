@@ -17,8 +17,8 @@ import datetime
 
 # Project file import
 import netmodule as netmod
-import core.network.utils as netutils
-import core.network.netdata as netdata
+import ndop.core.network.utils as netutils
+import ndop.core.network.netdata as netdata
 
 
 class NetModChild(netmod.NetModule):

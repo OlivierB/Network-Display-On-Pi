@@ -3,7 +3,7 @@
 
 build/
 dist/
-NDOP*/
+*.egg-info
 
 # sublime project file
 *.sublime-project

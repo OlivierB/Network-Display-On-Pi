@@ -141,7 +141,7 @@ def add_mod_prot(wsdata, llmod):
             for mod in lmod:
                 try:
                     # import module
-                    module = importlib.import_module("modules." + mod)
+                    module = importlib.import_module("ndop.modules." + mod)
 
                     # Check module main class
                     getattr(module, "NetModChild")
@@ -150,9 +150,8 @@ def add_mod_prot(wsdata, llmod):
                     modclass = module.NetModChild()
                     # Add protocol for the webserver
                     wsdata.addProtocol(modclass.protocol)
-
-                except Exception:
-                    pass
+                except:
+                    raise
 
 
 def conf_logger(args):

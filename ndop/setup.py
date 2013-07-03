@@ -5,9 +5,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = "NDOP",
-    version = "0.2.0",
-    packages = find_packages(),
+    name="NDOP",
+    version="0.2.0",
+    packages=find_packages(),
     # scripts = ['ndop/ndop.py'],
 
     install_requires=[
@@ -23,5 +23,5 @@ setup(
     keywords="sniffer websocket network",
     url='https://github.com/OlivierB/Network-Display-On-Pi.git',
     license='',
-    entry_points={"console_scripts": ["ndop=ndop.ndop:main"]},
+    entry_points={"console_scripts": ["ndop=ndop.server:main"]},
 )
