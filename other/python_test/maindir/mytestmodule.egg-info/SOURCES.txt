@@ -1,0 +1,14 @@
+setup.py
+mymodule/__init__.py
+mymodule/mainmodule.py
+mymodule/subdir/__init__.py
+mymodule/subdir/submodule.py
+mymodule/subdir/subsubdir/__init__.py
+mymodule/subdir/subsubdir/subsubmodule.py
+mymodule/subdir2/__init__.py
+mymodule/subdir2/submodule2.py
+mytestmodule.egg-info/PKG-INFO
+mytestmodule.egg-info/SOURCES.txt
+mytestmodule.egg-info/dependency_links.txt
+mytestmodule.egg-info/entry_points.txt
+mytestmodule.egg-info/top_level.txt
