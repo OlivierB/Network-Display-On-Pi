@@ -13,8 +13,8 @@ from ... import layer
 
 
 class DNS(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="DNS")
+    
+    def decode(self, pktdata):
 
         # self.transaction_id = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
         self.dns_name = ''
@@ -58,9 +58,8 @@ class DNS(layer.Layer):
 
 
 class HTTP(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="HTTP")
 
+    def decode(self, pktdata):
         stype = ""
         cnt = 0
         dlen = min(len(pktdata), 10)
@@ -75,14 +74,11 @@ class HTTP(layer.Layer):
         else:
             self.type = ""
 
-        self.data = pktdata 
+        self.data = pktdata
 
 
 class HTTPS(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="HTTPS")
-
-        self.payload = layer.Layer(pktdata)
+    pass
 
 
 dUDPType = {

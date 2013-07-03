@@ -21,104 +21,81 @@ import services.services as services
 
 
 class IPv4(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="IPv4")
-        
-        # self.version = (ord(pktdata[0]) & 0xf0) >> 4
+
+    def decode(self, pktdata):
         self.header_len = ord(pktdata[0]) & 0x0f
+        self.type = ord(pktdata[9])
+        self.src = struct.unpack('I', pktdata[12:16])[0]
+        self.dst = struct.unpack('I', pktdata[16:20])[0]
+
+        # self.version = (ord(pktdata[0]) & 0xf0) >> 4
         # self.tos = ord(pktdata[1])
-        self.total_len = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
+        # self.total_len = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         # self.id = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
         # self.flags = (ord(pktdata[6]) & 0xe0) >> 5
         # self.fragment_offset = socket.ntohs(struct.unpack('H', pktdata[6:8])[0] & 0x1f)
         # self.ttl = ord(pktdata[8])
-        self.type = ord(pktdata[9])
         # self.checksum = socket.ntohs(struct.unpack('H', pktdata[10:12])[0])
-        self.src = struct.unpack('I', pktdata[12:16])[0]
-        self.dst = struct.unpack('I', pktdata[16:20])[0]
 
-        if self.header_len > 5:
-            self.options = pktdata[20:4*(self.header_len-5)]
-        else:
-            self.options = None
+        # if self.header_len > 5:
+        #     self.options = pktdata[20:4*(self.header_len-5)]
+        # else:
+        #     self.options = None
 
         # IP protocol decode
         try:
             call = dIPType[self.type]["callback"]
-        except:
-            call = None
-
-        if call is not None:
-            self.payload = call(pktdata[4*self.header_len:])
-        else:
-            self.payload = layer.Layer(pktdata[4*self.header_len:])
-
-    def is_type(self, typ):
-        return self.type == typ
+            if call is not None:
+                self.payload = call(self, pktdata[4*self.header_len:], protocol=dIPType[self.type]["protocol"])
+            else:
+                self.payload = layer.Layer(self, pktdata[4*self.header_len:], protocol=dIPType[self.type]["protocol"])
+        except Exception:
+            self.payload = layer.Layer(self, pktdata[4*self.header_len:])
+            print self.type
 
 
 class TCP(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="TCP")
 
+    def decode(self, pktdata):
         self.sport = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
         self.dport = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.header_len = ord(pktdata[12]) >> 4
 
-        # self.payload = layer.Layer(pktdata[4*self.header_len:])
+        if self.sport in services.dTCPType.keys():
+            self.type = self.sport
+        elif self.dport in services.dTCPType.keys():
+            self.type = self.dport
 
-        self.type = -1
-
-        # IP protocol decode
         try:
-            if self.dport in services.dTCPType.keys():
-                call = services.dTCPType[self.dport]["callback"]
-                self.type = self.dport
+            call = services.dTCPType[self.type]["callback"]
+            if call is not None:
+                self.payload = call(self, pktdata[4*self.header_len:], protocol=services.dTCPType[self.type]["protocol"])
             else:
-                call = services.dTCPType[self.sport]["callback"]
-                self.type = self.sport
+                self.payload = layer.Layer(self, pktdata[4*self.header_len:], protocol=services.dTCPType[self.type]["protocol"])
         except:
-            call = None
-
-        if call is not None:
-            self.payload = call(pktdata[4*self.header_len:])
-        else:
-            self.payload = layer.Layer(pktdata[4*self.header_len:])
-
-    def is_type(self, typ):
-        return self.type == typ
+            self.payload = layer.Layer(self, pktdata[4*self.header_len:])
 
 
 class UDP(layer.Layer):
-    def __init__(self, pktdata):
-        layer.Layer.__init__(self, protocol="UDP")
 
+    def decode(self, pktdata):
         self.sport = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
         self.dport = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.len = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
 
-        self.payload = layer.Layer(pktdata[8:])
+        if self.sport in services.dUDPType.keys():
+            self.type = self.sport
+        elif self.dport in services.dUDPType.keys():
+            self.type = self.dport
 
-        self.type = -1
-
-        # IP protocol decode
         try:
-            if self.dport in services.dUDPType.keys():
-                call = services.dUDPType[self.dport]["callback"]
-                self.type = self.dport
+            call = services.dUDPType[self.type]["callback"]
+            if call is not None:
+                self.payload = call(self, pktdata[8:], protocol=services.dUDPType[self.type]["protocol"])
             else:
-                call = services.dUDPType[self.sport]["callback"]
-                self.type = self.sport
+                self.payload = layer.Layer(self, pktdata[8:], protocol=services.dUDPType[self.type]["protocol"])
         except:
-            call = None
-
-        if call is not None:
-            self.payload = call(pktdata[8:])
-        else:
-            self.payload = layer.Layer(pktdata[8:])
-
-    def is_type(self, typ):
-        return self.type == typ
+            self.payload = layer.Layer(self, pktdata[8:])
 
 
 dIPType = {
