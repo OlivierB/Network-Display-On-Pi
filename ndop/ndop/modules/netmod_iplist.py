@@ -15,8 +15,8 @@ import pcap
 
 # Project file import
 from netmodule import NetModule
-import ndop.core.network.netdata as netdata
-import ndop.core.network.utils as netutils
+from ndop.core.network import netdata
+from ndop.core.network import netutils
 
 MAX_IP_LIST_OUTSIDE = 1000
 MAX_IP_LIST_SEND = 20

@@ -15,7 +15,6 @@ import pcap
 
 # Project file import
 from .. import layer
-import ip
 
 import services.services as services
 
@@ -49,9 +48,9 @@ class IPv4(layer.Layer):
                 self.payload = call(self, pktdata[4*self.header_len:], protocol=dIPType[self.type]["protocol"])
             else:
                 self.payload = layer.Layer(self, pktdata[4*self.header_len:], protocol=dIPType[self.type]["protocol"])
-        except Exception:
+        except Exception as e:
             self.payload = layer.Layer(self, pktdata[4*self.header_len:])
-            print self.type
+            print "IPv4 :", e
 
 
 class TCP(layer.Layer):
@@ -61,17 +60,14 @@ class TCP(layer.Layer):
         self.dport = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.header_len = ord(pktdata[12]) >> 4
 
-        if self.sport in services.dTCPType.keys():
-            self.type = self.sport
-        elif self.dport in services.dTCPType.keys():
-            self.type = self.dport
+        self.type = select_port(self.sport, self.dport)
 
         try:
-            call = services.dTCPType[self.type]["callback"]
+            call = services.dPortsList[self.type]["callback"]
             if call is not None:
-                self.payload = call(self, pktdata[4*self.header_len:], protocol=services.dTCPType[self.type]["protocol"])
+                self.payload = call(self, pktdata[4*self.header_len:], protocol=services.dPortsList[self.type]["protocol"])
             else:
-                self.payload = layer.Layer(self, pktdata[4*self.header_len:], protocol=services.dTCPType[self.type]["protocol"])
+                self.payload = layer.Layer(self, pktdata[4*self.header_len:], protocol=services.dPortsList[self.type]["protocol"])
         except:
             self.payload = layer.Layer(self, pktdata[4*self.header_len:])
 
@@ -83,19 +79,43 @@ class UDP(layer.Layer):
         self.dport = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.len = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
 
-        if self.sport in services.dUDPType.keys():
-            self.type = self.sport
-        elif self.dport in services.dUDPType.keys():
-            self.type = self.dport
+        # if self.underlayer.dst == 4294967295:
+        #     print "Broadcast from", pcap.ntoa(self.underlayer.src), " - (", pcap.ntoa(self.underlayer.dst), ")", 
+        #     print pktdata[8:]
+        # elif self.underlayer.dst >> 24 == 255:
+        #     print "Multicast from", pcap.ntoa(self.underlayer.src), " - (", pcap.ntoa(self.underlayer.dst), ")"
+        #     print pktdata[8:]
+
+        self.type = select_port(self.sport, self.dport)
 
         try:
-            call = services.dUDPType[self.type]["callback"]
+            call = services.dPortsList[self.type]["callback"]
             if call is not None:
-                self.payload = call(self, pktdata[8:], protocol=services.dUDPType[self.type]["protocol"])
+                self.payload = call(self, pktdata[8:], protocol=services.dPortsList[self.type]["protocol"])
             else:
-                self.payload = layer.Layer(self, pktdata[8:], protocol=services.dUDPType[self.type]["protocol"])
+                self.payload = layer.Layer(self, pktdata[8:], protocol=services.dPortsList[self.type]["protocol"])
         except:
             self.payload = layer.Layer(self, pktdata[8:])
+
+def select_port(src, dst):
+    port = -1
+    mp = min(src, dst)
+
+    if src <= 1024 and dst <= 1024:
+        if src in services.dPortsList.keys():
+            port = src
+        elif dst in services.dPortsList.keys():
+            port =  dst
+    elif mp <= 1024 and mp in services.dPortsList.keys():
+        port = mp
+    else:
+        if src in services.dPortsList.keys():
+            port = src
+        elif dst in services.dPortsList.keys():
+            port = dst
+    # if src in services.dPortsList.keys() and dst in services.dPortsList.keys() and src != dst:
+    #     print "TCP: MAIS ALLO QUOI !!!!!!!! Te un protocol et tu fais chier !", src, dst, "select :", port
+    return port
 
 
 dIPType = {
@@ -105,7 +125,7 @@ dIPType = {
     3: {'callback': None, 'protocol': 'GGP', 'description': 'Gateway-to-Gateway'},
     4: {'callback': None, 'protocol': 'IPv4', 'description': 'IPv4 encapsulation'},
     5: {'callback': None, 'protocol': 'ST', 'description': 'Stream'},
-    6: {'callback': ip.TCP, 'protocol': 'TCP', 'description': 'Transmission Control'},
+    6: {'callback': TCP, 'protocol': 'TCP', 'description': 'Transmission Control'},
     7: {'callback': None, 'protocol': 'CBT', 'description': 'CBT'},
     8: {'callback': None, 'protocol': 'EGP', 'description': 'Exterior Gateway Protocol'},
     9: {'callback': None, 'protocol': 'IGP', 'description': 'any private interior gateway (used by Cisco for their IGRP)'},
@@ -116,7 +136,7 @@ dIPType = {
     14: {'callback': None, 'protocol': 'EMCON', 'description': 'EMCON'},
     15: {'callback': None, 'protocol': 'XNET', 'description': 'Cross Net Debugger'},
     16: {'callback': None, 'protocol': 'CHAOS', 'description': 'Chaos'},
-    17: {'callback': ip.UDP, 'protocol': 'UDP', 'description': 'User Datagram'},
+    17: {'callback': UDP, 'protocol': 'UDP', 'description': 'User Datagram'},
     18: {'callback': None, 'protocol': 'MUX', 'description': 'Multiplexing'},
     19: {'callback': None, 'protocol': 'DCN-MEAS', 'description': 'DCN Measurement Subsystems'},
     20: {'callback': None, 'protocol': 'HMP', 'description': 'Host Monitoring'},
