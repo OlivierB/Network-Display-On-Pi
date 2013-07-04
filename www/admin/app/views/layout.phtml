@@ -1,0 +1,36 @@
+<link href="<?php echo $this->asset('assets/css/drag_drop.css') ?>" rel="stylesheet">
+<script src="<?= $this->asset('assets/js/drag_drop.js') ?>" ></script>
+
+<div id='panel' >
+	<div id='inline-wrapper'>
+
+		<?php foreach ($modules as $key => $value) { ?>
+			<div class='module' draggable="true" id="module_<?= $value['id'] ?>">
+				<div class="legend" ><?= $value['name'] ?> </div>
+				<img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png">
+			</div>
+		<?php } ?>
+	</div>
+</div>
+
+<div id='pages'>
+	<?php for($i = 0; $i < 5; $i++){ ?>
+	<div class="page thumbnail">
+		<div class='legend_page'>Page <?= $i+1 ?></div>
+		<div class='page-dropper module' id='page<?= $i ?>'>		
+			<img src="<?= $this->asset('assets/images/default_thumbnail.png') ?>">
+		</div>
+	</div>
+
+
+	<?php } ?>
+
+	<div class="page thumbnail" id='add_page'>
+		<div class='legend_page'>Add</div>
+		<div class='module' >		
+			<img src="<?= $this->asset('assets/images/add_thumbnail.png') ?>">
+		</div>
+	</div>
+	
+
+</div>
