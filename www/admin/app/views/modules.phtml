@@ -1,3 +1,8 @@
+<link href="<?= $this->asset('assets/css/masonry.css') ?>" rel="stylesheet">
+<script src="<?= $this->asset('assets/js/masonry.pkgd.min.js') ?>"></script>
+<script src="<?= $this->asset('assets/js/masonry.perso.js') ?>"></script>
+
+
 
 <div class="hero-unit">
 	<h1>Modules <strong>customization</strong></h1>
@@ -13,19 +18,19 @@
 	</p>
 </div>
 
-<div class="row-fluid">
-	<ul class="thumbnails">
-		<?php foreach ($modules as $key => $value){ ?>
-		<li class="span3">
-			<div class="thumbnail">
-				<img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png" alt="">
-				<div class="caption">
-					<h3><?= $value['name'] ?></h3>
-					<p><?= $value['description'] ?></p>
-					
-				</div>
+<div id="container" >
+    <?php foreach ($modules as $key => $value){ ?>
+    <div class="masonry">
+    	<div class="thumbnail">
+	        <img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png" alt="">
+	        <div class="caption">
+				<h3><?= $value['name'] ?></h3>
+				<p><?= $value['description'] ?></p>
+				
 			</div>
-		</li>
-		<?php } ?>
-	</ul>
+		</div>
+   </div>
+   <?php } ?>
 </div>
+
+
