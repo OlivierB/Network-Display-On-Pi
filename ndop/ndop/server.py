@@ -199,7 +199,7 @@ def main():
     # Be root to access network device
     if os.getuid() != 0:
         print("Need to be root !")
-        exit(2)
+        return 2
 
     # Get command line arguments
     args = ServerArgumentParser().parse_args()
@@ -220,7 +220,7 @@ def main():
     elif 'run' == args.daemon_cmd:
         daemon_serv.run()
 
-    sys.exit(0)
+    return 0
 
 
 if __name__ == "__main__":

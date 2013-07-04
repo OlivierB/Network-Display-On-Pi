@@ -9,13 +9,13 @@ inherit from NetModule
 """
 
 # Project file import
-import netmodule as netmod
+from netmodule import NetModule
 # import core.network.netdata as netdata
 
 
-class NetModChild(netmod.NetModule):
+class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
-        netmod.NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='http', *args, **kwargs)
+        NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='http', *args, **kwargs)
 
     def update(self):
         """
@@ -32,6 +32,7 @@ class NetModChild(netmod.NetModule):
 
         pkt is formated with Packet class
         """
+
         res = pkt.get_protocol("Ethernet", "IPv4", "TCP", "HTTP")
         if res is not None and res.type != "":
             
@@ -45,9 +46,11 @@ class NetModChild(netmod.NetModule):
             #     print h.split(": ")
 
             if res.type == "POST":
-                print res.data
 
-                print "----------"
+                header_end = res.data.find("\n\r")
+                if len(res.data) > header_end+2:
+                    print res.data[header_end+2:]
+                    print "----------"
 
     def reset(self):
         """

@@ -10,13 +10,13 @@ inherit from NetModule
 """
 
 # Project file import
-import netmodule as netmod
+from netmodule import NetModule
 import ndop.core.network.netdata as netdata
 
 
-class NetModChild(netmod.NetModule):
+class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
-        netmod.NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='dns', *args, **kwargs)
+        NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='dns', *args, **kwargs)
         self.l_dns_name = list()
 
     def update(self):

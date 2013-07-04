@@ -9,12 +9,12 @@ inherit from NetModule
 """
 
 # Project file import
-import netmodule as netmod
+from netmodule import NetModule
 
 
-class NetModChild(netmod.NetModule):
+class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
-        netmod.NetModule.__init__(self, protocol='classip', *args, **kwargs)
+        NetModule.__init__(self, protocol='classip', *args, **kwargs)
 
     def update(self):
         return None

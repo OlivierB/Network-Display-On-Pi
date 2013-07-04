@@ -12,13 +12,13 @@ inherit from NetModule
 import datetime
 
 # Project file import
-import netmodule as netmod
+from netmodule import NetModule
 import ndop.core.network.netdata as netdata
 
 
-class NetModChild(netmod.NetModule):
+class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
-        netmod.NetModule.__init__(self, updatetime=30, savetime=('m', 30), protocol='protocols', *args, **kwargs)
+        NetModule.__init__(self, updatetime=30, savetime=('m', 30), protocol='protocols', *args, **kwargs)
 
         # packet data
         self.lEtherProtocol = dict()  # list protocol ethernet

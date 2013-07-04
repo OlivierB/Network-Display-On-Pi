@@ -14,16 +14,16 @@ inherit from NetModule
 import pcap
 
 # Project file import
-import netmodule as netmod
+from netmodule import NetModule
 import ndop.core.network.netdata as netdata
 import ndop.core.network.utils as netutils
 
 LOCCOMM_MAX_IP = 1000
 
 
-class NetModChild(netmod.NetModule):
+class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
-        netmod.NetModule.__init__(self, updatetime=1, protocol='local_communication', *args, **kwargs)
+        NetModule.__init__(self, updatetime=1, protocol='local_communication', *args, **kwargs)
 
         # packet data
         self.dIP_loccomm = dict()

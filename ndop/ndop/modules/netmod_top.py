@@ -15,12 +15,12 @@ import time
 import psutil
 
 # Project file import
-import netmodule as netmod
+from netmodule import NetModule
 
 
-class NetModChild(netmod.NetModule):
+class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
-        netmod.NetModule.__init__(self, updatetime=1, protocol='server_stat', *args, **kwargs)
+        NetModule.__init__(self, updatetime=1, protocol='server_stat', *args, **kwargs)
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
