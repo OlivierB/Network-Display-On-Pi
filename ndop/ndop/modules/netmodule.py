@@ -13,7 +13,7 @@ import time
 import datetime
 
 
-class NetModule():
+class NetModule(object):
     """
     Module main class
     Define most usefull inheritance functions

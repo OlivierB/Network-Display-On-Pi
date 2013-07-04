@@ -1,43 +1,52 @@
-===========
-Towel Stuff
-===========
+=====================
+Network Display On Pi
+=====================
 
-Towel Stuff provides such and such and so and so. You might find
-it most useful for tasks involving <x> and also <y>. Typical usage
-often looks like this::
+Network Display On Pi (NDOP) provide you a way to capture network
+packets and send stats by websockets. Packets analysis is done thought
+differents modules you can choose.
+NDOP main commands :
 
-    #!/usr/bin/env python
+    help and commands list: ``ndop -h`` or ``ndop --help``
 
-    from towelstuff import location
-    from towelstuff import utils
+    run in consol: ``ndop run``
 
-    if utils.has_towel():
-        print "Your towel is located:", location.where_is_my_towel()
+    start ndop daemon: ``ndop start``
 
-(Note the double-colon and 4-space indent formatting above.)
-
-Paragraphs are separated by blank lines. *Italics*, **bold**,
-and ``monospace`` look like this.
+    stop bdop daemon: ``ndop stop``
 
 
-A Section
-=========
+see https://github.com/OlivierB/Network-Display-On-Pi.git
 
-Lists look like this:
 
-* First
+Files
+=====
 
-* Second. Can be multiple lines
-  but must be indented properly.
+Files list:
 
-A Sub-Section
--------------
+* clean.sh: clean ndop directory (.pyc and setup install)
 
-Numbered lists look like you'd expect:
+* launch_ndop.sh: start ndop without installation
+  This script forward parameters to ndop
 
-1. hi there
+* setup.py: program installer (see next section)
 
-2. must be going
+* uninstall.sh: program uninstaller
 
-Urls are http://like.this and links can be
-written `like this <http://www.example.com/foo/bar>`_.
+
+Program management
+==================
+
+Install
+-------
+
+1. Check dependances
+
+2. run ``python setup.py install``
+
+Uninstall
+---------
+
+Just need to run ``./uninstall.sh``
+
+

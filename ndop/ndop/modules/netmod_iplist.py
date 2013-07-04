@@ -14,7 +14,7 @@ import operator
 import pcap
 
 # Project file import
-import netmodule as netmod
+from netmodule import NetModule
 import ndop.core.network.netdata as netdata
 import ndop.core.network.utils as netutils
 
@@ -23,9 +23,9 @@ MAX_IP_LIST_SEND = 20
 MAX_TIME_IP_LIST = 600
 
 
-class NetModChild(netmod.NetModule):
+class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
-        netmod.NetModule.__init__(self, updatetime=5, protocol='iplist', *args, **kwargs)
+        NetModule.__init__(self, updatetime=5, protocol='iplist', *args, **kwargs)
 
         # packet data
         self.lIPOut = dict()

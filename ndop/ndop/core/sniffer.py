@@ -29,8 +29,8 @@ from ndop.core.mysql import MySQLdata
 PCAP_PROMISCUOUS_MODE = 1
 # Waiting time for new packet
 PCAP_SNIFFER_TIMEOUT = 300
-# Packet max length for capture
-PCAP_PACKET_MAX_LEN = 60000
+# Packet max length for capture (memory allocation)
+PCAP_PACKET_MAX_LEN = 1514
 # Time to check modules update
 MIN_TIME_MOD_UPDATE = 0.5
 # Time to check modules SQL database saving
