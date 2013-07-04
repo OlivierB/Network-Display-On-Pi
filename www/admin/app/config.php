@@ -17,11 +17,5 @@ Atomik::set(array(
     
     ));
 
-Atomik::set('app.routes', array(
- 'hello/:year/:month' => array(
-     'action' => 'hello',
-     'month' => 'all'
-     )
- ));
 
 

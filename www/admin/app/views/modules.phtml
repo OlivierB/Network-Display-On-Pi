@@ -1,0 +1,31 @@
+
+<div class="hero-unit">
+	<h1>Modules <strong>customization</strong></h1>
+	<p>Here you can choose what your modules will look like and define their parameters.</p>
+
+	<p>
+		<strong>If you don't see your module in the list, try to refresh the database.</strong>
+		<p>
+			<a class="btn btn-primary btn-large" href="<?= $this->url('sql/load_modules') ?>">
+				Refresh database
+			</a>
+		</p>
+	</p>
+</div>
+
+<div class="row-fluid">
+	<ul class="thumbnails">
+		<?php foreach ($modules as $key => $value){ ?>
+		<li class="span3">
+			<div class="thumbnail">
+				<img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png" alt="">
+				<div class="caption">
+					<h3><?= $value['name'] ?></h3>
+					<p><?= $value['description'] ?></p>
+					
+				</div>
+			</div>
+		</li>
+		<?php } ?>
+	</ul>
+</div>

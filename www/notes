@@ -10,3 +10,6 @@
 	-launch : 
 		- redis-server
 		- go run freegeoip.go (in the freegeoip directory)
+
+- module admin
+	- check the right for 'ndop.conf.ini' on another pc
