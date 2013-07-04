@@ -1,6 +1,10 @@
 *.py[cod]
 *.pyc
 
+build/
+dist/
+*.egg-info
+
 # sublime project file
 *.sublime-project
 *.sublime-workspace

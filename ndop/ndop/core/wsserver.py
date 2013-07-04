@@ -12,16 +12,13 @@ Use python tornado webserver
 """
 
 # Python lib import
-import threading
-import time
 import logging
-import tornado.httpserver
-import tornado.websocket
-import tornado.ioloop
-import tornado.web
+from time import sleep
+from threading import Thread, Lock
+from tornado import web, websocket, httpserver, ioloop
 
 
-class WSHandler_main(tornado.websocket.WebSocketHandler):
+class WSHandler_main(websocket.WebSocketHandler):
     """
     handler for main server page ("/")
     """
@@ -49,23 +46,39 @@ class WSHandler_main(tornado.websocket.WebSocketHandler):
             self.close()
             return None
  
+class WSHandler_online(web.RequestHandler):
+    """
+    handler for main server page ("/")
+    """
+    def open(self):
+        pass
+
+    def get(self):
+        self.write("ndop")
+
+    def on_message(self, message):
+        pass
+
+    def on_close(self):
+        pass
 
 # associate handler function and page
-application = tornado.web.Application([
-    (r'/', WSHandler_main)
+application = web.Application([
+    (r'/', WSHandler_main),
+    (r'/online', WSHandler_online)
 ])
 
 
-class WsServer(threading.Thread):
+class WsServer(Thread):
     """
     Thread class for tornado webserver
     """
 
     def __init__(self, port=9000):
-        threading.Thread.__init__(self)
+        Thread.__init__(self)
 
         # HTTP server
-        self.http_server = tornado.httpserver.HTTPServer(application)
+        self.http_server = httpserver.HTTPServer(application)
         self.http_server.listen(port)
         self.clientList = ClientsList()
 
@@ -74,7 +87,7 @@ class WsServer(threading.Thread):
     def run(self):
         self.log.info("WsServer : Server started...")
         try:
-            tornado.ioloop.IOLoop.instance().start()
+            ioloop.IOLoop.instance().start()
             self.log.info('WsServer : Server stopped...')
         except KeyboardInterrupt:
             self.log.info('WsServer : Server stopped on interruption signal...')
@@ -83,7 +96,7 @@ class WsServer(threading.Thread):
 
     def stop(self):
         self.clientList.closeCom()
-        tornado.ioloop.IOLoop.instance().stop()
+        ioloop.IOLoop.instance().stop()
 
 
 class ClientsList(object):
@@ -102,7 +115,7 @@ class ClientsList(object):
     #  class values
     cli_list = dict()
     protocols_list = list()
-    mutex = threading.Lock()
+    mutex = Lock()
 
     def addClient(self, client, subprotocols):
         """
@@ -194,6 +207,6 @@ if __name__ == "__main__":
     ws.start()
     try:
         while 1:
-            time.sleep(1)
+            sleep(1)
     except KeyboardInterrupt:
         ws.stop()

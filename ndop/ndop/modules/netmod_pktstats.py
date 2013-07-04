@@ -17,7 +17,7 @@ import datetime
 
 # Project file import
 import netmodule as netmod
-from core.sniffer import GetSniffer
+from ndop.core.sniffer import GetSniffer
 
 
 class NetModChild(netmod.NetModule):

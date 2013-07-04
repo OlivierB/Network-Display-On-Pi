@@ -1,5 +1,5 @@
-#!/usr/bin/python
-#encoding: utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
 Network Display On Pi
@@ -19,12 +19,12 @@ import logging.handlers
 import datetime as dt
 
 # Project configuration file
-import config.server as config
+from config import server_conf
 
 # Project file import
-import core.sniffer
-import core.wsserver
-import core.daemon as daemon
+from core.sniffer import SnifferManager
+from core.wsserver import WsServer, ClientsList
+from core.daemon import Daemon
 
 
 __program__ = "NDOP"
@@ -47,17 +47,17 @@ class ServerArgumentParser(argparse.ArgumentParser):
             dest='daemon_cmd', help="Daemon commands control (use 'run' for consol mode)")
 
         self.add_argument("-p", "--port",
-            default=config.websocket_port, type=int, dest="websocket_port",
-            help="Websocket server port (default: %i)" % config.websocket_port)
+            default=server_conf.websocket_port, type=int, dest="websocket_port",
+            help="Websocket server port (default: %i)" % server_conf.websocket_port)
 
         self.add_argument("-i", "--interface",
-            default=config.sniffer_device, dest="sniffer_device",
-            help="Network device for sniffing (default: %s)" % config.sniffer_device)
+            default=server_conf.sniffer_device, dest="sniffer_device",
+            help="Network device for sniffing (default: %s)" % server_conf.sniffer_device)
 
         self.add_argument("-d", "--debug", action='store_true', help="Pass in debug mode")
 
 
-class ServeurNDOP(daemon.Daemon):
+class ServeurNDOP(Daemon):
     """
     Main class for NDOP server
 
@@ -65,13 +65,13 @@ class ServeurNDOP(daemon.Daemon):
     """
 
     def __init__(self, args):
-        daemon.Daemon.__init__(self,
-            config.daemon_pid_file,
-            stdin=config.daemon_stdin,
-            stdout=config.daemon_stdout,
-            stderr=config.daemon_stderr,
-            root_dir=config.daemon_root_dir,
-            working_dir=config.daemon_working_dir)
+        Daemon.__init__(self,
+            server_conf.daemon_pid_file,
+            stdin=server_conf.daemon_stdin,
+            stdout=server_conf.daemon_stdout,
+            stderr=server_conf.daemon_stderr,
+            root_dir=server_conf.daemon_root_dir,
+            working_dir=server_conf.daemon_working_dir)
 
         self.args = args
 
@@ -89,13 +89,13 @@ class ServeurNDOP(daemon.Daemon):
         logger.info("# " + dt.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
 
         # Init websocket server (tornado)
-        ws_serv = core.wsserver.WsServer(self.args.websocket_port)
+        ws_serv = WsServer(self.args.websocket_port)
         # Init websocket data
-        wsdata = core.wsserver.ClientsList()
-        add_mod_prot(wsdata, config.modules_list)
+        wsdata = ClientsList()
+        add_mod_prot(wsdata, server_conf.modules_list)
 
         # init packet capture system
-        sniff = core.sniffer.SnifferManager(dev=self.args.sniffer_device)
+        sniff = SnifferManager(dev=self.args.sniffer_device)
 
         # Start services
         try:
@@ -141,7 +141,7 @@ def add_mod_prot(wsdata, llmod):
             for mod in lmod:
                 try:
                     # import module
-                    module = importlib.import_module("modules." + mod)
+                    module = importlib.import_module("ndop.modules." + mod)
 
                     # Check module main class
                     getattr(module, "NetModChild")
@@ -150,9 +150,8 @@ def add_mod_prot(wsdata, llmod):
                     modclass = module.NetModChild()
                     # Add protocol for the webserver
                     wsdata.addProtocol(modclass.protocol)
-
-                except Exception:
-                    pass
+                except:
+                    raise
 
 
 def conf_logger(args):
@@ -160,7 +159,7 @@ def conf_logger(args):
     Configure general logger parameters
     """
     # create a file handler
-    file_handler = logging.handlers.RotatingFileHandler(config.log_file, 'a', 1000000)
+    file_handler = logging.handlers.RotatingFileHandler(server_conf.log_file, 'a', 1000000)
     # output handler
     stdout_handler = logging.StreamHandler(sys.stdout)
 

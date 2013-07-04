@@ -13,10 +13,10 @@ import os
 import time
 import atexit
 import logging
-from signal import SIGINT
+from signal import SIGTERM, SIGINT
 
 # stop timeout (in second)
-MAX_SIGINT_WAIT = 15
+MAX_SIGINT_WAIT = 4
 
 
 class Daemon:
@@ -138,6 +138,7 @@ class Daemon:
                 os.kill(pid, SIGINT)
                 time.sleep(0.1)
                 if time.time() - st_t > MAX_SIGINT_WAIT:
+                    os.kill(pid, SIGTERM)
                     self.log.error("Can't stop ndop daemon")
                     break
 

@@ -15,8 +15,8 @@ import pcap
 
 # Project file import
 import netmodule as netmod
-import core.network.netdata as netdata
-import core.network.utils as netutils
+import ndop.core.network.netdata as netdata
+import ndop.core.network.utils as netutils
 
 LOCCOMM_MAX_IP = 1000
 

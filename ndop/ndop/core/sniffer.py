@@ -17,12 +17,12 @@ import threading
 import multiprocessing as mp
 
 # Project configuration file
-import config.server as config
+from ndop.config import server_conf
 
 # Project file import
-import core.wsserver
-import core.network.packet as packet
-import core.mysql as mysqldata
+from ndop.core.wsserver import ClientsList
+from ndop.core.network.packet import Packet
+from ndop.core.mysql import MySQLdata
 
 
 # Accept all packet or not
@@ -43,14 +43,14 @@ class SnifferManager():
     """
     def __init__(self, dev):
         self.dev = dev
-        self.ws_data = core.wsserver.ClientsList()
+        self.ws_data = ClientsList()
         self.l_sniffer = list()
         self.l_sniffer_data = list()
 
         self.init()
 
     def init(self):
-        llmod = config.modules_list
+        llmod = server_conf.modules_list
         nb_sniff = 1
         for lmod in llmod:
             if type(lmod) is list:
@@ -147,8 +147,8 @@ class Sniffer(mp.Process):
         capture = False
 
         # Mysql database
-        mydb = mysqldata.MySQLdata(config.db_host, config.db_user, config.db_passwd, config.db_database)
-        if config.db_sql_on:
+        mydb = MySQLdata(server_conf.db_host, server_conf.db_user, server_conf.db_passwd, server_conf.db_database)
+        if server_conf.db_sql_on:
             mydb.connection()
 
         # Get device informations if possible (IP address assigned)
@@ -174,7 +174,7 @@ class Sniffer(mp.Process):
 
                 if pkt is not None:
                     # Decode packet
-                    pktdec = packet.Packet(pkt[0], pkt[1], pkt[2])
+                    pktdec = Packet(pkt[0], pkt[1], pkt[2])
 
                     # send pkt to modules
                     for mod in lmod:
@@ -193,7 +193,7 @@ class Sniffer(mp.Process):
                         pipe.send(l_res)
 
                 # Modules save call
-                if config.db_sql_on:
+                if server_conf.db_sql_on:
                     if time.time() - last_save_t > MIN_TIME_DB_UPDATE:
                         last_save_t = time.time()
                         for mod in lmod:
@@ -231,7 +231,7 @@ def load_mod(lmod, dev, pre=""):
         for mod in lmod:
             try:
                 # import module
-                module = importlib.import_module("modules." + mod)
+                module = importlib.import_module("ndop.modules." + mod)
 
                 # Check module main class
                 getattr(module, "NetModChild")
