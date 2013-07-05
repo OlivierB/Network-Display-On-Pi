@@ -46,24 +46,39 @@ include 'pages/common.php';
 <body>
 	<!-- All pages are included here, slideJS handle the animation -->
 
-
+	
 	
 	<div id="slides" >
 
-		<div><?php include "modules/traffic/index.php" ?></div>
-		<div><?php include "modules/alertBase/index.php" ?></div>
-		<div><?php include "modules/serverStat/index.php" ?></div>
-		<div><?php include "modules/map/index.php" ?></div>
+		<?php
+		$app = parse_ini_file('ndop.conf.ini');
 
-		<div><?php include "modules/network3D/index.php" ?></div>
+		if( isset($app['database_address']) && 
+			isset($app['database_login']) && 
+			isset($app['database_password']) )
+		{
+			try {
+				$db = new PDO("mysql:host=".$app['database_address'].";dbname=NDOP_GUI", $app['database_login'], $app['database_password']);
 
-		<div><?php include "modules/dailyTraffic/index.php" ?></div>
-		<div><?php include "modules/weeklyTraffic/index.php" ?></div>
-		<div><?php include "modules/monthlyTraffic/index.php" ?></div>
-		<div><?php include "modules/dns/index.php" ?></div>
-		<div><?php include "modules/summary/index.php" ?></div>
-		<div><?php include "modules/dnsBubble/index.php" ?></div>
-		<div><?php include "modules/stressServer/index.php" ?></div>
+
+				$sql = "SELECT folder_name FROM  `layout` JOIN modules ON id_module = id";
+				$results = $db->query($sql);
+				$pages = $results->fetchAll(PDO::FETCH_ASSOC);
+
+				foreach ($pages as $key => $value) {
+					echo "<div>";
+					include "modules/".$value['folder_name']."/index.php";
+					echo "</div>";
+				}
+			}
+			catch(PDOException $e)
+			{
+				echo $e->getMessage();
+			}
+		}
+		?>
+
+		
 
 	</div>
 	
