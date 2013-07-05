@@ -1,13 +1,28 @@
+@media screen and (min-width: 800px) {
+	.container{
+		font-size: 15px;
+	}
+	
+}
+
+@media screen and (max-width: 800px) {
+	.container{
+		font-size: 10px;
+	}
+}
+
 #panel{
 	width: 25%;
 	/*max-height: 150px;*/
 	overflow: auto;
+	/*overflow-x: hidden;*/
 	/*border-radius:10px;*/
 	background-color: #e5eabf;
 	display: inline-block;
 	/*padding: 10px;*/
 	/*padding-top: 20px;*/
 	/*position: fixed;*/
+	margin: 0 1% 0 1%;
 
 }
 
@@ -15,17 +30,19 @@
 	float: left;
 	width: 100%;
 	/*margin-right: -30000px;*/
-	margin-left: 5px;
+	/*margin-left: 5px;*/
 }
 
 .module{
 	
 	/*display: inline-block;*/
-	width: 95%;
+	width: 93%;
 
 	/*margin-bottom: 5px;
 	margin-left: 15px;*/
+	margin: auto;
 	margin-top: 5px;
+	margin-bottom: 5px;
 
 	background-color: gray;
 	position: relative;
@@ -34,19 +51,36 @@
 .module img{
 	width: 100%;
 }
-.legend{
-	font-size: 25px;
-	padding-top: 15px;
-	padding-bottom: 15px;
-	position: absolute;
 
-	/*margin-top: -50px;*/
+.legend{
 	background-color: rgba(0,0,0,0.5);
 	color: white;
 	text-align: center;
 	width: 100%;
 	bottom: 0;
+	font-size: 180%;
+
+
 }
+@media screen and (min-width: 800px) {
+	.legend{
+		
+		padding-top: 15px;
+		padding-bottom: 15px;
+		position: absolute;		
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.legend{
+		/*font-size: 15px;*/
+		padding-top: 5px;
+		padding-bottom: 5px;
+		position: absolute;
+	}
+}
+
+
 
 .module:hover .legend{
 	background-color: rgba(255,255,255, 0.5);
@@ -56,15 +90,31 @@
 	overflow: auto;
 	display: inline-block;
 	width: 70%;
-	margin-left: 25px;
+	/*margin-left: 25px;*/
+	vertical-align: top;
+
+
 }
 .page{ 
-
+	position: relative;
+	/*margin: auto;*/
+	margin: 5px 0 5px 0;
+	margin-left: 1%;
+	margin-right: 1%;
 	display: inline-block;
-	margin: 5px;
+	/*margin: auto;*/
+	width: 30%;
 }
+
+.page i{
+	position: absolute;
+	top: 2%;
+	right: 2%;
+}
+
 .thumbnail{
-	width: 28%;
+	padding: 0.2%;
+	/*margin: 1%;*/
 }
 .thumbnail img{
 	width: 100%;
@@ -74,5 +124,17 @@
 	text-align: center;
 	font-size: 18px;
 	font-weight: bold;
-	margin: 10px;
+	/*margin: 10px;*/
+}
+
+.container{
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+.btn-wide{
+	width: 48%;
+	margin: 0;
+	font-size: 160%;
+	/*padding: 0;*/
 }

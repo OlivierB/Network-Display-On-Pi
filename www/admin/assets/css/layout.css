@@ -6,6 +6,11 @@ body {
 .hero-unit {
   background: #e5eabf;
 }
-  .hero-unit h1 strong {
-    color: #b2c60d;
-  }
+.hero-unit h1 strong {
+color: #b2c60d;
+}
+
+
+.menu{
+	padding-left: 50px; 
+}
