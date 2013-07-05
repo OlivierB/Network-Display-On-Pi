@@ -151,7 +151,8 @@ def add_mod_prot(wsdata, llmod):
                     # Add protocol for the webserver
                     wsdata.addProtocol(modclass.protocol)
                 except:
-                    raise
+                    logger = logging.getLogger()
+                    logger.debug("Add module protocol :", exc_info=True)
 
 
 def conf_logger(args):
@@ -173,7 +174,7 @@ def conf_logger(args):
     # Get logger
     logger = logging.getLogger()
 
-    # Set debub mode or not
+    # Set debug mode or not
     if args.debug:
         mod = logging.DEBUG
     else:

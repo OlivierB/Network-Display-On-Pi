@@ -13,6 +13,9 @@ Use python tornado webserver
 
 # Python lib import
 import logging
+import base64
+import json
+
 from time import sleep
 from threading import Thread, Lock
 from tornado import web, websocket, httpserver, ioloop
@@ -45,6 +48,31 @@ class WSHandler_main(websocket.WebSocketHandler):
         else:
             self.close()
             return None
+
+class WSHandler_admin(websocket.WebSocketHandler):
+    """
+    handler for main server page ("/")
+    """
+    def open(self):
+        cl = ClientsList()
+        cl.addAdmin(self)
+
+    def on_message(self, message):
+        try:
+            cl = ClientsList()
+            data = base64.b64encode(json.dumps(cl.getProtocols()))
+            self.write_message(data)
+        except Exception:
+            logger = logging.getLogger()
+            logger.debug("WsServer send : Can't send to admin")
+        
+
+    def on_close(self):
+        cl = ClientsList()
+        cl.delAdmin(self)
+
+    def select_subprotocol(self, subprotocols):
+        pass
  
 class WSHandler_online(web.RequestHandler):
     """
@@ -65,7 +93,8 @@ class WSHandler_online(web.RequestHandler):
 # associate handler function and page
 application = web.Application([
     (r'/', WSHandler_main),
-    (r'/online', WSHandler_online)
+    (r'/online', WSHandler_online),
+    (r'/admin', WSHandler_admin)
 ])
 
 
@@ -91,8 +120,9 @@ class WsServer(Thread):
             self.log.info('WsServer : Server stopped...')
         except KeyboardInterrupt:
             self.log.info('WsServer : Server stopped on interruption signal...')
-        except Exception:
-            self.log.error("WsServer : ", exc_info=True)
+        except Exception as e:
+            self.log.debug("WsServer :", exc_info=True)
+            self.log.error("WsServer :", e)
 
     def stop(self):
         self.clientList.closeCom()
@@ -114,6 +144,7 @@ class ClientsList(object):
 
     #  class values
     cli_list = dict()
+    admin_list = list()
     protocols_list = list()
     mutex = Lock()
 
@@ -132,6 +163,16 @@ class ClientsList(object):
                 self.cli_list[prot] = [client]
             self.mutex.release()
         return prot
+
+    def addAdmin(self, client):
+        self.mutex.acquire()
+        self.admin_list.append(client)
+        self.mutex.release()
+
+    def delAdmin(self, client):
+        self.mutex.acquire()
+        self.admin_list.remove(client)
+        self.mutex.release()
 
     def delClient(self, client):
         """
@@ -160,7 +201,8 @@ class ClientsList(object):
         try:
             client.write_message(data)
         except Exception:
-            pass
+            logger = logging.getLogger()
+            logger.debug("WsServer send : Can't send to client")
 
     def send(self, proto, data):
         """
@@ -185,6 +227,10 @@ class ClientsList(object):
                 if p in self.cli_list.keys():
                     for c in self.cli_list[p]:
                         self.__send(c, data)
+
+        for admin in self.admin_list:
+             self.__send(admin, base64.b64encode(json.dumps(dict(proto=proto, data=data))))
+
         self.mutex.release()
 
     def listProto(self):

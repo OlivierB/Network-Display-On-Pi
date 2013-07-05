@@ -3,7 +3,7 @@ Network Display On Pi
 =====================
 
 Network Display On Pi (NDOP) provide you a way to capture network
-packets and send stats by websockets. Packets analysis is done thought
+packets and send stats by websockets. Packets analysis is done through
 differents modules you can choose.
 NDOP main commands :
 

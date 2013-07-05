@@ -9,7 +9,7 @@ Network implementation data
 ########################################
 # ETHERNET PROTOCOL
 # File : core.network.ethernet.py
-import ethernet
+from . import ethernet
 
 # List of Ethernet type
 ETHERTYPE = ethernet.dEtherType
@@ -21,21 +21,18 @@ for typ in ethernet.dEtherType.keys():
 ########################################
 # IP PROTOCOL
 # File : core.network.ether.ip.py
-import ether.ip
-
-# List of reserved IP address on network
-IP_RESERVED = ether.ip.dIPReserved
+from ether import ip
 
 # List of IP type
-IPTYPE = ether.ip.dIPType
+IPTYPE = ip.dIPType
 # Local variable
-for typ in ether.ip.dIPType.keys():
-    locals()["IPTYPE_"+ether.ip.dIPType[typ]["protocol"].replace(" ", "_")] = typ
+for typ in ip.dIPType.keys():
+    locals()["IPTYPE_"+ip.dIPType[typ]["protocol"].replace(" ", "_")] = typ
 
 ########################################
-# IP PROTOCOL
-# File : core.network.ether.ip.py
-import ether.services.services as services
+# PORTS LIST
+# File : core.network.ether.services.services.py
+from ether.services import services
 
 PORTSLIST = services.dPortsList
 # Local variable

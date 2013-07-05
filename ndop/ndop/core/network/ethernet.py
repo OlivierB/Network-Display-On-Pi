@@ -9,6 +9,7 @@ Network utils
 # Project file import
 from . import layer
 from ether import ip
+from . import netutils
 
 
 class Ethernet(layer.Layer):
@@ -19,14 +20,7 @@ class Ethernet(layer.Layer):
         self.type = pktdata[12:14]
 
         # Ethernet protocol decode
-        try:
-            call = dEtherType[self.type]["callback"]
-            if call is not None:
-                self.payload = call(self, pktdata[14:], protocol=dEtherType[self.type]["protocol"])
-            else:
-                self.payload = layer.Layer(self, pktdata[14:], protocol=dEtherType[self.type]["protocol"])
-        except Exception:
-            self.payload = layer.Layer(self, pktdata[14:])
+        self.payload = netutils.get_next_layer(self, self.type, dEtherType, pktdata[14:])
 
     def __str__(self):
         tor = "[Ethernet " + self.payload.__str__() + "]"

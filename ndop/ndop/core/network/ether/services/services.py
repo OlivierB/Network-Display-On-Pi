@@ -18,6 +18,9 @@ class DNS(layer.Layer):
 
         # self.transaction_id = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
         self.dns_name = ''
+        lpkt = len(pktdata)
+        if lpkt < 3:
+            raise layer.ProtocolMismatch("Not enough data (size %i)" % lpkt)
         flags1 = ord(pktdata[2])
 
         if (flags1 >> 7) == 0:
@@ -32,7 +35,7 @@ class DNS(layer.Layer):
 
                 length = ord(pktdata[i])
 
-                while length != 0:
+                while i < lpkt and length != 0:
                     i += 1
                     string += (pktdata[i:i+length])
                     i += length
