@@ -22,6 +22,9 @@ import services.services as services
 class IPv4(layer.Layer):
 
     def decode(self, pktdata):
+        if len(pktdata) < 20:
+            raise layer.ProtocolMismatch("Not enough data")
+
         self.header_len = ord(pktdata[0]) & 0x0f
         self.type = ord(pktdata[9])
         self.src = struct.unpack('I', pktdata[12:16])[0]
@@ -48,6 +51,9 @@ class IPv4(layer.Layer):
 class TCP(layer.Layer):
 
     def decode(self, pktdata):
+        if len(pktdata) < 12:
+            raise layer.ProtocolMismatch("Not enough data")
+
         self.sport = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
         self.dport = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.header_len = ord(pktdata[12]) >> 4
@@ -60,6 +66,9 @@ class TCP(layer.Layer):
 class UDP(layer.Layer):
 
     def decode(self, pktdata):
+        if len(pktdata) < 8:
+            raise layer.ProtocolMismatch("Not enough data")
+
         self.sport = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
         self.dport = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.len = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
