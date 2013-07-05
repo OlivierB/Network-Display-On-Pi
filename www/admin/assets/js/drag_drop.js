@@ -12,13 +12,11 @@ $(document).ready(function() {
 function LayoutConfig() {
 
     this.layout = [];
+    // load the current layout stored in database in a this layout
+    this.loadLayout();
 
     // intial number of pages we can drop on
     this.nb_page = parseInt($('#nb_page').html());
-
-    this.nb_module_chosen = this.nb_page;
-    this.truc = 5;
-    console.log(this.nb_module_chosen)
 
     // set callback to every objects we can drag and drop
     this.refreshDroppable();
@@ -43,24 +41,18 @@ function LayoutConfig() {
 
     this.refreshSupprCallback();
 
-    
-
-    // load the current layout stored in database in a js variable
-    this.loadLayout();
-
 
 }
 
 LayoutConfig.prototype.refreshDroppable = function() {
     $('*[draggable="true"]').on({
-        // on commence le drag
+
         dragstart: function(e) {
             $(this).css('opacity', '0.5');
-
-            // on garde le texte en mémoire (A, B, C ou D)
+            // recored the id of the dragged module
             e.dataTransfer.setData('text', this.id);
         },
-        // fin du drag (même sans drop)
+        // end of the drag (even without drop)
         dragend: function() {
             $(this).css('opacity', '1');
         }
@@ -72,17 +64,14 @@ LayoutConfig.prototype.refreshDropper = function(that) {
 
         drop: function(e) {
             e.preventDefault();
+            // get the id of the module
             var id = e.dataTransfer.getData('text');
+
+            // set the new module to the correct place
             $('#' + this.id).html($('#' + id).html());
 
-            
-            if(that.layout[parseInt(this.id.substr(4))] == null){
-                that.nb_module_chosen++;
-                console.log('dop ' + that.nb_module_chosen)
-            }
             that.layout[parseInt(this.id.substr(4))] = parseInt(id.substr(7));
-            
-            console.log(that.layout)
+
         },
 
         dragover: function(e) {
@@ -93,7 +82,6 @@ LayoutConfig.prototype.refreshDropper = function(that) {
 
 LayoutConfig.prototype.addPage = function() {
     this.nb_page++;
-    // console.log(this.nb_page)
     var html = "<div class='page thumbnail'>\
        <div class='legend_page'>Page " + this.nb_page + "</div>\
        <i id='suppr" + (this.nb_page - 1) + "' class='icon-remove suppr'></i>\
@@ -102,9 +90,9 @@ LayoutConfig.prototype.addPage = function() {
        </div>\
        </div>";
 
+    $('#page-container').append(html);
 
-    $('#pageContainer').append(html);
-
+    // refresh the drag and drop callbacks
     this.refreshDropper(this);
     this.refreshSupprCallback();
 }
@@ -114,30 +102,21 @@ LayoutConfig.prototype.resizePagesContainer = function() {
     $('#panel').height(window.innerHeight - 100);
 }
 
+// save the config in the database
 LayoutConfig.prototype.saveConfig = function() {
-    var i = 0;
-    var length = this.layout.length;
 
-    console.log(this.layout)
-    while (i < length && this.layout[i] != null) {
-        i++;
-    }
     var nb = 0;
     var is_null = false;
-    for(var elm in this.layout){
-        console.log('elm ' + elm);
-        if(elm!=nb){
+    for (var elm in this.layout) {
+        // we check if the recorder page are 0, 1, 2, ...
+        if (elm != nb) {
             is_null = true;
         }
-        
         nb++;
-        
     }
-    console.log('l ' + is_null + ' ' + this.nb_module_chosen + ' ' + nb)
-
-
-
-    if (nb !== this.nb_module_chosen || is_null) {
+    console.log(this.layout)
+    // if there is a blank page between the filled page
+    if (is_null) {
         alert("You can't let blank page.")
     } else {
         $.ajax({
@@ -145,8 +124,8 @@ LayoutConfig.prototype.saveConfig = function() {
             url: "/admin/sql/save_config_layout.php",
             data: {
                 'pages[]': this.layout,
-                success: function(){
-                    alert('Layout saved');
+                success: function() {
+                    alert('Layout saved.');
                 }
             },
         });
@@ -156,14 +135,15 @@ LayoutConfig.prototype.saveConfig = function() {
 LayoutConfig.prototype.supprPage = function(event) {
     var id = parseInt(this.id.substr(5));
     var that = event.data.that;
-    if(that.layout[id] != null){
+
+    // erase the page from the layout variable and from the dom
+    if (that.layout[id] != null) {
         delete that.layout[id];
-        that.nb_module_chosen--;
-        console.log('mod ch ' + that.nb_module_chosen)
+        // a default image is stored in the page
         $('#page' + id).html($('#saveImage').html());
     }
-    
-    
+
+
 }
 
 LayoutConfig.prototype.refreshSupprCallback = function() {
@@ -174,11 +154,11 @@ LayoutConfig.prototype.refreshSupprCallback = function() {
 }
 
 LayoutConfig.prototype.loadLayout = function() {
-    function success(data){
-
-    for (var i = 0; i < data.length; i++) {
-        this.layout[parseInt(data[i].page)] = parseInt(data[i].id_module);
-    };
+    function success(data) {
+        // we fill our variabe with the response of the ajax request
+        for (var i = 0; i < data.length; i++) {
+            this.layout[parseInt(data[i].page)] = parseInt(data[i].id_module);
+        };
     }
     $.ajax({
         type: "GET",
@@ -189,7 +169,9 @@ LayoutConfig.prototype.loadLayout = function() {
 
 };
 
-LayoutConfig.prototype.clearConfig = function(){
+LayoutConfig.prototype.clearConfig = function() {
+    // clear our variable and the dom from the previsous layout config
     this.layout = [];
-    $('#pageContainer').html('');
+    $('#page-container').html('');
+    this.nb_page = 0;
 }
