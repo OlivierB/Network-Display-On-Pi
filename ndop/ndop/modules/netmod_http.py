@@ -10,7 +10,6 @@ inherit from NetModule
 
 # Project file import
 from netmodule import NetModule
-# import core.network.netdata as netdata
 
 
 class NetModChild(NetModule):
@@ -49,8 +48,17 @@ class NetModChild(NetModule):
 
                 header_end = res.data.find("\n\r")
                 if len(res.data) > header_end+2:
-                    print res.data[header_end+2:]
-                    print "----------"
+                    info = res.data[header_end+2:]
+                    find = False
+                    infoSearch = info.lower()
+                    for word in l_wd:
+                        if infoSearch.find(word) != -1:
+                            find = True
+                            break
+
+                    if find:
+                        print info
+                        print "----------"
 
     def reset(self):
         """
@@ -67,3 +75,9 @@ class NetModChild(NetModule):
 
         """
         return None
+
+
+l_wd = [
+    "login", "pseudo", "email", "e-mail"
+    "mdp", "pass", "pwd",
+]

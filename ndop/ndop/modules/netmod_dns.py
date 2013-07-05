@@ -11,7 +11,7 @@ inherit from NetModule
 
 # Project file import
 from netmodule import NetModule
-import ndop.core.network.netdata as netdata
+from ndop.core.network import netdata
 
 
 class NetModChild(NetModule):
@@ -28,7 +28,7 @@ class NetModChild(NetModule):
     def pkt_handler(self, pkt):
         if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
             if pkt.Ether.payload.is_type(netdata.IPTYPE_UDP):
-                if pkt.Ether.payload.payload.is_type(netdata.UDPTYPE_DNS):
+                if pkt.Ether.payload.payload.is_type(netdata.PORT_DNS):
                     if pkt.Ether.payload.payload.payload.dns_name != '':
                         self.l_dns_name.append(pkt.Ether.payload.payload.payload.dns_name)
 

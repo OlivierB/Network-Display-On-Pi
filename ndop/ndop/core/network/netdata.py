@@ -37,12 +37,8 @@ for typ in ether.ip.dIPType.keys():
 # File : core.network.ether.ip.py
 import ether.services.services as services
 
-UDPTYPE = services.dUDPType
+PORTSLIST = services.dPortsList
 # Local variable
-for typ in services.dUDPType.keys():
-    locals()["UDPTYPE_"+services.dUDPType[typ]["protocol"].replace(" ", "_")] = typ
+for typ in services.dPortsList.keys():
+    locals()["PORT_"+services.dPortsList[typ]["protocol"].replace(" ", "_")] = typ
 
-TCPTYPE = services.dTCPType
-# Local variable
-for typ in services.dTCPType.keys():
-    locals()["TCPTYPE_"+services.dTCPType[typ]["protocol"].replace(" ", "_")] = typ
