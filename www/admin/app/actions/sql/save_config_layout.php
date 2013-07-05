@@ -6,18 +6,7 @@
 
 	$this['database']->exec($sql);
 
-
-
-
 	if(isset($_POST['pages'])){
-
-
-
-		print_r(json_decode($_POST['pages'][0]));
-
-
-
-
 
 		foreach ($_POST['pages'] as $page => $module) {
 			print_r(json_decode($module));

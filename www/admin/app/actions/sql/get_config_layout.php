@@ -1,6 +1,6 @@
 <?php
 
-		Atomik::disableLayout();
+	Atomik::disableLayout();
 
 	$sql = "SELECT * FROM  `layout` ";
 
