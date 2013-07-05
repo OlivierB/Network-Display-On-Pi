@@ -203,8 +203,10 @@ class Sniffer(mp.Process):
 
         except KeyboardInterrupt:
             logger.info("Sniffer %i : Interruption signal" % self.id)
-        except Exception:
-            logger.error("Sniffer %i : " % self.id, exc_info=True)
+        except Exception as e:
+            logger.debug("Sniffer %i :" % self.id, exc_info=True)
+            # logger.error("Sniffer %i : %s" % (self.id, e.strerror))
+            print e
         finally:
             if capture:
                 mydb.close()

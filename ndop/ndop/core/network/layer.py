@@ -26,7 +26,8 @@ class Layer():
                 return "-> "+self.protocol
 
     def decode(self, pktdata):
-        self.data = pktdata
+        # self.data = pktdata
+        pass
 
     def is_protocol(self, *args):
         if len(args) > 0:
@@ -43,7 +44,7 @@ class Layer():
     def get_protocol(self, *args):
         if len(args) > 1:
             if args[0] == "*" or args[0] == self.protocol:
-                if self.protocol is not None:
+                if self.payload is not None:
                     return self.payload.get_protocol(*args[1:])
                 else:
                     return None
@@ -59,3 +60,10 @@ class Layer():
 
     def is_type(self, typ):
         return self.type == typ
+
+class ProtocolMismatch(Exception):
+    """Protocol error"""
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)

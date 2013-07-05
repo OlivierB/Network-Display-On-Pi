@@ -11,10 +11,10 @@ IP protocol
 # Python lib import
 import socket
 import struct
-import pcap
 
 # Project file import
 from .. import layer
+from .. import netutils
 
 import services.services as services
 
@@ -42,15 +42,7 @@ class IPv4(layer.Layer):
         #     self.options = None
 
         # IP protocol decode
-        try:
-            call = dIPType[self.type]["callback"]
-            if call is not None:
-                self.payload = call(self, pktdata[4*self.header_len:], protocol=dIPType[self.type]["protocol"])
-            else:
-                self.payload = layer.Layer(self, pktdata[4*self.header_len:], protocol=dIPType[self.type]["protocol"])
-        except Exception as e:
-            self.payload = layer.Layer(self, pktdata[4*self.header_len:])
-            print "IPv4 :", e
+        self.payload = netutils.get_next_layer(self, self.type, dIPType, pktdata[4*self.header_len:])
 
 
 class TCP(layer.Layer):
@@ -62,14 +54,7 @@ class TCP(layer.Layer):
 
         self.type = select_port(self.sport, self.dport)
 
-        try:
-            call = services.dPortsList[self.type]["callback"]
-            if call is not None:
-                self.payload = call(self, pktdata[4*self.header_len:], protocol=services.dPortsList[self.type]["protocol"])
-            else:
-                self.payload = layer.Layer(self, pktdata[4*self.header_len:], protocol=services.dPortsList[self.type]["protocol"])
-        except:
-            self.payload = layer.Layer(self, pktdata[4*self.header_len:])
+        self.payload = netutils.get_next_layer(self, self.type, services.dPortsList, pktdata[4*self.header_len:])
 
 
 class UDP(layer.Layer):
@@ -79,43 +64,36 @@ class UDP(layer.Layer):
         self.dport = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.len = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
 
-        # if self.underlayer.dst == 4294967295:
-        #     print "Broadcast from", pcap.ntoa(self.underlayer.src), " - (", pcap.ntoa(self.underlayer.dst), ")", 
-        #     print pktdata[8:]
-        # elif self.underlayer.dst >> 24 == 255:
-        #     print "Multicast from", pcap.ntoa(self.underlayer.src), " - (", pcap.ntoa(self.underlayer.dst), ")"
-        #     print pktdata[8:]
-
         self.type = select_port(self.sport, self.dport)
 
-        try:
-            call = services.dPortsList[self.type]["callback"]
-            if call is not None:
-                self.payload = call(self, pktdata[8:], protocol=services.dPortsList[self.type]["protocol"])
-            else:
-                self.payload = layer.Layer(self, pktdata[8:], protocol=services.dPortsList[self.type]["protocol"])
-        except:
-            self.payload = layer.Layer(self, pktdata[8:])
+        self.payload = netutils.get_next_layer(self, self.type, services.dPortsList, pktdata[8:])
+
 
 def select_port(src, dst):
-    port = -1
-    mp = min(src, dst)
+    # port = -1
+    # mp = min(src, dst)
 
-    if src <= 1024 and dst <= 1024:
-        if src in services.dPortsList.keys():
-            port = src
-        elif dst in services.dPortsList.keys():
-            port =  dst
-    elif mp <= 1024 and mp in services.dPortsList.keys():
-        port = mp
+    # if src <= 1024 and dst <= 1024:
+    #     if src in services.dPortsList.keys():
+    #         port = src
+    #     elif dst in services.dPortsList.keys():
+    #         port =  dst
+    # elif mp <= 1024 and mp in services.dPortsList.keys():
+    #     port = mp
+    # else:
+    #     if src in services.dPortsList.keys():
+    #         port = src
+    #     elif dst in services.dPortsList.keys():
+    #         port = dst
+    # return port
+
+    if dst in services.dPortsList.keys():
+        return dst
+    elif src in services.dPortsList.keys():
+        return src
     else:
-        if src in services.dPortsList.keys():
-            port = src
-        elif dst in services.dPortsList.keys():
-            port = dst
-    # if src in services.dPortsList.keys() and dst in services.dPortsList.keys() and src != dst:
-    #     print "TCP: MAIS ALLO QUOI !!!!!!!! Te un protocol et tu fais chier !", src, dst, "select :", port
-    return port
+        return -1
+
 
 
 dIPType = {
@@ -264,22 +242,3 @@ dIPType = {
     141: {'callback': None, 'protocol': 'WESP', 'description': 'Wrapped Encapsulating Security Payload'},
     142: {'callback': None, 'protocol': 'ROHC', 'description': 'Robust Header Compression'}
 }
-
-dIPReserved = [
-    (pcap.aton('0.0.0.0'), 8),        # Current network (only valid as source address)  RFC 5735
-    (pcap.aton('10.0.0.0'), 8),       # Private network RFC 1918
-    (pcap.aton('100.64.0.0'), 10),    # Shared Address Space    RFC 6598
-    (pcap.aton('127.0.0.0'), 8),      # Loopback    RFC 5735
-    (pcap.aton('169.254.0.0'), 16),   # Link-local  RFC 3927
-    (pcap.aton('172.16.0.0'), 12),    # Private network RFC 1918
-    (pcap.aton('192.0.0.0'), 24),     # IETF Protocol Assignments   RFC 5735
-    (pcap.aton('192.0.2.0'), 24),     # TEST-NET-1, documentation and examples  RFC 5735
-    (pcap.aton('192.88.99.0'), 24),   # IPv6 to IPv4 relay  RFC 3068
-    (pcap.aton('192.168.0.0'), 16),   # Private network RFC 1918
-    (pcap.aton('198.18.0.0'), 15),    # Network benchmark tests RFC 2544
-    (pcap.aton('198.51.100.0'), 24),  # TEST-NET-2, documentation and examples  RFC 5737
-    (pcap.aton('203.0.113.0'), 24),   # TEST-NET-3, documentation and examples  RFC 5737
-    (pcap.aton('224.0.0.0'), 4),      # IP multicast (former Class D network)   RFC 5771
-    (pcap.aton('240.0.0.0'), 4),      # Reserved (former Class E network)   RFC 1700
-    (pcap.aton('255.255.255.255'), 32)  # Broadcast
-]

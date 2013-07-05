@@ -91,8 +91,9 @@ class WsServer(Thread):
             self.log.info('WsServer : Server stopped...')
         except KeyboardInterrupt:
             self.log.info('WsServer : Server stopped on interruption signal...')
-        except Exception:
-            self.log.error("WsServer : ", exc_info=True)
+        except Exception as e:
+            self.log.debug("WsServer :", exc_info=True)
+            self.log.error("WsServer :", e)
 
     def stop(self):
         self.clientList.closeCom()
@@ -160,7 +161,8 @@ class ClientsList(object):
         try:
             client.write_message(data)
         except Exception:
-            pass
+            logger = logging.getLogger()
+            logger.debug("WsServer send : Can't send to client")
 
     def send(self, proto, data):
         """
