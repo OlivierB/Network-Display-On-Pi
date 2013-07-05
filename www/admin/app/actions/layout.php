@@ -10,3 +10,7 @@
 
 	$results = $this['database']->query($sql);
 	$pages = $results->fetchAll(PDO::FETCH_ASSOC);
+
+	$nb_page =  count($pages);
+	// if($nb_page < 0)
+	// 	$nb_page = 0;

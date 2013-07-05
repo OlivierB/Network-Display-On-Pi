@@ -13,11 +13,18 @@ function LayoutConfig() {
 
     this.layout = [];
 
+    // intial number of pages we can drop on
+    this.nb_page = parseInt($('#nb_page').html());
+
+    this.nb_module_chosen = this.nb_page;
+    this.truc = 5;
+    console.log(this.nb_module_chosen)
+
     // set callback to every objects we can drag and drop
     this.refreshDroppable();
 
     // set callback to every objects we can drop on
-    this.refreshDropper(this.layout);
+    this.refreshDropper(this);
 
     // resize the height of the container to the height of the window
     this.resizePagesContainer();
@@ -36,8 +43,7 @@ function LayoutConfig() {
 
     this.refreshSupprCallback();
 
-    // intial number of pages we can drop on
-    this.nb_page = parseInt($('#nb_page').html()) || 0;
+    
 
     // load the current layout stored in database in a js variable
     this.loadLayout();
@@ -61,7 +67,7 @@ LayoutConfig.prototype.refreshDroppable = function() {
     });
 }
 
-LayoutConfig.prototype.refreshDropper = function(layout) {
+LayoutConfig.prototype.refreshDropper = function(that) {
     $('.page-dropper').on({
 
         drop: function(e) {
@@ -69,9 +75,14 @@ LayoutConfig.prototype.refreshDropper = function(layout) {
             var id = e.dataTransfer.getData('text');
             $('#' + this.id).html($('#' + id).html());
 
-            console.log(layout)
-            layout[parseInt(this.id.substr(4))] = parseInt(id.substr(7));
-            console.log(layout)
+            
+            if(that.layout[parseInt(this.id.substr(4))] == null){
+                that.nb_module_chosen++;
+                console.log('dop ' + that.nb_module_chosen)
+            }
+            that.layout[parseInt(this.id.substr(4))] = parseInt(id.substr(7));
+            
+            console.log(that.layout)
         },
 
         dragover: function(e) {
@@ -92,9 +103,9 @@ LayoutConfig.prototype.addPage = function() {
        </div>";
 
 
-    $('#add_page').before(html);
+    $('#pageContainer').append(html);
 
-    this.refreshDropper(this.layout);
+    this.refreshDropper(this);
     this.refreshSupprCallback();
 }
 
@@ -104,52 +115,61 @@ LayoutConfig.prototype.resizePagesContainer = function() {
 }
 
 LayoutConfig.prototype.saveConfig = function() {
-    console.log(this.layout)
     var i = 0;
     var length = this.layout.length;
 
-    console.log('len ' + i +'<' + length  + '=' + (i < length))
-
+    console.log(this.layout)
     while (i < length && this.layout[i] != null) {
-        console.log(i + ' ' + length + ' ' + this.layout[i]);
         i++;
     }
-
-
-    function success(data) {
-        console.log('success ' + data)
+    var nb = 0;
+    var is_null = false;
+    for(var elm in this.layout){
+        console.log('elm ' + elm);
+        if(elm!=nb){
+            is_null = true;
+        }
+        
+        nb++;
+        
     }
+    console.log('l ' + is_null + ' ' + this.nb_module_chosen + ' ' + nb)
 
-    if (i !== length) {
-        console.log('manque des cases')
+
+
+    if (nb !== this.nb_module_chosen || is_null) {
+        alert("You can't let blank page.")
     } else {
-        console.log(this.layout)
-
         $.ajax({
             type: "POST",
             url: "/admin/sql/save_config_layout.php",
             data: {
-                'pages[]': this.layout
+                'pages[]': this.layout,
+                success: function(){
+                    alert('Layout saved');
+                }
             },
-            success: success,
-            // dataType: dataType
         });
     }
 }
 
 LayoutConfig.prototype.supprPage = function(event) {
     var id = parseInt(this.id.substr(5));
-
-    delete event.data.layout[id];
-    event.data.layout.length--;
-    console.log(id)
-    $('#page' + id).html($('#saveImage').html());
+    var that = event.data.that;
+    if(that.layout[id] != null){
+        delete that.layout[id];
+        that.nb_module_chosen--;
+        console.log('mod ch ' + that.nb_module_chosen)
+        $('#page' + id).html($('#saveImage').html());
+    }
+    
+    
 }
 
 LayoutConfig.prototype.refreshSupprCallback = function() {
     // callback on the 'save' button
     $('.suppr').click({
-        layout: this.layout
+        that: this
     }, this.supprPage);
 }
 
