@@ -5,7 +5,7 @@
 <div class='slide-div'>
 	<div class='row-fluid'>
 		<div class="span12" >
-			<span id="dns-canavas-alert"></span>
+			<span id="dns-canvas-alert"></span>
 			<div class='height-full' id="dns-canvas" >
 
 
