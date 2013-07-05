@@ -73,7 +73,9 @@ include 'pages/common.php';
 			}
 			catch(PDOException $e)
 			{
-				echo $e->getMessage();
+				echo "<div>";
+				include "modules/introduction/index.php";
+				echo "</div>";
 			}
 		}
 		?>
