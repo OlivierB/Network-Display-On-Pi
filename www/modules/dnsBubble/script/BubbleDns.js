@@ -20,7 +20,7 @@ BubbleDns.prototype.display = function() {
 
 	this.context.drawImage(this.image, this.x, this.y, size, size);
 
-
+	this.size = size;
 };
 
 BubbleDns.prototype.update = function() {
@@ -28,5 +28,5 @@ BubbleDns.prototype.update = function() {
 
 	this.moveX += (Math.random()-0.5) / 10;
 	this.x += this.moveX;
-	return this.limitY < this.y;
+	return this.limitY < this.y + this.size;
 };
