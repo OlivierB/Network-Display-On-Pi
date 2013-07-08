@@ -5,5 +5,5 @@ else
 	var IpMap = new IpLocationMapOnline('map');
 
 // Connection to the IP provider programm
-IpMap.connect(dispatcher, App.ipListProtocol);
+IpMap.connect(dispatcher, 'iplist');
 
