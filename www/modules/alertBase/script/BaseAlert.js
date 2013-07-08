@@ -7,7 +7,7 @@ BaseAlert.prototype.load = function() {
 
 	$.ajax({
 		type: "GET",
-		url: "http://" + App.baseAdress + this.url,
+		url: "http://" + App.webServerAddress + this.url,
 		async: true,
 		success: function(data) {
 			$("#" + this.id).html(data);

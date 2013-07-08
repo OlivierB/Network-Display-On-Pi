@@ -1,1 +1,1 @@
-dispatcher = new DataDispatcher(App.serverAddress);
+dispatcher = new DataDispatcher(App.NDOPAddress);
