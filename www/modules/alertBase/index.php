@@ -10,5 +10,5 @@
 </div>
 
 
-<script src='/modules/alertBase/script/BaseAlert.js'></script>
+<script src='/script/snort/BaseAlert.js'></script>
 <script src='/modules/alertBase/script/alert-loader.js'></script>
