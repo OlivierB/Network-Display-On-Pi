@@ -1,5 +1,6 @@
 <?php
 include 'pages/common.php';
+include 'ndop.conf.php';
 ?>
 <a href=""></a>
 <!DOCTYPE html>
@@ -29,6 +30,7 @@ include 'pages/common.php';
 	<link rel="stylesheet" href="/style/resize.css">
 
 	<!-- Personnal JS -->
+	<script language="javascript" type="text/javascript" src="/pages/js_build.php"></script>
 	<script src="/ndop.conf.js"></script>
 
 	<script src='/script/network/DataDispatcher.js'></script>
@@ -41,6 +43,8 @@ include 'pages/common.php';
 	<script src="/script/resize/resize.js"></script>
 
 
+
+
 </head>
 
 <body>
@@ -51,18 +55,17 @@ include 'pages/common.php';
 	<div id="slides" >
 
 		<?php
-		$app = parse_ini_file('ndop.conf.ini');
+		NDOP::$app = parse_ini_file('ndop.conf.ini');
 
-		if( isset($app['database_address']) && 
-			isset($app['database_login']) && 
-			isset($app['database_password']) )
+		if( isset(NDOP::$app['database_address']) && 
+			isset(NDOP::$app['database_login']) && 
+			isset(NDOP::$app['database_password']) )
 		{
 			try {
-				$db = new PDO("mysql:host=".$app['database_address'].";dbname=NDOP_GUI", $app['database_login'], $app['database_password']);
-
+				NDOP::$app['db'] = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password']);
 
 				$sql = "SELECT folder_name FROM  `layout` JOIN modules ON id_module = id";
-				$results = $db->query($sql);
+				$results = NDOP::$app['db']->query($sql);
 				$pages = $results->fetchAll(PDO::FETCH_ASSOC);
 
 				foreach ($pages as $key => $value) {
