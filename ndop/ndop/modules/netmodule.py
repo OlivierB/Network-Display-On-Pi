@@ -34,7 +34,7 @@ class NetModule(object):
         self.dev = dev
 
     def __str__(self):
-        return self.__class__.__name__ + " | " + self.protocol
+        return self.protocol
 
     def get_data(self):
         """

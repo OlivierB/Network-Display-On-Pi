@@ -43,6 +43,7 @@ class SnifferManager():
         self.ws_data = ClientsList()
         self.l_sniffer = list()
         self.l_sniffer_data = list()
+        self.is_running = False
 
         self.init()
 
@@ -60,6 +61,8 @@ class SnifferManager():
             time.sleep(0.5)
         for sniff_data in self.l_sniffer_data:
             sniff_data.start()
+
+        self.is_running = True
 
     def stop(self):
         # Stop receiver pipe first
@@ -139,6 +142,9 @@ class Sniffer(mp.Process):
         pipe = self.pipe_sender
         sql_on = self.config.sql_on
         lmod = self.lmod
+        for mod in lmod:
+            logger.info("Load network module - websocket subprotocol" + mod.__str__())
+
         last_update_t = time.time()
         last_save_t = time.time()
         capture = False

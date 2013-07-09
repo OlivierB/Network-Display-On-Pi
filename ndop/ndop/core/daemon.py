@@ -153,12 +153,6 @@ class Daemon:
                 print str(err)
                 sys.exit(1)
 
-    def restart(self):
-        """
-        Restart the daemon
-        """
-        self.stop()
-        self.start()
 
     def run(self):
         if self.function is not None:

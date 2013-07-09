@@ -11,7 +11,6 @@ NDOP
 # Python lib import
 import sys
 import time
-import importlib
 import logging
 import datetime as dt
 
@@ -26,7 +25,7 @@ def ndop_run(config):
     """
     Main server function
 
-    Stand by Loop
+    waiting Loop
     """
 
     # Get logger
@@ -45,62 +44,32 @@ def ndop_run(config):
     # init packet capture system
     sniff = SnifferManager(config)
 
-    # Start services
     try:
+        # Start services
         ws_serv.start()
         time.sleep(0.5)
-    except:
-        ws_serv.stop()
-        return 2
-
-    try:
         sniff.start()
-    except:
-        ws_serv.stop()
-        sniff.stop()
-        return 2
 
-    # Loop
-    try:
+        # Loop
         while 1:
             time.sleep(1)
 
     except KeyboardInterrupt:
         logger.info("Stopping...")
+
     finally:
         # Sniffer stop
         sniff.stop()
-        sniff.join()
+        if sniff.is_running:
+            sniff.join()
+
         # Webserver stop
         ws_serv.stop()
-        ws_serv.join()
+        if ws_serv.is_alive():
+            ws_serv.join()
         logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-            
+
     return 0
-
-
-def add_mod_prot(wsdata, llmod):
-    """
-    Load modules to get protocols list
-    """
-
-    if len(llmod) > 0:
-        for lmod in llmod:
-            for mod in lmod:
-                try:
-                    # import module
-                    module = importlib.import_module("ndop.modules." + mod)
-
-                    # Check module main class
-                    getattr(module, "NetModChild")
-
-                    # Create an instance
-                    modclass = module.NetModChild()
-                    # Add protocol for the webserver
-                    wsdata.addProtocol(modclass.protocol)
-                except:
-                    logger = logging.getLogger()
-                    logger.debug("Add module protocol :", exc_info=True)
 
 
 def main():
@@ -114,11 +83,6 @@ def main():
         conf.config_checker()
     except ConfigCenter as e:
         print "Config Cheker Error : %s" % e
-
-    print "Good"
-
-    # logger = logging.getLogger()
-    # logger.info("in main")
 
     if conf.cmd in ['start', 'restart']:
         daemon_serv = Daemon(
@@ -143,6 +107,7 @@ def main():
         return ndop_run(conf)
  
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

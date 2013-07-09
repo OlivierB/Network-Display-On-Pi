@@ -11,9 +11,9 @@ import logging
 import logging.handlers
 from pcap import findalldevs
 
-
 # Project configuration file
 from ndop.config import server_conf
+
 
 class ConfigChecker():
     """
@@ -37,7 +37,7 @@ class ConfigChecker():
         self.cmd = args.cmd
         self.daemon = False
         self.debug = args.debug
-        if self.cmd in ['start', 'restart', 'run']:
+        if self.cmd in ['start', 'run']:
             self.check_network(args)
             self.check_sql(args)
             self.check_modules(args)
@@ -47,7 +47,7 @@ class ConfigChecker():
                 self.check_daemon_files(args)
                 self.check_pidfile(args)
 
-        elif self.cmd in ['stop', 'status']:
+        elif self.cmd == 'stop':
             self.check_pidfile(args)
 
         self.check_logfile(args, daemon=self.daemon)
@@ -58,7 +58,7 @@ class ConfigChecker():
         # init
         parser.description = "%s Version %s" % (server_conf.__description__,server_conf. __version__)
         # daemon server command. 'run' to avoid daemon mode
-        parser.add_argument(choices=['start', 'stop', 'restart', 'status', 'run'],
+        parser.add_argument(choices=['start', 'stop', 'run'], default="run",
             dest='cmd', help="Control commands (use 'run' for consol mode)")
         parser.add_argument("-d", "--debug", action='store_true', help="pass in debug mode")
         parser.add_argument("-u", "--unroot", action='store_true', help="authorize to launch ndop without root")
