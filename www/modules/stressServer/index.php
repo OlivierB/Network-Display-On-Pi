@@ -4,17 +4,17 @@
 <?php header_display('Server stress'); ?>
 
 <div class='slide-div'>
-		<div class='row-fluid'>
+		<div class='row-fluid height-half'>
 			<div class="span12" >
 				<span id="packet-loss-live-chart-alert"></span>
-				<div class='height-half' id="packet-loss-live-chart" ></div>
+				<div  id="packet-loss-live-chart" ></div>
 			</div>			
 		</div>
 
-		<div class='row-fluid'>
+		<div class='row-fluid height-half'>
 			<div class="span12" >
 				<span id="packet-loss-day-chart-alert"></span>
-				<div class='height-half' id="packet-loss-day-chart"></div>
+				<div  id="packet-loss-day-chart"></div>
 			</div>
 
 			
