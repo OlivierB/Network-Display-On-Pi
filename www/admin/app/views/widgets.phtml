@@ -1,0 +1,37 @@
+<link href="<?= $this->asset('assets/css/masonry.css') ?>" rel="stylesheet">
+<script src="<?= $this->asset('assets/js/masonry.pkgd.min.js') ?>"></script>
+<script src="<?= $this->asset('assets/js/masonry.perso.js') ?>"></script>
+
+
+
+<div class="hero-unit">
+	<h1>Widgets <strong>list</strong></h1>
+	<p>Here you can see every widgets.</p>
+
+	<p>
+		<strong>If you don't see your widget in the list, try to refresh the database.</strong>
+		<p>
+			<a class="btn btn-primary btn-large" href="<?= $this->url('sql/load_widgets') ?>">
+				Refresh database
+			</a>
+		</p>
+	</p>
+</div>
+
+<div id="container" >
+    <?php foreach ($widgets as $key => $value){ ?>
+    <div class="masonry">
+    	<div class="thumbnail">
+	        <img src="../widgets/<?= $value['folder_name'] ?>/thumbnail.png" alt="">
+	        <div class="caption">
+				<h3><?= $value['name'] ?></h3>
+				<p><?= $value['description'] ?></p>
+				
+			</div>
+			<a class="btn" href="<?= $this->url('widgets/'.$value['folder_name']) ?>" > Configure</a>
+		</div>
+   </div>
+   <?php } ?>
+</div>
+
+
