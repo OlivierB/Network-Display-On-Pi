@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="/modules/dns/style/dns.css">
 
 <?php header_display('DNS request'); ?>
 
