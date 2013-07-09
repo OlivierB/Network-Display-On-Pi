@@ -10,7 +10,6 @@ Use pcap
 
 # Python lib import
 import time
-import importlib
 import pcap
 import logging
 import threading
@@ -36,21 +35,33 @@ MIN_TIME_DB_UPDATE = 1
 
 class SnifferManager():
     """
-    Manage some sniffers
+    Configure and Manage sniffers
     """
     def __init__(self, config):
         self.config = config
+
+        # websocket data
         self.ws_data = ClientsList()
+
+        # sniffer list
         self.l_sniffer = list()
+        # sniffer data receiver list
         self.l_sniffer_data = list()
+        # state
         self.is_running = False
 
+        # init all sniffer and data receiver
         self.init()
 
     def init(self):
+        if self.config.sql_on:
+            sql_conf = self.config.sql_conf
+        else:
+            sql_conf = None
+
         nb_sniff = 1
         for lmod in self.config.ll_modules:
-            sniff = Sniffer(self.config, self.config.sniff_dev, lmod=lmod, id=nb_sniff)
+            sniff = Sniffer(self.config.sniff_dev, lmod=lmod, sql=sql_conf, id=nb_sniff)
             self.l_sniffer.append(sniff)
             self.l_sniffer_data.append(SnifferData(sniff.get_data, self.ws_data))
             nb_sniff += 1
@@ -110,54 +121,54 @@ class Sniffer(mp.Process):
     This class some modules which analyse packets and make stats
     """
     
-    def __init__(self, config, dev, lmod=list(), id=1):
+    def __init__(self, dev, lmod=list(), sql=None, id=1):
         mp.Process.__init__(self)
 
         # stop condition
         self.terminated = mp.Value('i', 0)
 
         # Var
-        self.config = config
+        self.id = id
+        self.sql = sql
         self.dev = dev
         self.lmod = lmod
-        self.id = id
+        
         # communication between packet capture (pcap) and webserver
         # (tornado) [2 process]
         self.pipe_receiver, self.pipe_sender = mp.Pipe(duplex=False)
 
     def get_data(self):
+        """return communication pipe"""
         return self.pipe_receiver.recv()
 
     def stop(self):
+        """term value and end pipe"""
         self.terminated.value = 1
         self.pipe_sender.send(None)
 
     def run(self):
+        """Sniffer main function"""
         # Get logger
         logger = logging.getLogger()
         logger.info("Sniffer %i : Capture started on %s" % (self.id, self.dev))
 
         # Init
-        term = self.terminated      # little optimisation (local variable)
-        pipe = self.pipe_sender
-        sql_on = self.config.sql_on
-        lmod = self.lmod
-        for mod in lmod:
-            logger.info("Load network module - websocket subprotocol" + mod.__str__())
-
         last_update_t = time.time()
         last_save_t = time.time()
         capture = False
 
+        # List loaded module
+        for mod in self.lmod:
+            logger.info("Sniffer %i : Load network module - websocket subprotocol" % (self.id) + mod.__str__())
         
-
-        if sql_on:
+        # connection to sql database
+        if self.sql is not None:
             # Mysql database
             mydb = MySQLdata(
-                self.config.sql_conf["host"],
-                self.config.sql_conf["user"],
-                self.config.sql_conf["passwd"],
-                self.config.sql_conf["database"])
+                self.sql["host"],
+                self.sql["user"],
+                self.sql["passwd"],
+                self.sql["database"])
             # connection
             mydb.connection()
 
@@ -179,7 +190,7 @@ class Sniffer(mp.Process):
             capture = True
 
             # Handler loop
-            while not term.value:
+            while not self.terminated.value:
                 pkt = p.next()
 
                 if pkt is not None:
@@ -187,26 +198,26 @@ class Sniffer(mp.Process):
                     pktdec = Packet(pkt[0], pkt[1], pkt[2])
 
                     # send pkt to modules
-                    for mod in lmod:
+                    for mod in self.lmod:
                         mod.pkt_handler(pktdec)
 
                 # Modules update call
                 if time.time() - last_update_t > MIN_TIME_MOD_UPDATE:
                     last_update_t = time.time()
                     l_res = list()
-                    for mod in lmod:
+                    for mod in self.lmod:
                         data = mod.get_data()
                         if data is not None:
                             l_res.append((mod.protocol, data))
                     # Data to send with websocket
                     if len(l_res) > 0:
-                        pipe.send(l_res)
+                        self.pipe_sender.send(l_res)
 
                 # Modules save call
-                if sql_on:
+                if self.sql is not None:
                     if time.time() - last_save_t > MIN_TIME_DB_UPDATE:
                         last_save_t = time.time()
-                        for mod in lmod:
+                        for mod in self.lmod:
                             data = mod.get_sql()
                             if data is not None:
                                 mydb.execute(data)
@@ -219,7 +230,7 @@ class Sniffer(mp.Process):
             print e
         finally:
             if capture:
-                if sql_on:
+                if self.sql is not None:
                     mydb.close()
                 logger.info("Sniffer %i : Capture stopped..." % self.id)
                 pkt_recv, pkt_drop, pkt_devdrop = p.stats()
@@ -231,40 +242,11 @@ class Sniffer(mp.Process):
                 % (self.id, pkt_recv, pkt_drop, pkt_devdrop, lost))
 
 
-def load_mod(lmod, dev, pre=""):
-    """
-    Load modules
-    """
-    # Get logger
-    logger = logging.getLogger()
-
-    l_modules = list()
-
-    if len(lmod) > 0:
-        for mod in lmod:
-            try:
-                # import module
-                module = importlib.import_module("ndop.modules." + mod)
-
-                # Check module main class
-                getattr(module, "NetModChild")
-
-                # Create an instance
-                modclass = module.NetModChild(dev=dev)
-
-                # add module to the list
-                l_modules.append(modclass)
-                logger.info(pre + "Load module " + mod + " (protocol:" + modclass.protocol + ")")
-
-            except Exception:
-                logger.error(pre + "Load module " + mod + " : ", exc_info=True)
-
-    return l_modules
-
-
 class GetSniffer(object):
     """
-    Singleton class to access to one process sniffer
+    Singleton class to access to one sniffer process
+
+    There is one GetSniffer by process (pcap process)
     """
 
     # Singleton creation
