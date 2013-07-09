@@ -1,9 +1,11 @@
-function DnsDisplayerText(id) {
+function DnsDisplayerText(id, params) {
 	// inheritance from DnsDisplayer
 	DnsDisplayer.call(this, id);
 
 	this.container = $('#' + id);
 	this.nbElemDisplayed = 0;
+	
+	this.numberItemDNSList = params.numberItemDNSList;
 
 }
 
@@ -22,7 +24,7 @@ DnsDisplayerText.prototype.addItem = function() {
 		$('#dns-table > tbody:first').prepend(str);
 		this.elems.shift();
 
-		if (this.nbElemDisplayed < App.NumberItemDNSList) {
+		if (this.nbElemDisplayed < this.numberItemDNSList) {
 			this.nbElemDisplayed++;
 		} else {
 			$('#dns-table tr:last').detach();

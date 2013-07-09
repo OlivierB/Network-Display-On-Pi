@@ -1,2 +1,2 @@
-var display = new DnsDisplayerCanvas("dns-canvas");
-display.connect(dispatcher, App.dnsProtocol);
+var display = new DnsDisplayerCanvas("dns-canvas", Params.dns);
+display.connect(dispatcher, 'dns');

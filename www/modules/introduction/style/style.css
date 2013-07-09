@@ -1,0 +1,36 @@
+.tutorial{
+	background-color: white;
+	margin: 5% 10%;
+	width: 80%;
+	height: 70%;
+	border-radius: 20px;
+	font-size: 30px;
+	text-align: center;
+}
+
+h2{
+	padding-top: 50px;
+	font-size: 70px;
+	color: #9ECA00;
+	line-height: 70px;
+}
+
+.instructions{
+	/*margin: 20px;*/
+	/*margin-top: 5%;*/
+}
+
+.instructions strong{
+	font-size: 45px;#
+}
+
+#logoNDOP{
+	width: 20%;
+	margin: auto;
+}
+
+.tutorial a{
+	color: #45A2AE;
+	font-size: 45px;
+	line-height: 45px;
+}

@@ -19,3 +19,8 @@ Atomik::set(array(
 
 
 
+Atomik::set('app.routes', array(
+   'modules/:folder' => array(
+       'action' => 'modules',
+   )
+));

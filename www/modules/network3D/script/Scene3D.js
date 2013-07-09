@@ -6,13 +6,13 @@
 
 
 
-function Scene3D(id) {
+function Scene3D(id, params) {
 
 	// inheritance from WebSocketManager
 	WebSocketManager.call(this, id + '-alert');
 
 	this.id = id;
-	this.detail3D = App.Details3D || 5;
+	this.detail3D = params.details3D || 5;
 
 
 

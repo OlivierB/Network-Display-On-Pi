@@ -5,25 +5,31 @@
 	<div id='inline-wrapper'>
 
 		<?php foreach ($modules as $key => $value) { ?>
-			<div class='module' draggable="true" id="module_<?= $value['id'] ?>">
-				<div class="legend" ><?= $value['name'] ?> </div>
-				<img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png">
-			</div>
+		<div class='module' draggable="true" id="module_<?= $value['id'] ?>">
+			<div class="legend" ><?= $value['name'] ?> </div>
+			<img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png">
+		</div>
 		<?php } ?>
 	</div>
 </div>
 
 <div id='pages'>
-	<?php for($i = 0; $i < 5; $i++){ ?>
-	<div class="page thumbnail">
-		<div class='legend_page'>Page <?= $i+1 ?></div>
-		<div class='page-dropper module' id='page<?= $i ?>'>		
-			<img src="<?= $this->asset('assets/images/default_thumbnail.png') ?>">
-		</div>
+	<div>
+		<button class="btn btn-large btn-primary btn-wide" type="button" id="save">Save this configuration</button>
+		<button class="btn btn-large btn-inverse btn-wide" type="button" id="clear">Clear this configuration</button>
 	</div>
-
-
-	<?php } ?>
+	<span id="page-container">
+		<?php foreach ($pages as $i => $value) { ?>
+		<div class="page thumbnail">
+			<div class='legend_page'>Page <?= $i+1 ?></div>
+			<i id='suppr<?= $i ?>' class="suppr icon-remove"></i>
+			<div class='page-dropper module'  id="page<?= $i ?>">
+				<div class="legend" ><?= $value['name'] ?> </div>
+				<img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png">
+			</div>
+		</div>
+		<?php  } ?>
+	</span>
 
 	<div class="page thumbnail" id='add_page'>
 		<div class='legend_page'>Add</div>
@@ -34,3 +40,8 @@
 	
 
 </div>
+
+<div id='saveImage' style='display:none;'>
+	<img src="<?= $this->asset('assets/images/default_thumbnail.png') ?>">
+</div>
+<div id="nb_page" style="display:none;"><?= $nb_page ?></div>

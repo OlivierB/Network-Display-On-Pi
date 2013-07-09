@@ -25,10 +25,6 @@
 		<h3>Swap load</h3>
 	</div>
 
-	<div class='span4'>
-		<div class='percent-chart-loader' id="loss" data-percent="0"><span>0</span></div>
-		<h3>Packet Loss</h3>
-	</div>
 
 
 

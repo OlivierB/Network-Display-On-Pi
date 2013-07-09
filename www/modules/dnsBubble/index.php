@@ -1,11 +1,10 @@
-<link rel="stylesheet" href="/modules/dns/style/dns.css">
 
 <?php header_display('DNS request'); ?>
 
 <div class='slide-div'>
 	<div class='row-fluid'>
 		<div class="span12" >
-			<span id="dns-canavas-alert"></span>
+			<span id="dns-canvas-alert"></span>
 			<div class='height-full' id="dns-canvas" >
 
 
