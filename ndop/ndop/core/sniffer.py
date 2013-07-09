@@ -16,9 +16,6 @@ import logging
 import threading
 import multiprocessing as mp
 
-# Project configuration file
-from ndop.config import server_conf
-
 # Project file import
 from ndop.core.wsserver import ClientsList
 from ndop.core.network.packet import Packet
@@ -41,8 +38,8 @@ class SnifferManager():
     """
     Manage some sniffers
     """
-    def __init__(self, dev):
-        self.dev = dev
+    def __init__(self, config):
+        self.config = config
         self.ws_data = ClientsList()
         self.l_sniffer = list()
         self.l_sniffer_data = list()
@@ -50,14 +47,12 @@ class SnifferManager():
         self.init()
 
     def init(self):
-        llmod = server_conf.modules_list
         nb_sniff = 1
-        for lmod in llmod:
-            if type(lmod) is list:
-                sniff = Sniffer(dev=self.dev, lmod=lmod, id=nb_sniff)
-                self.l_sniffer.append(sniff)
-                self.l_sniffer_data.append(SnifferData(sniff.get_data, self.ws_data))
-                nb_sniff += 1
+        for lmod in self.config.ll_modules:
+            sniff = Sniffer(self.config, self.config.sniff_dev, lmod=lmod, id=nb_sniff)
+            self.l_sniffer.append(sniff)
+            self.l_sniffer_data.append(SnifferData(sniff.get_data, self.ws_data))
+            nb_sniff += 1
 
     def start(self):
         for sniff in self.l_sniffer:
@@ -112,13 +107,14 @@ class Sniffer(mp.Process):
     This class some modules which analyse packets and make stats
     """
     
-    def __init__(self, dev="eth0", lmod=list(), id=1):
+    def __init__(self, config, dev, lmod=list(), id=1):
         mp.Process.__init__(self)
 
         # stop condition
         self.terminated = mp.Value('i', 0)
 
         # Var
+        self.config = config
         self.dev = dev
         self.lmod = lmod
         self.id = id
@@ -141,14 +137,22 @@ class Sniffer(mp.Process):
         # Init
         term = self.terminated      # little optimisation (local variable)
         pipe = self.pipe_sender
-        lmod = load_mod(self.lmod, self.dev, pre="Sniffer %i : " % self.id)
+        sql_on = self.config.sql_on
+        lmod = self.lmod
         last_update_t = time.time()
         last_save_t = time.time()
         capture = False
 
-        # Mysql database
-        mydb = MySQLdata(server_conf.db_host, server_conf.db_user, server_conf.db_passwd, server_conf.db_database)
-        if server_conf.db_sql_on:
+        
+
+        if sql_on:
+            # Mysql database
+            mydb = MySQLdata(
+                self.config.sql_conf["host"],
+                self.config.sql_conf["user"],
+                self.config.sql_conf["passwd"],
+                self.config.sql_conf["database"])
+            # connection
             mydb.connection()
 
         # Get device informations if possible (IP address assigned)
@@ -193,7 +197,7 @@ class Sniffer(mp.Process):
                         pipe.send(l_res)
 
                 # Modules save call
-                if server_conf.db_sql_on:
+                if sql_on:
                     if time.time() - last_save_t > MIN_TIME_DB_UPDATE:
                         last_save_t = time.time()
                         for mod in lmod:
@@ -209,7 +213,8 @@ class Sniffer(mp.Process):
             print e
         finally:
             if capture:
-                mydb.close()
+                if sql_on:
+                    mydb.close()
                 logger.info("Sniffer %i : Capture stopped..." % self.id)
                 pkt_recv, pkt_drop, pkt_devdrop = p.stats()
                 if pkt_recv > 0:

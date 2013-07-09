@@ -103,7 +103,7 @@ class WsServer(Thread):
     Thread class for tornado webserver
     """
 
-    def __init__(self, port=9000):
+    def __init__(self, port):
         Thread.__init__(self)
 
         # HTTP server

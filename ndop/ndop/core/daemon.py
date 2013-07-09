@@ -25,7 +25,7 @@ class Daemon:
     
     Usage: subclass the Daemon class and override the run() method
     """
-    def __init__(self, pidfile, stdin='/dev/null', stdout='/dev/null', stderr='/dev/null', root_dir='/', working_dir='/'):
+    def __init__(self, pidfile, function=None, args=(), stdin='/dev/null', stdout='/dev/null', stderr='/dev/null', root_dir='/', working_dir='/'):
         self.stdin = stdin
         self.stdout = stdout
         self.stderr = stderr
@@ -34,6 +34,9 @@ class Daemon:
         self.root_dir = root_dir
         self.working_dir = working_dir
         self.log = logging.getLogger()
+
+        self.function = function
+        self.args = args
 
     def daemonize(self):
         """
@@ -139,7 +142,6 @@ class Daemon:
                 time.sleep(0.1)
                 if time.time() - st_t > MAX_SIGINT_WAIT:
                     os.kill(pid, SIGTERM)
-                    self.log.error("Can't stop ndop daemon")
                     break
 
         except OSError, err:
@@ -159,7 +161,5 @@ class Daemon:
         self.start()
 
     def run(self):
-        """
-        You should override this method when you subclass Daemon. It will be called after the process has been
-        daemonized by start() or restart().
-        """
+        if self.function is not None:
+            return self.function(*self.args)

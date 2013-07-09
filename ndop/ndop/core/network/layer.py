@@ -61,6 +61,7 @@ class Layer():
     def is_type(self, typ):
         return self.type == typ
 
+
 class ProtocolMismatch(Exception):
     """Protocol error"""
     def __init__(self, value):

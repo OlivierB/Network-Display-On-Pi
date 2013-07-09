@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import websocket
 import thread
 import time
@@ -74,7 +77,10 @@ def main(*args):
 
     if len(args) > 0:
         if args[0] == "--list":
-            get_list()
+            try:
+                get_list()
+            except:
+                print "Cannot get list"
             return 0
 
         for a in args:
