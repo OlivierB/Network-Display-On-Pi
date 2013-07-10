@@ -214,7 +214,7 @@ class ConfigChecker():
         """
         Check if it is possible to write in the given file
         """
-        if os.path.isfile(path):
+        if os.path.exists(path):
             if os.access(path, os.W_OK):
                 return True
             else:
