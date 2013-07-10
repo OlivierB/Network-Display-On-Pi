@@ -1,6 +1,6 @@
 <?php
 $this['database']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$insert_widget = "INSERT INTO `widget` (`folder_name`, `name`, `description`, `updated`) VALUES (:folder_name, :name, :description, TRUE) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), updated=TRUE;";
+$insert_widget = "INSERT IGNORE INTO `widget` (`folder_name`, `name`, `description`, `updated`) VALUES (:folder_name, :name, :description, TRUE) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), updated=TRUE;";
 $prep_insert_widget = $this['database']->prepare($insert_widget);
 
 
@@ -16,7 +16,7 @@ $select_id_set = "SELECT `id` FROM `widget_parameter_set` WHERE `id_widget` = :i
 $prep_select_id_set = $this['database']->prepare($select_id_set);
 
 
-$insert_param_widget = "INSERT INTO `widget_parameter_design` (`id_widget`, `name`, `type`, `description`, `updated`) VALUES (:id_widget, :name, :type, :description, TRUE) ON DUPLICATE KEY UPDATE description=VALUES(description), updated=TRUE, type=VALUES(type) ;";
+$insert_param_widget = "INSERT IGNORE INTO `widget_parameter_design` (`id_widget`, `name`, `type`, `description`, `updated`) VALUES (:id_widget, :name, :type, :description, TRUE) ON DUPLICATE KEY UPDATE description=VALUES(description), updated=TRUE, type=VALUES(type) ;";
 $prep_insert_param_widget = $this['database']->prepare($insert_param_widget);
 
 
@@ -24,11 +24,29 @@ $select_id_param = "SELECT `id` FROM `widget_parameter_design` WHERE `name` = :n
 $prep_select_id_param = $this['database']->prepare($select_id_param);
 
 
-$insert_default_param = "INSERT  INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES (:id_set, :id_param, :value);";
+$insert_default_param = "INSERT  IGNORE INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES (:id_set, :id_param, :value);";
 $prep_insert_default_param = $this['database']->prepare($insert_default_param);
+
 
 $sql = 'UPDATE `widget` SET `updated`=FALSE;';
 $this['database']->exec($sql);
+
+
+$update_folder = "UPDATE `widget` SET `updated`=TRUE WHERE `folder_name` = :folder_name;";
+$prep_update_folder = $this['database']->prepare($update_folder);
+
+
+$delete_old_folder = "DELETE FROM `widget` WHERE `updated` = FALSE;";
+$prep_delete_old_folder = $this['database']->prepare($delete_old_folder);
+
+
+$dir = opendir('../widgets') or die('Erreur');
+while($entry = @readdir($dir)) {
+	$prep_update_folder->execute(array( 
+		'folder_name' 	=> $entry
+	));
+}
+$prep_delete_old_folder->execute();
 
 $dir = opendir('../widgets') or die('Erreur');
 while($entry = @readdir($dir)) {
@@ -105,7 +123,6 @@ while($entry = @readdir($dir)) {
 }
 closedir($dir);
 
-$sql = "DELETE FROM `widget` WHERE `updated`=FALSE";
-$this['database']->exec($sql);
+
 
 // $this->redirect('widgets');
