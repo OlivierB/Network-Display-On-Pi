@@ -81,7 +81,7 @@ def main():
     try:
         conf.config_checker()
     except ConfigCenter as e:
-        if conf.debug:
+        if (conf.daemon and conf.debug) or not conf.daemon:
             sys.stderr.write("Config Cheker : %s\n" % e)
         return 2
 
