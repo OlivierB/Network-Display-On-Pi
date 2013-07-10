@@ -9,10 +9,9 @@
 	<p>Here you can choose what your modules will look like and define their parameters.</p>
 
 	<p>
-		<strong>If you don't see your module in the list, try to refresh the database.</strong>
 		<p>
-			<a class="btn btn-primary btn-large" href="<?= $this->url('sql/load_modules') ?>">
-				Refresh database
+			<a class="btn btn-primary btn-large" href="<?= $this->url('modules/editor') ?>">
+				Create new module
 			</a>
 		</p>
 	</p>
@@ -22,13 +21,13 @@
     <?php foreach ($modules as $key => $value){ ?>
     <div class="masonry">
     	<div class="thumbnail">
-	        <img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png" alt="">
+	        <!-- <img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png" alt=""> -->
 	        <div class="caption">
 				<h3><?= $value['name'] ?></h3>
 				<p><?= $value['description'] ?></p>
 				
 			</div>
-			<a class="btn" href="<?= $this->url('modules/'.$value['folder_name']) ?>" > Configure</a>
+			<a class="btn" href="<?= $this->url('modules/editor/'.$value['folder_name']) ?>" > Configure</a>
 		</div>
    </div>
    <?php } ?>

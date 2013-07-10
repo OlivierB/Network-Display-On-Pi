@@ -1,0 +1,24 @@
+.height-half{
+	height: 50%;
+}
+
+.height-full{
+	height: 100%;
+}
+
+
+
+.line{
+	height: 100%;
+}
+
+.line .module{
+	height: 100%;
+}
+.line .module img{
+	height: 100%;
+}
+
+#module_content{
+	padding: 10px;
+}
