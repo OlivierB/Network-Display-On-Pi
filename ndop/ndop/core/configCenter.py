@@ -39,6 +39,9 @@ class ConfigChecker():
         # Get command line arguments
         args = self.parser().parse_args()
 
+        self.daemon = args.daemon
+        self.debug = args.debug
+
         # Check user
         if not args.unroot and not self.is_root():
             raise UserMode("Need to be root or add -u (--unroot) argument !")
@@ -47,23 +50,15 @@ class ConfigChecker():
         # Load config file
         self.load_config("ndop.config.server_conf")
         
-        # Launch mode
-        self.cmd = args.cmd
-        self.daemon = False
-        self.debug = args.debug
-        
-        if self.cmd in ['start', 'run']:
-            self.check_network(args)
-            self.check_sql(args)
-            self.check_modules(args)
+        # Check
+        self.check_network(args)
+        self.check_sql(args)
+        self.check_modules(args)
 
-            if not self.cmd == 'run':
-                self.daemon = True
-                self.check_daemon_files(args)
-                self.check_pidfile(args)
-
-        elif self.cmd == 'stop':
+        if self.daemon:
+            self.check_daemon_files(args)
             self.check_pidfile(args)
+
 
         self.check_logfile(args, daemon=self.daemon)
         conf_logger(debug=self.debug, p_file=self.log_file)
@@ -75,9 +70,7 @@ class ConfigChecker():
         parser = argparse.ArgumentParser()
         # init
         parser.description = "%s Version %s" % (server_conf.__description__,server_conf. __version__)
-        # daemon server command. 'run' to avoid daemon mode
-        parser.add_argument(choices=['start', 'stop', 'run'],
-            dest='cmd', help="Control commands (use 'run' for consol mode)")
+
         parser.add_argument("-d", "--debug", action='store_true', help="pass in debug mode")
         parser.add_argument("-u", "--unroot", action='store_true', help="authorize to launch ndop without root")
         parser.add_argument("-p", "--port", type=int, help="websocket server port")

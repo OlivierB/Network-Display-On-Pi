@@ -159,7 +159,7 @@ class Sniffer(mp.Process):
 
         # List loaded module
         for mod in self.lmod:
-            logger.info("Sniffer %i : Load network module - websocket subprotocol" % (self.id) + mod.__str__())
+            logger.info("Sniffer %i : Load network module - websocket subprotocol " % (self.id) + mod.__str__())
         
         # connection to sql database
         if self.sql is not None:

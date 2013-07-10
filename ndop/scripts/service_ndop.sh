@@ -20,7 +20,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Network-Display-On-Pi"
 NAME=ndop
 DAEMON=/usr/local/bin/$NAME
-DAEMON_ARGS="start"
+DAEMON_ARGS="--daemon"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -44,7 +44,7 @@ do_start()
     #   0 if daemon has been started
     #   1 if daemon was already running
     #   2 if daemon could not be started
-    !(start-stop-daemon --status --quiet --pidfile $PIDFILE --name $NAME) \
+    `!(start-stop-daemon --status --quiet --pidfile $PIDFILE --name $NAME)` > /dev/null \
         || return 1
 
     start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- \
@@ -78,7 +78,7 @@ do_stop()
     start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
     [ "$?" = 2 ] && return 2
     # Many daemons don't delete their pidfiles when they exit.
-    # rm -f $PIDFILE
+    rm -f $PIDFILE
     return "$RETVAL"
 }
 

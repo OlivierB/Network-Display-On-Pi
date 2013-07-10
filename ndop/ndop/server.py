@@ -81,11 +81,12 @@ def main():
     try:
         conf.config_checker()
     except ConfigCenter as e:
-        print "Config Cheker : %s" % e
+        if conf.debug:
+            sys.stderr.write("Config Cheker : %s\n" % e)
         return 2
 
     # Launch program in normal mode or daemon mode
-    if conf.cmd == 'start':
+    if conf.daemon:
         daemon_serv = Daemon(
             conf.daemon_pid_file,
             function=ndop_run, args=(conf,), 
@@ -93,11 +94,7 @@ def main():
             stderr=conf.daemon_stderr)
         daemon_serv.start()
 
-    elif conf.cmd == 'stop':
-        daemon_serv = Daemon(conf.daemon_pid_file)
-        daemon_serv.stop()
-
-    elif conf.cmd == 'run':
+    else:
         return ndop_run(conf)
  
     return 0
