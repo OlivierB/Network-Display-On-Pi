@@ -76,12 +76,16 @@ class ConfigChecker():
         # init
         parser.description = "%s Version %s" % (server_conf.__description__,server_conf. __version__)
         # daemon server command. 'run' to avoid daemon mode
-        parser.add_argument(choices=['start', 'stop', 'run'], default="run",
+        parser.add_argument(choices=['start', 'stop', 'run'],
             dest='cmd', help="Control commands (use 'run' for consol mode)")
         parser.add_argument("-d", "--debug", action='store_true', help="pass in debug mode")
         parser.add_argument("-u", "--unroot", action='store_true', help="authorize to launch ndop without root")
         parser.add_argument("-p", "--port", type=int, help="websocket server port")
         parser.add_argument("-i", "--interface", help="sniffer device")
+        parser.add_argument("--daemon", action='store_true', help="daemon mode")
+        parser.add_argument("--init", action='store_true', help="Module database initialisation")
+        parser.add_argument("--reset", action='store_true', help="Module database reset")
+        parser.add_argument('--version', action='version', version=('NDOP %s' % server_conf. __version__))
         return parser
 
     def get_elem(self, elem):
