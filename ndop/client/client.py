@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import websocket
+import argparse
 import thread
 import time
 import pprint
@@ -10,6 +11,25 @@ import base64
 import json
 
 INDENT=2
+
+__description__ = "NDOP client"
+__version__ = "0.0.1"
+
+DEF_ADDR = "127.0.0.1:9000"
+
+def parser():
+    """
+    Create parser class to check input arguments
+    """
+    parser = argparse.ArgumentParser()
+    # init
+    parser.description = "%s Version %s" % (__description__,__version__)
+
+    parser.add_argument("protocols", nargs='*', help="select some protocols")
+    parser.add_argument("--addr", help="websocket server address", default=("%s" % DEF_ADDR))
+    parser.add_argument("--list", action='store_true', help="Protocols list")
+    parser.add_argument('--version', action='version', version=('NDOP %s' %  __version__))
+    return parser
 
 def on_message(ws, message):
     pp = pprint.PrettyPrinter(indent=INDENT)
@@ -62,8 +82,8 @@ class ProtoMGMT(object):
         self.l_proto.append(proto)
 
 
-def get_list():
-    ws = websocket.create_connection("ws://192.168.1.137:9000/admin")
+def get_list(addr):
+    ws = websocket.create_connection("ws://"+addr+"/admin")
     ws.send("")
     pp = pprint.PrettyPrinter(indent=INDENT)
     result =  json.loads(base64.b64decode(ws.recv()))
@@ -72,26 +92,28 @@ def get_list():
     ws.close()
 
 
-def main(*args):
+def main():
     p = ProtoMGMT()
 
-    if len(args) > 0:
-        if args[0] == "--list":
-            try:
-                get_list()
-            except:
-                print "Cannot get list"
-            return 0
+    args = parser().parse_args()
 
-        for a in args:
-            p.add_proto(a)
+    if args.list:
+        try:
+            get_list(args.addr)
+        except:
+            print "Cannot get list"
+        return 0
+
+    for a in args.protocols:
+        p.add_proto(a)
+
     if len(p.l_proto) == 0:
         print "Listen ALL protocols"
     else:
         print "Listen :", p.l_proto
 
     websocket.enableTrace(False)
-    ws = websocket.WebSocketApp("ws://192.168.1.137:9000/admin",
+    ws = websocket.WebSocketApp("ws://"+args.addr+"/admin",
                                 on_message = on_message,
                                 on_error = on_error,
                                 on_close = on_close)
@@ -105,7 +127,7 @@ def main(*args):
 
 
 if __name__ == "__main__":
-    sys.exit(main(*sys.argv[1:]))
+    sys.exit(main())
     
 
 
