@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Main module class
@@ -14,6 +14,7 @@ import datetime
 
 
 class NetModule(object):
+
     """
     Module main class
     Define most usefull inheritance functions
@@ -67,10 +68,10 @@ class NetModule(object):
         elif self.savecode[0] == 'h':
             d = datetime.datetime.today()
             self.savetime = time.time()
-            self.savewait = (self.savecode[1] - (d.hour % self.savecode[1])) * 3600 - (d.minute*60) - d.second
+            self.savewait = (self.savecode[1] - (d.hour % self.savecode[1])) * 3600 - (d.minute * 60) - d.second
         else:
             self.savetime = time.time()
-            self.savewait = 30*60
+            self.savewait = 30 * 60
             print "NetModule : Time save error"
 
     def save_timecode(self, savetime):
@@ -130,7 +131,7 @@ class NetModule(object):
     def save(self):
         """
         Called to save module data in sql database every savetime
-        
+
         return a list of sql request to save module content
             else return None
 

@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Client system sniffer
@@ -34,6 +34,7 @@ MIN_TIME_DB_UPDATE = 1
 
 
 class SnifferManager():
+
     """
     Configure and Manage sniffers
     """
@@ -90,6 +91,7 @@ class SnifferManager():
 
 
 class SnifferData(threading.Thread):
+
     """
     Get data from sniffer
     and send them to ws server
@@ -113,14 +115,14 @@ class SnifferData(threading.Thread):
         self.term = True
 
 
-
 class Sniffer(mp.Process):
+
     """
     Class for packet capture
 
     This class some modules which analyse packets and make stats
     """
-    
+
     def __init__(self, dev, lmod=list(), sql=None, id=1):
         mp.Process.__init__(self)
 
@@ -132,7 +134,7 @@ class Sniffer(mp.Process):
         self.sql = sql
         self.dev = dev
         self.lmod = lmod
-        
+
         # communication between packet capture (pcap) and webserver
         # (tornado) [2 process]
         self.pipe_receiver, self.pipe_sender = mp.Pipe(duplex=False)
@@ -160,7 +162,7 @@ class Sniffer(mp.Process):
         # List loaded module
         for mod in self.lmod:
             logger.info("Sniffer %i : Load network module - websocket subprotocol " % (self.id) + mod.__str__())
-        
+
         # connection to sql database
         if self.sql is not None:
             # Mysql database
@@ -180,7 +182,6 @@ class Sniffer(mp.Process):
 
         # Create new pcap capture object
         p = pcap.pcapObject()
-        
 
         try:
             # (Dev, buffer, promiscuous mode, timeout)
@@ -239,10 +240,11 @@ class Sniffer(mp.Process):
                 else:
                     lost = 0.0
                 logger.info('Sniffer %i : %i packets received, %i packets dropped, %i packets dropped by interface - %d%%'
-                % (self.id, pkt_recv, pkt_drop, pkt_devdrop, lost))
+                            % (self.id, pkt_recv, pkt_drop, pkt_devdrop, lost))
 
 
 class GetSniffer(object):
+
     """
     Singleton class to access to one sniffer process
 

@@ -16,6 +16,7 @@ from ndop.config import server_conf
 
 
 class ConfigChecker():
+
     """
     Singleton server config class
 
@@ -49,7 +50,7 @@ class ConfigChecker():
 
         # Load config file
         self.load_config("ndop.config.server_conf")
-        
+
         # Check
         self.check_network(args)
         self.check_sql(args)
@@ -58,7 +59,6 @@ class ConfigChecker():
         if self.daemon:
             self.check_daemon_files(args)
             self.check_pidfile(args)
-
 
         self.check_logfile(args, daemon=self.daemon)
         conf_logger(debug=self.debug, p_file=self.log_file)
@@ -69,7 +69,7 @@ class ConfigChecker():
         """
         parser = argparse.ArgumentParser()
         # init
-        parser.description = "%s Version %s" % (server_conf.__description__,server_conf. __version__)
+        parser.description = "%s Version %s" % (server_conf.__description__, server_conf. __version__)
 
         parser.add_argument("-d", "--debug", action='store_true', help="pass in debug mode")
         parser.add_argument("-u", "--unroot", action='store_true', help="authorize to launch ndop without root")
@@ -154,7 +154,7 @@ class ConfigChecker():
         self.daemon_stderr = self.get_elem("daemon_stderr")
         if not self.is_file_writable(self.daemon_stderr):
             raise ArgumentConfigError("stderr : Cannot write in %s" % self.daemon_stderr)
-    
+
     def check_pidfile(self, args):
         self.daemon_pid_file = self.get_elem("daemon_pid_file")
         if not self.is_file_writable(self.daemon_pid_file):
@@ -221,7 +221,8 @@ class ConfigChecker():
                 return False
         else:
             try:
-                with open(path, "a+"): pass
+                with open(path, "a+"):
+                    pass
                 os.remove(path)
                 return True
             except IOError:
@@ -284,36 +285,44 @@ def conf_logger(debug=False, p_file=None):
 
 
 class ConfigCenter(Exception):
+
     """ndop config error"""
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return self.__class__.__name__ + " : " + repr(self.value)
 
 
 class ArgumentMissing(ConfigCenter):
+
     """Argument missing in the file"""
     pass
 
 
 class ArgumentError(ConfigCenter):
+
     """
     Argument is present but wrong informed
-    
+
     Example : type or structure error
     """
     pass
 
 
 class ConfigFile(ConfigCenter):
+
     """Config file import error"""
     pass
 
 
 class ArgumentConfigError(ConfigCenter):
+
     """Argument has a wrong value"""
     pass
 
+
 class UserMode(ConfigCenter):
+
     """User cannot run the program"""
     pass

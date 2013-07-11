@@ -89,14 +89,14 @@ def main():
     if conf.daemon:
         daemon_serv = Daemon(
             conf.daemon_pid_file,
-            function=ndop_run, args=(conf,), 
-            stdout=conf.daemon_stdout, 
+            function=ndop_run, args=(conf,),
+            stdout=conf.daemon_stdout,
             stderr=conf.daemon_stderr)
         daemon_serv.start()
 
     else:
         return ndop_run(conf)
- 
+
     return 0
 
 

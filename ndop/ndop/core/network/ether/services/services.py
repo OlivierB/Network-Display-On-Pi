@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Network implementation data
@@ -13,7 +13,7 @@ from ... import layer
 
 
 class DNS(layer.Layer):
-    
+
     def decode(self, pktdata):
 
         # self.transaction_id = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
@@ -37,7 +37,7 @@ class DNS(layer.Layer):
 
                 while i < lpkt and length != 0:
                     i += 1
-                    string += (pktdata[i:i+length])
+                    string += (pktdata[i:i + length])
                     i += length
                     length = ord(pktdata[i])
                     if length != 0:
@@ -71,7 +71,7 @@ class HTTP(layer.Layer):
                 stype += pktdata[cnt]
                 # print pktdata[cnt]
                 cnt += 1
-        
+
         if stype in ["HTTP", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH"]:
             self.type = stype
         else:

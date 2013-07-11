@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Websocket module
@@ -22,6 +22,7 @@ from tornado import web, websocket, httpserver, ioloop
 
 
 class WSHandler_main(websocket.WebSocketHandler):
+
     """
     handler for main server page ("/")
     """
@@ -49,7 +50,9 @@ class WSHandler_main(websocket.WebSocketHandler):
             self.close()
             return None
 
+
 class WSHandler_admin(websocket.WebSocketHandler):
+
     """
     handler for main server page ("/")
     """
@@ -65,7 +68,6 @@ class WSHandler_admin(websocket.WebSocketHandler):
         except Exception:
             logger = logging.getLogger()
             logger.debug("WsServer send : Can't send to admin")
-        
 
     def on_close(self):
         cl = ClientsList()
@@ -73,8 +75,10 @@ class WSHandler_admin(websocket.WebSocketHandler):
 
     def select_subprotocol(self, subprotocols):
         pass
- 
+
+
 class WSHandler_online(web.RequestHandler):
+
     """
     handler for main server page ("/")
     """
@@ -99,6 +103,7 @@ application = web.Application([
 
 
 class WsServer(Thread):
+
     """
     Thread class for tornado webserver
     """
@@ -130,6 +135,7 @@ class WsServer(Thread):
 
 
 class ClientsList(object):
+
     """
     Singleton class to collect client data
     """
@@ -216,12 +222,12 @@ class ClientsList(object):
             for p in self.cli_list.keys():
                 for c in self.cli_list[p]:
                     self.__send(c, data)
-            
+
         elif type(proto) is type(str()):
             if proto in self.cli_list.keys():
                 for c in self.cli_list[proto]:
                     self.__send(c, data)
-            
+
         else:
             for p in proto:
                 if p in self.cli_list.keys():
@@ -229,7 +235,7 @@ class ClientsList(object):
                         self.__send(c, data)
 
         for admin in self.admin_list:
-             self.__send(admin, base64.b64encode(json.dumps(dict(proto=proto, data=data))))
+            self.__send(admin, base64.b64encode(json.dumps(dict(proto=proto, data=data))))
 
         self.mutex.release()
 

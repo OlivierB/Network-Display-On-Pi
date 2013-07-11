@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Network Layer
@@ -8,6 +8,7 @@ Network Layer
 
 
 class Layer():
+
     def __init__(self, underlayer, pktdata, protocol=None):
         self.underlayer = underlayer
         self.payload = None
@@ -21,9 +22,9 @@ class Layer():
             return "-> ROW"
         else:
             if self.payload is not None:
-                return "-> "+self.protocol+" "+self.payload.__str__()
+                return "-> " + self.protocol + " " + self.payload.__str__()
             else:
-                return "-> "+self.protocol
+                return "-> " + self.protocol
 
     def decode(self, pktdata):
         # self.data = pktdata
@@ -63,8 +64,10 @@ class Layer():
 
 
 class ProtocolMismatch(Exception):
+
     """Protocol error"""
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)

@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Client system monitoring
@@ -24,6 +24,7 @@ MAX_TIME_IP_LIST = 600
 
 
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, protocol='iplist', *args, **kwargs)
 
@@ -46,8 +47,8 @@ class NetModChild(NetModule):
             val = dict()
 
             # val["iptop"] = self.get_ipout_top(maxip = 10)
-                
-            val['iplist'] = self.lIP_tosend[ip_ns:(ip_ns+MAX_IP_LIST_SEND)]
+
+            val['iplist'] = self.lIP_tosend[ip_ns:(ip_ns + MAX_IP_LIST_SEND)]
             self.lIP_next_start += MAX_IP_LIST_SEND
 
             # send data
@@ -91,7 +92,7 @@ class NetModChild(NetModule):
     def __cleaniplist(self, ip, t, lt, limit):
         diff = t - lt
         elem = self.lIPOut[ip]
-        if not(((t - elem["time"]) < diff/2.0) or (elem["nbr"] > limit and (t - elem["time"]) < MAX_TIME_IP_LIST)):
+        if not(((t - elem["time"]) < diff / 2.0) or (elem["nbr"] > limit and (t - elem["time"]) < MAX_TIME_IP_LIST)):
             self.lIPOut.pop(ip)
 
     def get_ipout(self):
