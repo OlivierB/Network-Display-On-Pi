@@ -25,7 +25,7 @@ ex_code = \
 
 ////////////////////////////
     // Ethernet interface for packets capture
-    "sniffer_device": "eth1",
+    "sniffer_device": "eth0",
 
 ////////////////////////////
     // Modules list :
