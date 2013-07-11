@@ -31,4 +31,11 @@ if [ "$val" == "0" ]; then
         cp ./scripts/service_ndop.sh /etc/init.d/ndop
         update-rc.d ndop defaults
     fi
+
+    if ! [ -r "/etc/ndop/server_conf.json" ]; then
+        mkdir -p /etc/ndop/
+        ./ndop/config/conf_generator.py -oe > /etc/ndop/server_conf.json
+        echo "Add server config file in /etc/ndop/"
+    fi
+
 fi

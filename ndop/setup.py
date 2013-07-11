@@ -24,4 +24,12 @@ setup(
     url='https://github.com/OlivierB/Network-Display-On-Pi.git',
     license='',
     entry_points={"console_scripts": ["ndop=ndop.server:main"]},
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Environment :: Console",
+        "Intended Audience :: System Administrators",
+        "Natural Language :: English",
+        "Operating System :: POSIX :: Linux",
+        "Topic :: System :: Monitoring",
+    ],
 )

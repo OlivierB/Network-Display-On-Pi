@@ -136,7 +136,7 @@ def main():
         sys.stdout.write("JSONize...OK\nWrite in :%s\n" % FILE_OUT)
         f = open(FILE_OUT, "w+")
         with f:
-            f.write(header+jsdumps)
+            f.write(final)
 
 def parser():
     """

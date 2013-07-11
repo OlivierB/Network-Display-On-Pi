@@ -36,3 +36,9 @@ if [ -r "/etc/init.d/ndop" ]; then
     update-rc.d ndop remove
     rm /etc/init.d/ndop
 fi
+
+if [ -r "/etc/ndop/server_conf.json" ]; then
+    rm /etc/ndop/server_conf.json
+    rmdir /etc/ndop
+    echo "Delete server config file in /etc/ndop/"
+fi

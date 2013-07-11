@@ -15,7 +15,7 @@ from pcap import findalldevs
 # Project configuration file
 from ndop.config import server_conf
 
-UNIX_CONF_FILE = "/etc/ndop/server.cfg"
+UNIX_CONF_FILE = "/etc/ndop/server_conf.json"
 
 class ConfigChecker():
 
@@ -52,7 +52,7 @@ class ConfigChecker():
 
         # Only check config
         if args.test:
-            conf_logger(debug=True, p_file=None)
+            self.conf_logger_normal(debug=True)
             self.load_config("ndop.config.server_conf")
             logger.debug("%s : Load default config : OK" % self.__class__.__name__)
             self.try_config_override(UNIX_CONF_FILE)
@@ -72,6 +72,8 @@ class ConfigChecker():
             logger.debug("%s : OK" % self.__class__.__name__)
             self.cmd = "test"
             return
+        else:
+            self.conf_logger_normal(debug=args.debug)
 
 
         # Check user
@@ -79,8 +81,10 @@ class ConfigChecker():
             raise UserMode("Need to be root or add -u (--unroot) argument !")
             return False
 
-        # Load config file
+        # Load default config file
         self.load_config("ndop.config.server_conf")
+        # try to get host config file
+        self.try_config_override(UNIX_CONF_FILE)
 
         # Check
         self.check_network(args)
@@ -93,7 +97,7 @@ class ConfigChecker():
             self.cmd = "daemon"
 
         self.check_logfile(args, daemon=self.daemon)
-        conf_logger(debug=self.debug, p_file=self.log_file)
+        self.conf_logger_daemon(debug=self.debug, p_file=self.log_file)
 
     def parser(self):
         """
@@ -120,10 +124,13 @@ class ConfigChecker():
 
         raise ArgumentMissing exception if error
         """
-        try:
-            return getattr(self.file_conf, elem)
-        except:
-            raise ArgumentMissing("Cannot get \"%s\" element" % elem)
+        if self.override_conf is not None and elem in self.override_conf.keys():
+            return self.override_conf[elem]
+        else:
+            try:
+                return getattr(self.file_conf, elem)
+            except:
+                raise ArgumentMissing("Cannot get \"%s\" element" % elem)
 
     def load_config(self, path):
         """
@@ -145,7 +152,7 @@ class ConfigChecker():
         logger.debug("%s : Try to override default config (%s)" % (self.__class__.__name__, path))
         try:
             error = "No file"
-            f = open(os.getcwd()+"/ndop/config/server_conf.json", "r")
+            f = open(path, "r")
             with f:
                 error = "Cannot read file"
                 textconf = ""
@@ -199,7 +206,7 @@ class ConfigChecker():
 
         # Get sniffer device
         if args.interface is None:
-            self.sniff_dev = self.get_elem("sniffer_device")
+            self.sniff_dev = str(self.get_elem("sniffer_device"))
         else:
             self.sniff_dev = args.interface
         # Check sniff device
@@ -314,35 +321,49 @@ class ConfigChecker():
         return l
 
 
-def conf_logger(debug=False, p_file=None):
-    """
-    Configure general logger parameters
-    """
-    # Set debug mode or not
-    if debug:
-        mod = logging.DEBUG
-    else:
-        mod = logging.INFO
+    def conf_logger_normal(self, debug=False):
+        """
+        Configure general logger parameters
+        """
+        # Set debug mode or not
+        if debug:
+            mod = logging.DEBUG
+        else:
+            mod = logging.INFO
 
-    # Get logger
-    logger = logging.getLogger()
-    logger.setLevel(mod)
+        # Get logger
+        logger = logging.getLogger()
+        logger.setLevel(mod)
 
-    if p_file is not None:
-        # Log in a file
-        file_handler = logging.handlers.RotatingFileHandler(p_file, 'a', 1000000)
-        file_formatter = logging.Formatter('[%(levelname)s] : %(asctime)s - %(message)s')
-        file_handler.setFormatter(file_formatter)
-        file_handler.setLevel(mod)
-        logger.addHandler(file_handler)
 
-    else:
         # output handler
-        stdout_handler = logging.StreamHandler(sys.stdout)
+        self.stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_formatter = logging.Formatter('[%(levelname)s] -> %(message)s')
-        stdout_handler.setFormatter(stdout_formatter)
-        stdout_handler.setLevel(mod)
-        logger.addHandler(stdout_handler)
+        self.stdout_handler.setFormatter(stdout_formatter)
+        self.stdout_handler.setLevel(mod)
+        logger.addHandler(self.stdout_handler)
+
+
+    def conf_logger_daemon(self, debug=False, p_file=None):
+        # Set debug mode or not
+        if debug:
+            mod = logging.DEBUG
+        else:
+            mod = logging.INFO
+
+        # Get logger
+        logger = logging.getLogger()
+        logger.setLevel(mod)
+
+        if p_file is not None:
+            # Log in a file
+            self.file_handler = logging.handlers.RotatingFileHandler(p_file, 'a', 1000000)
+            file_formatter = logging.Formatter('[%(levelname)s] : %(asctime)s - %(message)s')
+            self.file_handler.setFormatter(file_formatter)
+            self.file_handler.setLevel(mod)
+            logger.addHandler(self.file_handler)
+
+            logger.removeHandler(self.stdout_handler)
 
 
 class ConfigCenter(Exception):
