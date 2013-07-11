@@ -32,7 +32,7 @@ Go in the NDOP server repository :
 
 
 *If you don't want to install NDOP in your system, you can try it with:*
-```./script/launch_ndop.sh```
+``` ./script/launch_ndop.sh ```
 
 There are two ways to install NDOP :
 * basic install with setup.py
@@ -46,7 +46,7 @@ For a basic install :
 ```python setup.py install```
 
 For a complete install :
-```./scripts/install_unix.sh```
+``` ./scripts/install_unix.sh ```
 
 
 ## Uninstall
