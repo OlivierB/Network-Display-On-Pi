@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Client system monitoring
@@ -21,6 +21,7 @@ from ndop.core.sniffer import GetSniffer
 
 
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='packet_loss', *args, **kwargs)
 
@@ -79,7 +80,7 @@ class NetModChild(NetModule):
         if res is not None:
             val["pkt_all"], val["pkt_drop"], val["pkt_devdrop"] = res
         else:
-            val["pkt_all"], val["pkt_drop"], val["pkt_devdrop"] = (0,0,0)
+            val["pkt_all"], val["pkt_drop"], val["pkt_devdrop"] = (0, 0, 0)
 
         return val
 

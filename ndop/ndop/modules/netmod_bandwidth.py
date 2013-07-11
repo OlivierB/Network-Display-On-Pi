@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Client system monitoring
@@ -22,6 +22,7 @@ from ndop.core.network import netdata
 
 
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='bandwidth', *args, **kwargs)
 
@@ -36,7 +37,7 @@ class NetModChild(NetModule):
         self.data["net_load_out"] = 0
 
         stat = self.sysState()
-        
+
         # init
         self.oldValues = stat
         self.oldTotstats = stat
@@ -78,7 +79,7 @@ class NetModChild(NetModule):
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         req += "\"" + date + "\"" + ","
-        req += str(res["net_load_loc"]+res["net_load_in"]+res["net_load_out"]) + ","
+        req += str(res["net_load_loc"] + res["net_load_in"] + res["net_load_out"]) + ","
         req += str(res["net_load_loc"]) + ","
         req += str(res["net_load_in"]) + ","
         req += str(res["net_load_out"]) + ","
@@ -123,7 +124,7 @@ class NetModChild(NetModule):
         val["time"] = new["time"]
         val["dtime"] = diff
 
-        # # net data by packet analysis
+        # net data by packet analysis
         val["loc_Ko"] = (new["net_load_loc"] - old["net_load_loc"]) / diff / 1024
         val["in_Ko"] = (new["net_load_in"] - old["net_load_in"]) / diff / 1024
         val["out_Ko"] = (new["net_load_out"] - old["net_load_out"]) / diff / 1024
@@ -143,7 +144,7 @@ class NetModChild(NetModule):
         diff = new["time"] - old["time"]
         val["dtime"] = diff
 
-        # # net data by packet analysis
+        # net data by packet analysis
         val["net_load_loc"] = (new["net_load_loc"] - old["net_load_loc"]) / 1024
         val["net_load_in"] = (new["net_load_in"] - old["net_load_in"]) / 1024
         val["net_load_out"] = (new["net_load_out"] - old["net_load_out"]) / 1024

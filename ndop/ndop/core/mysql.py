@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 """
 Client system sniffer
 
@@ -12,6 +14,7 @@ import MySQLdb as mdb
 
 
 class MySQLdata():
+
     def __init__(self, host, user, passwd, database, port=3306, maxtry=3):
         self.host = host
         self.user = user
@@ -49,7 +52,7 @@ class MySQLdata():
             try:
                 with self.connect:
                     cur = self.connect.cursor()
-                    
+
                     if type(data) is list:
                         for e in data:
                             cur.execute(e)
@@ -57,7 +60,7 @@ class MySQLdata():
                         cur.execute(data)
             except mdb.Error, e:
                 self.logger.error("MySQLdb Error %d: %s" % (e.args[0], e.args[1]))
-        
+
     def close(self):
         if self.connect:
             self.connect.close

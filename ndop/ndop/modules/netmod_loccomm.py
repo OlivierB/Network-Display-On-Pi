@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Client system monitoring
@@ -22,17 +22,18 @@ LOCCOMM_MAX_IP = 1000
 
 
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, protocol='local_communication', *args, **kwargs)
 
         # packet data
         self.dIP_loccomm = dict()
         self.oldIPList = set()
-        
+
     def update(self):
         # get data
         val = self.get_loc_comm()
- 
+
         # send data
         return val
 
@@ -59,7 +60,7 @@ class NetModChild(NetModule):
         if len(lk) < LOCCOMM_MAX_IP:
             if key in lk:
                 val = self.dIP_loccomm[key]
-                self.dIP_loccomm[key] = (val[0]+1, val[1]+size)
+                self.dIP_loccomm[key] = (val[0] + 1, val[1] + size)
             else:
                 self.dIP_loccomm[key] = (1, size)
 

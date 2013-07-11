@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Daemon model class
@@ -20,9 +20,10 @@ MAX_SIGINT_WAIT = 4
 
 
 class Daemon:
+
     """
     A generic daemon class.
-    
+
     Usage: subclass the Daemon class and override the run() method
     """
     def __init__(self, pidfile, function=None, args=(), stdin='/dev/null', stdout='/dev/null', stderr='/dev/null', root_dir='/', working_dir='/'):
@@ -52,7 +53,7 @@ class Daemon:
         except OSError, e:
             self.log.error("fork #1 failed: %d (%s)\n" % (e.errno, e.strerror))
             sys.exit(1)
-    
+
         # decouple from parent environment
         try:
             os.chroot(self.root_dir)
@@ -66,7 +67,7 @@ class Daemon:
             sys.exit(1)
         os.setsid()
         os.umask(0)
-    
+
         # do second fork
         try:
             pid = os.fork()
@@ -76,7 +77,7 @@ class Daemon:
         except OSError, e:
             self.log.error("fork #2 failed: %d (%s)\n" % (e.errno, e.strerror))
             sys.exit(1)
-    
+
         # redirect standard file descriptors
         sys.stdout.flush()
         sys.stderr.flush()
@@ -86,12 +87,12 @@ class Daemon:
         os.dup2(si.fileno(), sys.stdin.fileno())
         os.dup2(so.fileno(), sys.stdout.fileno())
         os.dup2(se.fileno(), sys.stderr.fileno())
-    
+
         # write pidfile
         atexit.register(self.delpid)
         pid = str(os.getpid())
         file(self.pidfile, 'w+').write("%s\n" % pid)
-    
+
     def delpid(self):
         os.remove(self.pidfile)
 
@@ -107,7 +108,7 @@ class Daemon:
             pf.close()
         except IOError:
             pid = None
-    
+
         if pid:
             message = "pidfile %s already exist. Daemon already running?\n"
             self.log.error(message % self.pidfile)
@@ -128,7 +129,7 @@ class Daemon:
             pf.close()
         except IOError:
             pid = None
-    
+
         if not pid:
             message = "pidfile %s does not exist. Daemon not running?\n"
             self.log.error(message % self.pidfile)
@@ -152,7 +153,6 @@ class Daemon:
             else:
                 print str(err)
                 sys.exit(1)
-
 
     def run(self):
         if self.function is not None:

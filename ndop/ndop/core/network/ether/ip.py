@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Network implementation data
@@ -45,7 +45,7 @@ class IPv4(layer.Layer):
         #     self.options = None
 
         # IP protocol decode
-        self.payload = netutils.get_next_layer(self, self.type, dIPType, pktdata[4*self.header_len:])
+        self.payload = netutils.get_next_layer(self, self.type, dIPType, pktdata[4 * self.header_len:])
 
 
 class TCP(layer.Layer):
@@ -60,7 +60,7 @@ class TCP(layer.Layer):
 
         self.type = select_port(self.sport, self.dport)
 
-        self.payload = netutils.get_next_layer(self, self.type, services.dPortsList, pktdata[4*self.header_len:])
+        self.payload = netutils.get_next_layer(self, self.type, services.dPortsList, pktdata[4 * self.header_len:])
 
 
 class UDP(layer.Layer):
@@ -102,7 +102,6 @@ def select_port(src, dst):
         return src
     else:
         return -1
-
 
 
 dIPType = {

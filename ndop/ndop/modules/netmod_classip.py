@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Client system monitoring
@@ -13,6 +13,7 @@ from netmodule import NetModule
 
 
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, protocol='classip', *args, **kwargs)
 
@@ -33,7 +34,7 @@ class NetModChild(NetModule):
     def save(self):
         """
         Called to save module data in sql database every savetime
-        
+
         return a list of sql request to save module content
             else return None
 

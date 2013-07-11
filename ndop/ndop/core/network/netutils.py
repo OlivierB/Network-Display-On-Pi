@@ -27,9 +27,9 @@ def ip_to_string(data):
 
 def dumphex(s, sep="    "):
     bytes = map(lambda x: '%.2x' % x, map(ord, s))
-    for i in xrange(0, len(bytes)/16):
-        print '%s%s' % (sep, string.join(bytes[i*16:(i+1)*16], ' '))
-    print '%s%s' % (sep, string.join(bytes[(i+1)*16:], ' '))
+    for i in xrange(0, len(bytes) / 16):
+        print '%s%s' % (sep, string.join(bytes[i * 16:(i + 1) * 16], ' '))
+    print '%s%s' % (sep, string.join(bytes[(i + 1) * 16:], ' '))
 
 
 def ethertype_decode(v):
@@ -38,7 +38,7 @@ def ethertype_decode(v):
 
 
 def get_next_layer(underlayer, p_type, l_protocol, pktdata):
-    
+
     if p_type in l_protocol.keys():
         call = l_protocol[p_type]["callback"]
         if call is not None:
@@ -46,11 +46,13 @@ def get_next_layer(underlayer, p_type, l_protocol, pktdata):
                 return call(underlayer, pktdata, protocol=l_protocol[p_type]["protocol"])
             except layer.ProtocolMismatch as e:
                 logger = logging.getLogger()
-                logger.debug("Layer %s (subprotocol : %s) - Protocol mismatch : %s" % (underlayer.protocol, l_protocol[p_type]["protocol"], e))
+                logger.debug("Layer %s (subprotocol : %s) - Protocol mismatch : %s" % (
+                             underlayer.protocol, l_protocol[p_type]["protocol"], e))
                 return None
             except Exception as e:
                 logger = logging.getLogger()
-                logger.error("Layer %s (subprotocol : %s) - get_next_layer call : %r" % (underlayer.protocol, l_protocol[p_type]["protocol"], e))
+                logger.error("Layer %s (subprotocol : %s) - get_next_layer call : %r" % (
+                             underlayer.protocol, l_protocol[p_type]["protocol"], e))
                 logger.debug("Layer %s : error in call function" % underlayer.protocol, exc_info=True)
                 return None
         else:
@@ -82,7 +84,7 @@ def ip_is_reserved(ip):
 
     reserved = False
     for (net, m) in dIPReserved:
-        mask = 0xffffffff >> (32-m)
+        mask = 0xffffffff >> (32 - m)
         if (ip & mask) == net:
             reserved = True
             break
