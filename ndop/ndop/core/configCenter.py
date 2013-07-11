@@ -4,6 +4,7 @@
 # Python lib import
 import os
 import sys
+import json
 import argparse
 import socket
 import importlib
@@ -14,6 +15,7 @@ from pcap import findalldevs
 # Project configuration file
 from ndop.config import server_conf
 
+UNIX_CONF_FILE = "/etc/ndop/server.cfg"
 
 class ConfigChecker():
 
@@ -40,8 +42,37 @@ class ConfigChecker():
         # Get command line arguments
         args = self.parser().parse_args()
 
+        # required
+        self.cmd = "run"
         self.daemon = args.daemon
         self.debug = args.debug
+
+        # logger
+        logger = logging.getLogger()
+
+        # Only check config
+        if args.test:
+            conf_logger(debug=True, p_file=None)
+            self.load_config("ndop.config.server_conf")
+            logger.debug("%s : Load default config : OK" % self.__class__.__name__)
+            self.try_config_override(UNIX_CONF_FILE)
+            self.check_network(args)
+            logger.debug("%s : Check network : OK" % self.__class__.__name__)
+            self.check_sql(args, full=True)
+            logger.debug("%s : Check SQL : OK" % self.__class__.__name__)
+            self.check_modules(args)
+            logger.debug("%s : Check modules : OK" % self.__class__.__name__)
+            self.check_daemon_files(args)
+            logger.debug("%s : Check Daemon files : OK" % self.__class__.__name__)
+            self.check_pidfile(args)
+            logger.debug("%s : Check PID file : OK" % self.__class__.__name__)
+            self.check_logfile(args, daemon=True)
+            logger.debug("%s : Check LOG file : OK" % self.__class__.__name__)
+
+            logger.debug("%s : OK" % self.__class__.__name__)
+            self.cmd = "test"
+            return
+
 
         # Check user
         if not args.unroot and not self.is_root():
@@ -59,6 +90,7 @@ class ConfigChecker():
         if self.daemon:
             self.check_daemon_files(args)
             self.check_pidfile(args)
+            self.cmd = "daemon"
 
         self.check_logfile(args, daemon=self.daemon)
         conf_logger(debug=self.debug, p_file=self.log_file)
@@ -78,6 +110,7 @@ class ConfigChecker():
         parser.add_argument("--daemon", action='store_true', help="daemon mode")
         parser.add_argument("--init", action='store_true', help="Module database initialisation")
         parser.add_argument("--reset", action='store_true', help="Module database reset")
+        parser.add_argument("--test", action='store_true', help="Check configuration without start ndop")
         parser.add_argument('--version', action='version', version=('NDOP %s' % server_conf. __version__))
         return parser
 
@@ -103,14 +136,42 @@ class ConfigChecker():
         except ImportError:
             raise ConfigFile("No config file")
         except Exception as e:
-            raise ConfigFile("Error in ndop.config.server_conf :%s" % e)
+            raise ConfigFile("Error in %s :%s" % (path, e))
 
-    def check_sql(self, args):
+    def try_config_override(self, path):
+        self.override_conf = None
+
+        logger = logging.getLogger()
+        logger.debug("%s : Try to override default config (%s)" % (self.__class__.__name__, path))
+        try:
+            error = "No file"
+            f = open(os.getcwd()+"/ndop/config/server_conf.json", "r")
+            with f:
+                error = "Cannot read file"
+                textconf = ""
+                # Clean comments
+                for line in f:
+                    if line.find("//") == -1:
+                        textconf += line
+                error = "Cannot load JSON"
+                loadconf = json.loads(textconf)
+                error = "Argument error"
+                self.override_conf = dict()
+                for elem in loadconf:
+                    if elem in dir(self.file_conf):
+                        self.override_conf[elem] = loadconf[elem]
+                        logger.debug("Override default config \"%s\"" % (elem))
+                    else:
+                        logger.debug("Override default config Error : \"%s\" is not in default config" % (elem))
+        except:
+            logger.debug("Override default config (%s) FAIL : %s" % (path, error))
+
+    def check_sql(self, args, full=False):
         """
         Check SQL varibles
         """
         self.sql_on = self.get_elem("sql_on")
-        if self.sql_on:
+        if self.sql_on or full:
             self.sql_conf = self.get_elem("sql_conf")
             for elem in ["host", "user", "passwd", "database", "port"]:
                 if not elem in self.sql_conf.keys():

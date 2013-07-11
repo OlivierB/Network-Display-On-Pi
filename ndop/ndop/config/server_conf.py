@@ -59,7 +59,7 @@ log_file = "/var/log/ndoplog"
 # SQL Database connection
 
 # Disabled SQL Database
-sql_on = True
+sql_on = False
 
 sql_conf = {
     "host": "192.168.1.144",
