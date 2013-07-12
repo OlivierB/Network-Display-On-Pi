@@ -55,7 +55,10 @@ class ConfigChecker():
             self.conf_logger_normal(debug=True)
             self.load_config("ndop.config.server_conf")
             logger.debug("%s : Load default config : OK" % self.__class__.__name__)
-            self.try_config_override(UNIX_CONF_FILE)
+            if args.file:
+                self.try_config_override(args.file)
+            else:
+                self.try_config_override(UNIX_CONF_FILE)
             self.check_network(args)
             logger.debug("%s : Check network : OK" % self.__class__.__name__)
             self.check_sql(args, full=True)
@@ -84,7 +87,10 @@ class ConfigChecker():
         # Load default config file
         self.load_config("ndop.config.server_conf")
         # try to get host config file
-        self.try_config_override(UNIX_CONF_FILE)
+        if args.file:
+            self.try_config_override(args.file)
+        else:
+            self.try_config_override(UNIX_CONF_FILE)
 
         # Check
         self.check_network(args)
@@ -111,6 +117,7 @@ class ConfigChecker():
         parser.add_argument("-u", "--unroot", action='store_true', help="authorize to launch ndop without root")
         parser.add_argument("-p", "--port", type=int, help="websocket server port")
         parser.add_argument("-i", "--interface", help="sniffer device")
+        parser.add_argument("-f", "--file", help="server configuration file")
         parser.add_argument("--daemon", action='store_true', help="daemon mode")
         parser.add_argument("--init", action='store_true', help="Module database initialisation")
         parser.add_argument("--reset", action='store_true', help="Module database reset")
