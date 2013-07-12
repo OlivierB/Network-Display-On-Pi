@@ -44,7 +44,7 @@ class WSHandler_main(websocket.WebSocketHandler):
         """
         cl = ClientsList()
         prot = cl.addClient(self, subprotocols)
-        if prot in cl.getProtocols():
+        if prot is not None:
             return prot
         else:
             self.close()
@@ -159,15 +159,28 @@ class ClientsList(object):
         Add a websocket client only if it has a subprotocol
         """
         prot = None
-        if len(subprotocols) > 0:
-            # Select the first protocol
-            prot = subprotocols[0]
-            self.mutex.acquire()
+        for elem in subprotocols:
+            if elem in self.protocols_list:
+                prot = elem
+                break
+
+        if prot is not None:
             if prot in self.cli_list.keys():
                 self.cli_list[prot] += [client]
             else:
                 self.cli_list[prot] = [client]
-            self.mutex.release()
+
+        return prot
+
+        # if len(subprotocols) > 0:
+        #     # Select the first protocol
+        #     prot = subprotocols[0]
+        #     self.mutex.acquire()
+        #     if prot in self.cli_list.keys():
+        #         self.cli_list[prot] += [client]
+        #     else:
+        #         self.cli_list[prot] = [client]
+        #     self.mutex.release()
         return prot
 
     def delClient(self, client):

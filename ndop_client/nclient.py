@@ -21,10 +21,10 @@ __description__ = "NDOP client"
 __version__ = "0.0.1"
 
 
-
 # --------------------------------
 # Shared value
 class SharedValue():
+
     def __init__(self, name, value):
         self.name = name
         self.value = value
@@ -36,7 +36,6 @@ class SharedValue():
 
     def add_listener(self, func):
         self.l_listener.append(func)
-
 
 
 # --------------------------------
@@ -60,7 +59,6 @@ class CursesPadManager():
         self.init(*args, **kwargs)
         self.update()
 
-
     def get_view_height(self):
         if self.height_in_screen == CURSES_FOLLOW_WIN_SIZE:
             return max(self.screen.getmaxyx()[0] - self.pos_in_screen_y, 1)
@@ -80,7 +78,7 @@ class CursesPadManager():
         height, width = self.screen.getmaxyx()
 
         if self.pos_in_screen_y < height and self.pos_in_screen_x < width \
-            and self.pos_in_screen_y >= 0 and self.pos_in_screen_x >= 0:
+                and self.pos_in_screen_y >= 0 and self.pos_in_screen_x >= 0:
             max_posy = min(height, self.pos_in_screen_y + self.get_view_height()) - 1
             max_posx = min(width, self.pos_in_screen_x + self.get_view_width()) - 1
             if self.pos_in_screen_y <= max_posy and self.pos_in_screen_x <= max_posx:
@@ -114,7 +112,6 @@ class CursesPadManager():
 
     def update(self):
         pass
-
 
     def exec_in_pad(self, posy, posx, func, *args, **kwargs):
         height, width = self.pad.getmaxyx()
@@ -155,11 +152,11 @@ class CursesMenu(CursesPadManager):
         cnt = 0
         for elem in self.elem:
             if cnt == self.shared_menupos.value:
-                self.exec_in_pad(cnt + dpos, 1, self.pad.addstr, elem[0:self.get_view_width() - 2], curses.color_pair(1))
+                self.exec_in_pad(cnt + dpos, 1, self.pad.addstr, elem[
+                                 0:self.get_view_width() - 2], curses.color_pair(1))
             else:
                 self.exec_in_pad(cnt + dpos, 1, self.pad.addstr, elem[0:self.get_view_width() - 2])
             cnt += 1
-
 
         self.pad.border(2, curses.ACS_VLINE, 1, 1, 1, 1, 1)
 
@@ -169,16 +166,15 @@ class CursesInfo(CursesPadManager):
     def init(self):
         self.nb_refresh = 0
 
-
     def update(self):
         self.nb_refresh += 1
         h, w = self.screen.getmaxyx()
         data = "width : %i - height : %i - refresh : %i" % (w, h, self.nb_refresh)
-        
-        self.set_posinscreen(h-1, 0)
 
-        self.exec_in_pad(0, 0, self.pad.addstr, data[0:self.screen.getmaxyx()[1]-1])
-        
+        self.set_posinscreen(h - 1, 0)
+
+        self.exec_in_pad(0, 0, self.pad.addstr, data[0:self.screen.getmaxyx()[1] - 1])
+
 
 class CursesContent(CursesPadManager):
 
@@ -216,7 +212,7 @@ class CursesWindow():
 
         # Get logger
         logger = logging.getLogger()
-        
+
         if args.debug:
             logger.setLevel(logging.DEBUG)
 
@@ -233,7 +229,6 @@ class CursesWindow():
             self.color_init()
             self.element_init()
 
-
             while not self.term:
                 self.check_resize()
                 self.screen.refresh()
@@ -247,7 +242,7 @@ class CursesWindow():
                 # INFO
                 self.info.update()
                 self.info.refresh()
-               
+
                 # arrange cursor
                 self.screen.move(0, 0)
                 # block display and wait for keyboard input
@@ -316,10 +311,12 @@ class CursesWindow():
         self.info = CursesInfo(self.screen, 0, 0, 1, CURSES_FOLLOW_WIN_SIZE)
         self.l_resize_func.append(self.info.win_resize)
 
-        self.menu = CursesMenu(self.screen, 0, 0, CURSES_FOLLOW_WIN_SIZE, MENU_WIDTH, self.shared_menupos, self.l_proto)
+        self.menu = CursesMenu(
+            self.screen, 0, 0, CURSES_FOLLOW_WIN_SIZE, MENU_WIDTH, self.shared_menupos, self.l_proto)
         self.l_resize_func.append(self.menu.win_resize)
 
-        self.content = CursesContent(self.screen, 0, MENU_WIDTH+1, CURSES_FOLLOW_WIN_SIZE, CURSES_FOLLOW_WIN_SIZE, self.shared_menupos, self.l_proto)
+        self.content = CursesContent(
+            self.screen, 0, MENU_WIDTH + 1, CURSES_FOLLOW_WIN_SIZE, CURSES_FOLLOW_WIN_SIZE, self.shared_menupos, self.l_proto)
         self.l_resize_func.append(self.content.win_resize)
 
 
@@ -352,7 +349,6 @@ def parser():
     return parser
 
 
-
 # --------------------------------
 # Logger
 def conf_logger(debug=False, p_file=None):
@@ -373,7 +369,6 @@ def conf_logger(debug=False, p_file=None):
         file_handler.setFormatter(file_formatter)
         file_handler.setLevel(logging.DEBUG)
         logger.addHandler(file_handler)
-
 
 
 # --------------------------------

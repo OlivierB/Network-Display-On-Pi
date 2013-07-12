@@ -13,7 +13,8 @@ setup(
     install_requires=[
         "psutil >= 0.7.1",
         "pylibpcap >= 0.6.4",
-        "tornado >= 0.0.0"
+        "tornado >= 2.4.1",
+        "argparse >= 1.2.1"
     ],
 
     author='Olivier BLIN',
