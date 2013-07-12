@@ -6,6 +6,6 @@
 // }
 
 var Params = {
-	'network3D'				: 		{'details3D' : 9},
+	'network3D'				: 		{'details3D' : 5},
 	'dns' 					: 		{'numberItemDNSList' : 15},
 }

@@ -21,4 +21,24 @@
 
 #module_content{
 	padding: 10px;
+	background-color:#cccccc;
+	height:100%
+}
+
+#widget_param{
+	background-color:gray; 
+	height:100%;
+	padding: 2%;
+	
+}
+
+label{
+	display: inline;   
+	margin: 10%;
+	vertical-align: 30%;     
+}
+
+
+#widget_param div{
+	padding-left: 10%;
 }

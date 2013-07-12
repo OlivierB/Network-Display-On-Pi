@@ -1,5 +1,7 @@
 <link href="<?php echo $this->asset('assets/css/drag_drop.css') ?>" rel="stylesheet">
 <link href="<?php echo $this->asset('assets/css/module_editor.css') ?>" rel="stylesheet">
+
+<script src="<?= $this->asset('assets/js/Widget.js') ?>" ></script>
 <script src="<?= $this->asset('assets/js/drag_drop_module.js') ?>" ></script>
 
 <div id='panel' >
@@ -21,20 +23,25 @@
 	</div>
 	<p>
 		<form class="form-inline">
-			<input type="text" class="input-small" placeholder="Name" value='<?= $module["module_name"] ?>'>
-			<input type="text" class="input-xxlarge" placeholder="Description" value='<?= $module["module_description"] ?>'>
+			<input id="module_name" type="text" class="input-small" placeholder="Name" value='<?= $module["module_name"] ?>'>
+			
+			<textarea id="module_description" rows="1" placeholder="Description" ><?= $module["module_description"] ?></textarea>
 		</form>
 	</p>
 	<div class="row-fluid" style="height:400px">
-		<div class="span8 row-fluid" style="background-color:#cccccc; height:100%" id="module_content">
+		<div class="span8 row-fluid" id="module_content">
 			<div class='height-half' id='first_line'>
 			</div>
 			<div class='height-half' id='second_line'>
 			</div>
-
 		</div>
 
-		<div class="span4" style="background-color:gray; height:100%" id="widget_param"></div>
+		<div class="span4" id="widget_param">
+			 
+			    
+			  	
+
+		</div>
 	</div>	
 </div>
 

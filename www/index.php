@@ -64,7 +64,7 @@ include 'ndop.conf.php';
 			try {
 				NDOP::$app['db'] = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password']);
 
-				$sql = "SELECT folder_name FROM  `layout` JOIN modules ON id_module = id";
+				$sql = "SELECT folder_name FROM  `layout` JOIN module ON id_module = id";
 				$results = NDOP::$app['db']->query($sql);
 				$pages = $results->fetchAll(PDO::FETCH_ASSOC);
 

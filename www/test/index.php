@@ -17,43 +17,26 @@
       <![endif]-->
   </head>
   <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="brand" href="/admin/">NDOP administration page</a>
-                <ul class="nav">
-                    <li class=""><a href="/admin/">Home</a></li>
-                    <li class=""><a href="/admin/config">Configuration</a></li>
-                    <li class=""><a href="/admin/modules">Modules</a></li>
-                    <li class="active"><a href="/admin/layout">Layout</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="container">
+    <script type="text/javascript">
 
-  <div id="content">
-    <link href="/admin/assets/css/drag_drop.css" rel="stylesheet">
-    <script src="/admin/assets/js/drag_drop.js" ></script>
 
-    <div id='panel' >
-      <div id='inline-wrapper'>
 
-          <div class='module' draggable="true" id="module_114">
-            <div class="legend" >Alert Snort </div>
-            <img src="../modules/alertBase/thumbnail.png">
-        </div>
-       
-    </div>
-</div>
+      var tab = [];
 
-<div id='pages'>
-    <div class="page thumbnail">
-        <div class='legend_page'>Page 1</div>
-        <div class='page-dropper module' id='page0'>    
-          <img src="/admin/assets/images/default_thumbnail.png">
-      </div>
-  </div>
+      tab[0] = {q:0, v:5};
+      tab[1] = {q:2, v:55};
+
+      console.log(JSON.stringify(tab));
+
+      // delete tab[0];
+      var res = tab.splice(1,1)
+
+      console.log(JSON.stringify(res))
+
+
+
+
+    </script>
 
 
 
