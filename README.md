@@ -84,6 +84,17 @@ create a new python file in ```ndop/modules``` with skeleton module :
 
 # python NDOP client
 
+If your server is on the local computer, you just need to run :
+```
+cd ndop_client
+python client
+```
+because default bind address is 127.0.0.1:9000.
+
+otherwise, configure distant address correctly with ```--addr``` option
+```
+python client --addr ADDRESS:PORT
+```
 
 # Integrated web client
 ## Configure a basic monitoring computer

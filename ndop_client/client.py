@@ -459,7 +459,6 @@ def parser():
     # init
     parser.description = "%s Version %s" % (__description__, __version__)
 
-    parser.add_argument("protocols", nargs='*', help="select some protocols")
     parser.add_argument("--addr", help="websocket server address", default=("%s" % DEF_ADDR))
     parser.add_argument("-d", "--debug", action='store_true', help="debug mode")
     parser.add_argument('--version', action='version', version=('NDOP %s' % __version__))
