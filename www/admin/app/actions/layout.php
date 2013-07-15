@@ -1,14 +1,17 @@
 <?php
 	$this['layout_page'] = 'active';
 
-	$sql = "SELECT * FROM  `module` ORDER BY name";
+	$this['database']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	$results = $this['database']->query($sql);
+
+	$select_modules = "SELECT * FROM  `module` ORDER BY name";
+
+	$results = $this['database']->query($select_modules);
 	$modules = $results->fetchAll(PDO::FETCH_ASSOC);
 
-	$sql = "SELECT id, folder_name, name FROM  `layout` JOIN `module` ON id_module = id";
+	$select_layout = "SELECT id, name FROM  `layout` JOIN `module` ON id_module = id";
 
-	$results = $this['database']->query($sql);
+	$results = $this['database']->query($select_layout);
 	$pages = $results->fetchAll(PDO::FETCH_ASSOC);
 
 	$nb_page =  count($pages);
