@@ -37,5 +37,6 @@ if [ "$val" == "0" ]; then
         ./ndop/config/conf_generator.py -oe > /etc/ndop/server_conf.json
         echo "Add server config file in /etc/ndop/"
     fi
+    ./scripts/clean.sh
 
 fi

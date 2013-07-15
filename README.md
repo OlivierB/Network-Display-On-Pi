@@ -84,6 +84,25 @@ create a new python file in ```ndop/modules``` with skeleton module :
 
 # python NDOP client
 
+## Installation
+
+* [python-websocket](https://pypi.python.org/pypi/websocket-client/0.7.0)
+* [python-curses](http://docs.python.org/2/howto/curses.html)
+* python-argparse
+
+Installation Commands:
+```
+cd ndop_client
+python setup.py install
+```
+
+You can also use bash install script:
+```
+./install_unix.sh
+```
+
+## Utilisation
+
 If your server is on the local computer, you just need to run :
 ```
 cd ndop_client

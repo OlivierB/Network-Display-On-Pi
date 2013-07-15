@@ -21,7 +21,7 @@ GETCH_TIMEOUT = 200
 CURSES_FOLLOW_WIN_SIZE = -1
 
 __description__ = "NDOP client"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 
 # --------------------------------
@@ -179,38 +179,176 @@ class CursesInfo(CursesPadManager):
         self.exec_in_pad(0, 0, self.pad.addstr, data[0:self.screen.getmaxyx()[1] - 1])
 
 
-class CursesContent(CursesPadManager):
+class CursesContent_handler(CursesPadManager):
 
-    def init(self, shared_menupos, subp_manager, l_protocols):
-        self.menu_pos = shared_menupos.value
-        shared_menupos.add_listener(self.new_menu_value)
-        self.subp_manager = subp_manager
-        self.l_protocols = l_protocols
+    def init(self, ws):
+        
+        self.ws = ws
 
-        self.subp_manager.add_listener(self.new_wsdata)
-
-    def new_menu_value(self, val):
-        self.menu_pos = val
-        self.update()
-
-    def new_wsdata(self, name):
-        if self.l_protocols[self.menu_pos] == name:
-            self.update()
 
     def update(self):
         self.pad.erase()
         h, w = self.screen.getmaxyx()
-        data = "Menu : %i" % (self.menu_pos)
 
-        self.exec_in_pad(0, 0, self.pad.addstr, data)
-        self.exec_in_pad(1, 0, self.pad.addstr, "Protocol :" +
-                         self.subp_manager.l_subp_handler[self.menu_pos].subprotocol)
+        self.exec_in_pad(0, 0, self.pad.addstr, "Protocol : %s" % self.ws.subprotocol)
 
         stt = 2
-        data = self.subp_manager.l_subp_handler[self.menu_pos].get_format(h, w)
+        data = self.ws.get_format()
         for line in data.split("\n"):
             self.exec_in_pad(stt, 0, self.pad.addstr, line)
             stt += 1
+
+
+class CursesContent_handler_bandwidth(CursesContent_handler):
+    def update(self):
+        self.pad.erase()
+        h, w = self.screen.getmaxyx()
+
+        self.exec_in_pad(0, 0, self.pad.addstr, "Protocol : %s - Page : %i" %
+                         (self.ws.subprotocol, self.ws.page))
+
+        
+
+        data = self.ws.get_format()
+        if data is None:
+            return
+
+        if self.ws.page >= 4:
+            self.exec_in_pad(2, 0, self.pad.addstr, "Empty" , curses.color_pair(1))
+            return
+
+        stt = 2
+        if self.ws.page == 0:
+            l_elem = ["tot_out_Ko", "tot_in_Ko", "loc_Ko", "in_Ko", "out_Ko", "Ko"]
+            for k in l_elem:
+                try:
+                    self.exec_in_pad(stt, 0, self.pad.addstr, k , curses.color_pair(1))
+                    self.exec_in_pad(stt, len(k), self.pad.addstr, " -> " + str(data[k]))
+                    stt += 2
+                except:
+                    pass
+            self.graph(15, 1, 15, 75, "Ko")
+        elif self.ws.page == 1:
+            l_elem = ["in_Ko", "out_Ko"]
+            for k in l_elem:
+                try:
+                    self.exec_in_pad(stt, 0, self.pad.addstr, k , curses.color_pair(1))
+                    self.exec_in_pad(stt, len(k), self.pad.addstr, " -> " + str(data[k]))
+                    stt += 2
+                except:
+                    pass
+                self.graph(10, 1, 15, 75, "in_Ko")
+                self.graph(27, 1, 15, 75, "out_Ko")
+        elif self.ws.page == 2:
+            l_elem = ["tot_in_Ko", "tot_out_Ko"]
+            for k in l_elem:
+                try:
+                    self.exec_in_pad(stt, 0, self.pad.addstr, k , curses.color_pair(1))
+                    self.exec_in_pad(stt, len(k), self.pad.addstr, " -> " + str(data[k]))
+                    stt += 2
+                except:
+                    pass
+                self.graph(10, 1, 15, 75, "tot_in_Ko")
+                self.graph(27, 1, 15, 75, "tot_out_Ko")
+        elif self.ws.page == 3:
+            l_elem = ["loc_Ko"]
+            for k in l_elem:
+                try:
+                    self.exec_in_pad(stt, 0, self.pad.addstr, k , curses.color_pair(1))
+                    self.exec_in_pad(stt, len(k), self.pad.addstr, " -> " + str(data[k]))
+                    stt += 2
+                except:
+                    pass
+                self.graph(15, 1, 15, 75, "loc_Ko")
+
+    def graph(self, y, x, h, w, elem):
+        space = 2
+        if self.ws.data is None:
+            return
+
+        mv = 1
+        for e in self.ws.data:
+            if e[elem] > mv:
+                mv = e[elem]
+
+        ratio = h / (mv*1.0)
+
+        pos = len(self.ws.data) - 1
+        posw = x + w
+        while posw > x and pos >= 0:
+            posh = y + h
+            while posh > y:
+                if ratio * self.ws.data[pos][elem] <= h - (posh-y):
+                    break
+                else:
+                    self.exec_in_pad(posh, posw, self.pad.addstr, "#")
+                    posh -= 1
+
+            pos -= 1
+            posw -= 1
+        self.exec_in_pad(y + h, x + w +space, self.pad.addstr, "-0 Ko")
+        for i in range(y+1, y + h):
+            self.exec_in_pad(i, x + w +space, self.pad.addstr, "|")
+        self.exec_in_pad(y, x + w +space, self.pad.addstr, "-%i Ko" % mv)
+
+
+class CursesContent_handler_system(CursesContent_handler):
+    def update(self):
+        self.pad.erase()
+        h, w = self.screen.getmaxyx()
+
+        self.exec_in_pad(0, 0, self.pad.addstr, "Protocol : %s" % self.ws.subprotocol)
+
+        data = self.ws.get_format()
+        if data is None:
+            return
+
+        stt = 2
+        for k in ["proc_load", "mem_load", "swap_load"]:
+            try:
+                self.exec_in_pad(stt, 0, self.pad.addstr, k , curses.color_pair(1))
+                self.exec_in_pad(stt, len(k), self.pad.addstr, " -> " + str(data[k])+"%")
+                self.draw(stt+1, 0, data[k])
+                stt += 3
+            except:
+                pass
+        
+
+    def draw(self, y, x, val):
+        self.exec_in_pad(y, x, self.pad.addstr, "[")
+        for i in range(1, 21):
+            if (i*5) <=  val:
+                if val < 33:
+                    self.exec_in_pad(y, x+i, self.pad.addstr, "I" , curses.color_pair(2))
+                elif val < 66:
+                    self.exec_in_pad(y, x+i, self.pad.addstr, "I" , curses.color_pair(3))
+                else:
+                    self.exec_in_pad(y, x+i, self.pad.addstr, "I" , curses.color_pair(4))
+
+        self.exec_in_pad(y, x+21, self.pad.addstr, "]")
+
+
+
+class CursesContent_handler_item(CursesContent_handler):
+    def update(self):
+        self.pad.erase()
+        h, w = self.screen.getmaxyx()
+
+        self.exec_in_pad(0, 0, self.pad.addstr, "Protocol : %s" % self.ws.subprotocol)
+
+        stt = 2
+        data = self.ws.get_format()
+        if data is None:
+            return
+
+        lk = data.keys()
+
+        for k in lk:
+            self.exec_in_pad(stt, 0, self.pad.addstr, k , curses.color_pair(1))
+            self.exec_in_pad(stt, len(k), self.pad.addstr, " -> " + str(data[k]))
+            stt += 2
+
+
 
 
 class CursesWindow():
@@ -242,8 +380,6 @@ class CursesWindow():
             print "Cannot get protocols list"
             return 0
 
-        # Websockets manager
-        self.ws_manager = Websocket_manager(args.addr, self.l_proto)
 
         try:
             # initialisation
@@ -251,7 +387,9 @@ class CursesWindow():
             self.color_init()
             self.element_init()
 
-            # WS listen
+            # Websockets manager
+            screen_args = [self.screen, 0, MENU_WIDTH + 1, CURSES_FOLLOW_WIN_SIZE, CURSES_FOLLOW_WIN_SIZE]
+            self.ws_manager = Websocket_manager(args.addr, self.l_proto, screen_args)
             self.ws_manager.start()
 
             while not self.term:
@@ -262,7 +400,7 @@ class CursesWindow():
                 self.menu.refresh()
 
                 # Content
-                self.content.refresh()
+                self.ws_manager.refresh(self.shared_menupos.value)
 
                 # INFO
                 self.info.update()
@@ -278,7 +416,8 @@ class CursesWindow():
         finally:
             self.curses_end()
             # stop subprotocols handler
-            self.ws_manager.stop()
+            if self.ws_manager is not None:
+                self.ws_manager.stop()
 
         return 0
 
@@ -288,6 +427,10 @@ class CursesWindow():
             self.menu.prev()
         elif car == curses.KEY_DOWN:
             self.menu.next()
+        elif car == curses.KEY_RIGHT:
+            self.ws_manager.next_page(self.shared_menupos.value)
+        elif car == curses.KEY_LEFT:
+            self.ws_manager.prev_page(self.shared_menupos.value)
         elif car == ord('q'):
             self.term = True
         elif car == curses.KEY_HOME:
@@ -320,6 +463,8 @@ class CursesWindow():
         self.height, self.width = self.screen.getmaxyx()
         self.l_resize_func = list()
         self.shared_menupos = SharedValue("menu_pos", 0)
+        self.shared_pagepos = SharedValue("page_pos", 0)
+        self.ws_manager = None
 
     def curses_end(self):
         # reverse init actions and close
@@ -333,6 +478,10 @@ class CursesWindow():
         curses.start_color()
         # create pair
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_GREEN)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_YELLOW)
+        curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_RED)
+        curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLUE)
 
     def element_init(self):
         self.info = CursesInfo(self.screen, 0, 0, 1, CURSES_FOLLOW_WIN_SIZE)
@@ -341,11 +490,7 @@ class CursesWindow():
         self.menu = CursesMenu(
             self.screen, 0, 0, CURSES_FOLLOW_WIN_SIZE, MENU_WIDTH, self.shared_menupos, self.l_proto)
         self.l_resize_func.append(self.menu.win_resize)
-
-        self.content = CursesContent(
-            self.screen, 0, MENU_WIDTH + 1, CURSES_FOLLOW_WIN_SIZE, CURSES_FOLLOW_WIN_SIZE, self.shared_menupos, self.ws_manager, self.l_proto)
-        self.l_resize_func.append(self.content.win_resize)
-
+        
 
 # --------------------------------
 # Websocket
@@ -358,17 +503,18 @@ def get_list(addr):
 
 class Websocket_manager():
 
-    def __init__(self, addr, l_protocols):
+    def __init__(self, addr, l_protocols, screen_args):
         self.l_protocols = l_protocols
         self.addr = addr
-        self.listen = list()
+
         # Create handlers for subprotocols
         self.l_subp_handler = list()
+
         for p in self.l_protocols:
             if p in list_handle_subprotocols.keys():
-                self.l_subp_handler.append(list_handle_subprotocols[p](self, self.addr, p))
+                self.l_subp_handler.append(list_handle_subprotocols[p](self, self.addr, p, screen_args))
             else:
-                self.l_subp_handler.append(Websocket_handler(self, self.addr, p))
+                self.l_subp_handler.append(Websocket_handler(self, self.addr, p, screen_args))
 
     def start(self):
         # start
@@ -376,16 +522,20 @@ class Websocket_manager():
             subp.start()
 
     def stop(self):
-        # start
+        # stop
         for subp in self.l_subp_handler:
             subp.stop()
 
-    def trigger(self, subprotocol):
-        for elem in self.listen:
-            elem(subprotocol)
+    def refresh(self, num):
+        self.l_subp_handler[num].refresh()
 
-    def add_listener(self, func):
-        self.listen.append(func)
+    def next_page(self, num):
+        self.l_subp_handler[num].next_page()
+        self.l_subp_handler[num].screen_content.update()
+
+    def prev_page(self, num):
+        self.l_subp_handler[num].prev_page()
+        self.l_subp_handler[num].screen_content.update()
 
 
 class Websocket_handler(Thread):
@@ -394,7 +544,7 @@ class Websocket_handler(Thread):
     Thread class to handle one websocket subprotocol
     """
 
-    def __init__(self, manager, addr, subprotocol):
+    def __init__(self, manager, addr, subprotocol, screen_args=list()):
         Thread.__init__(self)
 
         self.manager = manager
@@ -402,7 +552,15 @@ class Websocket_handler(Thread):
         self.subprotocol = subprotocol
         self.ws = None
         self.connect = True
-        self.last = ""
+        self.last = None
+        self.data = list()
+        self.page = 0
+
+        sc_args = screen_args + [self]
+        self.init_view(sc_args)
+
+    def init_view(self, sc_args):
+        self.screen_content = CursesContent_handler(*sc_args)
 
     def run(self):
 
@@ -420,7 +578,7 @@ class Websocket_handler(Thread):
                 try:
                     decoded = json.loads(recv)
                     self.handle_data(decoded)
-                    self.manager.trigger(self.subprotocol)
+                    self.screen_content.update()
                 except:
                     pass
         except:
@@ -429,23 +587,74 @@ class Websocket_handler(Thread):
         return 0
 
     def handle_data(self, data):
-        pp = pprint.PrettyPrinter(indent=2, width=100, depth=None, stream=None)
-        self.last = pp.pformat(data)
+        self.last = data
 
-    def get_format(self, height, width):
-        return self.last
+    def get_format(self):
+        if self.last is not None:
+            pp = pprint.PrettyPrinter(indent=2, width=100, depth=None, stream=None)
+            return pp.pformat(self.last)
+        else:
+            return ""
+
+    def next_page(self):
+        self.page += 1
+
+    def prev_page(self):
+        if self.page > 0:
+            self.page -= 1
 
     def stop(self):
         self.connect = False
         if self.ws is not None:
             self.ws.close()
 
+    def refresh(self):
+        self.screen_content.refresh()
+
 
 class Websocket_subprotocol_bandwidth(Websocket_handler):
-    pass
+    
+    def init_view(self, sc_args):
+        self.screen_content = CursesContent_handler_bandwidth(*sc_args)
+
+    def handle_data(self, data):
+        self.last = data
+        self.data.append(data)
+        if len(self.data) > 100:
+            self.data.pop(0)
+
+    def get_format(self):
+        return self.last
+
+
+class Websocket_subprotocol_pktloss(Websocket_handler):
+    
+    def init_view(self, sc_args):
+        self.screen_content = CursesContent_handler_item(*sc_args)
+
+    def handle_data(self, data):
+        self.last = data
+
+    def get_format(self):
+        return self.last
+
+
+class Websocket_subprotocol_srvstats(Websocket_handler):
+    
+    def init_view(self, sc_args):
+        self.screen_content = CursesContent_handler_system(*sc_args)
+
+    def handle_data(self, data):
+        self.last = data
+
+    def get_format(self):
+        return self.last
+
 
 list_handle_subprotocols = {
-    "bandwidth": Websocket_subprotocol_bandwidth
+    "bandwidth": Websocket_subprotocol_bandwidth,
+    "packet_loss": Websocket_subprotocol_pktloss,
+    "server_stat": Websocket_subprotocol_srvstats
 }
 
 
