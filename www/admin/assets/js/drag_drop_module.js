@@ -72,7 +72,9 @@ ModuleConfig.prototype.refreshDropper = function(that) {
             widget.addParameterPanelToDOM(that.container_parameter);
             that.refreshSubmitWidgetCallback();
 
-            that.layout[widget.dom_id] = widget;
+            // that.layout[widget.dom_id] = widget;
+            that.current_widget_id_dom = -1;
+            that.new_widget = widget;
 
         },
 
@@ -274,16 +276,17 @@ ModuleConfig.prototype.addWidget = function() {
 
             if (this.current_widget_id_dom > 0) {
                 var widget = this.layout[this.current_widget_id_dom];
-
                 delete this.layout[this.current_widget_id_dom];
-                widget.x = x;
-                widget.y = y;
-                widget.width = width;
-                widget.height = height;
-                widget.current_id_parameter_set = this.checkInput('parameter_set');
             }else{
-                
+                var widget = this.new_widget;
+                // this.current_widget_id_dom = widget.dom_id;
             }
+
+            widget.x = x;
+            widget.y = y;
+            widget.width = width;
+            widget.height = height;
+            widget.current_id_parameter_set = this.checkInput('parameter_set');
 
             
 
@@ -316,7 +319,7 @@ ModuleConfig.prototype.checkOverlapping = function(widget_to_check) {
     for (var id_dom in this.layout) {
 
         var widget = this.layout[id_dom];
-
+        console.log(widget_to_check)
 
         // every height must be equal, there can't be both a full and half height widgets at the same time
         if (widget_to_check.height != widget.height) {
@@ -342,8 +345,9 @@ ModuleConfig.prototype.clickOnChosenWidget = function(event) {
     var id = parseInt(this.id.substr(14));
 
     that.layout[id].addParameterPanelToDOM(that.container_parameter);
+    $('.selected_module').removeClass('selected_module');
+    that.layout[id].setBorder();
     that.refreshSubmitWidgetCallback();
 
     that.current_widget_id_dom = id;
-    console.log(that.layout)
 }

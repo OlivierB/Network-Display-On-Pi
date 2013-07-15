@@ -19,9 +19,16 @@ Atomik::set(array(
 
 
 
-Atomik::set('app.routes', array(
+Atomik::add('app.routes', array(
    'modules/editor/:module' => array(
-       'action' => 'editor',
-       'module' =>''
+       'action' => 'module_editor',
+       'module' => ''
+   )
+));
+
+Atomik::add('app.routes', array(
+   'widget/editor/:widget' => array(
+       'action' => 'widget_editor',
+       'widget' =>''
    )
 ));

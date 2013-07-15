@@ -42,3 +42,9 @@ label{
 #widget_param div{
 	padding-left: 10%;
 }
+
+.selected_module{
+	border-style: solid;
+	border-color: red;
+	border-width: 1px;
+}
