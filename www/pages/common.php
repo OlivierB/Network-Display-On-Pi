@@ -38,8 +38,14 @@ function display_module($name, $id) {
 	foreach ($widgets as $index => $widget) {
 
 		// if the widget is set to be on the second line then every following 
-        // widgets willl be on the second line
+        // widgets will be on the second line
         if ($widget['y'] == 1 && $current_y == 0) {
+        	// if ther is no widget on the first line we add a blank one to set a height to the first line
+        	if($current_x == 0) {
+        		display_widget(-1, -1, 1, 1);
+        	}
+
+
             echo "</div><div class='row-fluid'>";
             $current_x = 0;
             $current_y = 1;
