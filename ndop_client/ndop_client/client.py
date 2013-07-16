@@ -14,7 +14,7 @@ from threading import Thread
 
 # CONST
 DEF_ADDR = "127.0.0.1:9000"
-LOG_FILE = "./clientlog"
+LOG_FILE = "/tmp/clientlog"
 MENU_WIDTH = 30
 GETCH_TIMEOUT = 200
 
