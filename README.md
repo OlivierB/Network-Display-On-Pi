@@ -86,9 +86,10 @@ create a new python file in ```ndop/modules``` with skeleton module :
 
 ## Installation
 
+* python-argparse
 * [python-websocket](https://pypi.python.org/pypi/websocket-client/0.7.0)
 * [python-curses](http://docs.python.org/2/howto/curses.html)
-* python-argparse
+
 
 Installation Commands:
 ```
@@ -101,7 +102,7 @@ You can also use bash install script:
 ./install_unix.sh
 ```
 
-## Utilisation
+## Utilization
 
 If your server is on the local computer, you just need to run :
 ```
@@ -132,7 +133,7 @@ xset -dpms &
 xset s noblank &
 xset s off &
 sakura &
-~/google.sh 192.168.1.144 
+~/google.sh ADDR
 ```
 
 ### google chrome script
@@ -146,7 +147,7 @@ while [ $# -gt 0 ]; do
 done
 ```
 
-If there are some errors, it could be interesting to see google-chrome logs :
+If there is a problem, it could be interesting to see google-chrome logs :
 ```
 tail -f ~/.config/google-chrome/chrome_debug.log
 ```

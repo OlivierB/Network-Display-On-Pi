@@ -5,6 +5,9 @@ import sys
 
 MAX=999999
 
+# SOURCE : https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt
+
+
 def main():
     f = open("ports.txt", "r")
     tcp = open("list_tcp.py", "w")
@@ -12,6 +15,7 @@ def main():
     sctp = open("list_sctp.py", "w")
     dccp = open("list_dccp.py", "w")
     res = open("res.txt", "w")
+    res.write("Double entry ports (delete them in list files):\n")
     with f:
         var = "#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n"
         tcp.write(var+"dListTCP = {\n")
