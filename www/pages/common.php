@@ -63,11 +63,26 @@ function display_widget($id_widget, $id_widget_parameter_set, $width, $height) {
 	$select_widget = "SELECT `folder_name` FROM `widget` WHERE `widget`.`id` = :id_widget;";
 	$prep_select_widget = NDOP::$app['db']->prepare($select_widget);
 
+	$select_params = "SELECT `name`, `value` FROM `widget_parameter_value` LEFT OUTER JOIN `widget_parameter_design` ON `id_param` = `id` WHERE `id_set` = :id_set;";
+	$prep_select_params = NDOP::$app['db']->prepare($select_params);
+
+
 	$prep_select_widget->execute(array(
 		'id_widget' => $id_widget
 		));
 
-	$widget = $prep_select_widget->fetchAll(PDO::FETCH_ASSOC);
+	$widget = $prep_select_widget->fetch(PDO::FETCH_ASSOC);
+
+	$prep_select_params->execute(array(
+		'id_set' => $id_widget_parameter_set
+		));
+
+	$params_fetch = $prep_select_params->fetchAll(PDO::FETCH_ASSOC);
+
+	$params = array();
+	foreach ($params_fetch as $key => $value) {
+		$params[$value['name']] = $value['value'];
+	}
 
 	if($height == 2) {
 		$class_height = "height-full";
@@ -76,7 +91,8 @@ function display_widget($id_widget, $id_widget_parameter_set, $width, $height) {
 	}
 	echo "<div class='span".$width." ".$class_height."' >";
 	if($id_widget > 0){
-		include "./widgets/".$widget[0]['folder_name']."/content.php";
+		$id = $id_widget;
+		include "./widgets/".$widget['folder_name']."/content.php";
 	}else{
 
 	}
