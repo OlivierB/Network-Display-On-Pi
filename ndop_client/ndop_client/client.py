@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import sys
@@ -13,7 +13,7 @@ from threading import Thread
 
 
 # CONST
-DEF_ADDR = "127.0.0.1:9000"
+DEF_ADDR = "127.0.0.1:9005"
 LOG_FILE = "/tmp/clientlog"
 MENU_WIDTH = 30
 GETCH_TIMEOUT = 200

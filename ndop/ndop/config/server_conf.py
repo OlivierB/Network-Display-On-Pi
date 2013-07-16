@@ -1,4 +1,4 @@
-#encoding: utf-8
+# -*- coding: utf-8 -*-
 
 """
 Server configuration
@@ -17,10 +17,10 @@ __description__ = "Network Sniffer with web display"
 # Network information
 
 # Websocket communication port
-websocket_port = 9000
+websocket_port = 9005
 
 # listening device for sniffing
-sniffer_device = "eth1"
+sniffer_device = "eth0"
 
 
 ########################################
@@ -64,7 +64,7 @@ db_on = False
 db_class = "MySQL_database"
 
 db_conf = {
-    "host": "192.168.1.144",
+    "host": "127.0.0.1",
     "user": "ndop",
     "passwd": "ndop",
     "database": "NDOP",

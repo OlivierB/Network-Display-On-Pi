@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import importlib
@@ -21,7 +21,7 @@ ex_code = \
 {
 ////////////////////////////
     // tornado websocket port
-    "websocket_port": 9000,
+    "websocket_port": 9005,
 
 ////////////////////////////
     // Ethernet interface for packets capture

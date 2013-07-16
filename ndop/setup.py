@@ -1,12 +1,13 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
 from setuptools import setup, find_packages
+from ndop.config import server_conf
 
 setup(
     name="NDOP",
-    version="0.0.3",
+    version=server_conf.__version__,
     packages=find_packages(),
     # scripts = ['ndop/ndop.py'],
 

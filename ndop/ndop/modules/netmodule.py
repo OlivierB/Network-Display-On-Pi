@@ -11,7 +11,7 @@ New submodule need to override some of these methods
 # Python lib import
 import time
 import datetime
-
+import logging
 
 class NetModule(object):
 
@@ -31,6 +31,8 @@ class NetModule(object):
         # Time management for save function
         self.save_timecode(savetime)
         self.save_timewait()
+
+        self.logger = logging.getLogger()
 
         self.dev = dev
 

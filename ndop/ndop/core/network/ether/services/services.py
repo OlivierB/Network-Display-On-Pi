@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 
 """
 Network implementation data
@@ -769,6 +769,7 @@ dPortsList = {
     1010: {'callback': None, 'protocol': 'SURF', 'description': 'surf'},
     1021: {'callback': None, 'protocol': 'EXP1', 'description': 'RFC3692-style Experiment 1'},
     1022: {'callback': None, 'protocol': 'EXP2', 'description': 'RFC3692-style Experiment 2'},
+    
     1025: {'callback': None, 'protocol': 'BLACKJACK', 'description': 'network blackjack'},
     1026: {'callback': None, 'protocol': 'CAP', 'description': 'Calendar Access Protocol'},
     1029: {'callback': None, 'protocol': 'SOLID-MUX', 'description': 'Solid Mux Server'},
@@ -5140,6 +5141,7 @@ dPortsList = {
     9000: {'callback': None, 'protocol': 'CSLISTENER', 'description': 'CSlistener'},
     9001: {'callback': None, 'protocol': 'ETLSERVICEMGR', 'description': 'ETL Service Manager'},
     9002: {'callback': None, 'protocol': 'DYNAMID', 'description': 'DynamID authentication'},
+    9005: {'callback': None, 'protocol': 'NDOP', 'description': 'Network Display On Pi'},
     9008: {'callback': None, 'protocol': 'OGS-SERVER', 'description': 'Open Grid Services Server'},
     9009: {'callback': None, 'protocol': 'PICHAT', 'description': 'Pichat Server'},
     9010: {'callback': None, 'protocol': 'SDR', 'description': 'Secure Data Replicator'},

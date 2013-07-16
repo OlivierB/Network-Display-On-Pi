@@ -24,7 +24,7 @@ class NetModChild(NetModule):
         NetModule.__init__(self, updatetime=1, protocol='server_stat', *args, **kwargs)
 
         if psutil.__version__ < '0.7.0':
-            print "Update psutil to 0.7.1"
+            self.logger.warning("Update psutil to 0.7.1")
 
         # packet data
         self.oldValues = self.sysState()

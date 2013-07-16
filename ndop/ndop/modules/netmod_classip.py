@@ -16,6 +16,7 @@ class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, savetime=('m', 1), protocol='classip', *args, **kwargs)
         self.last = None
+        self.logger
 
     def update(self):
         return self.last

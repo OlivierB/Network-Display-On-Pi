@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 
 """
 Client system sniffer
@@ -29,7 +29,7 @@ PCAP_PACKET_MAX_LEN = 1514
 # Time to check modules update
 MIN_TIME_MOD_UPDATE = 0.5
 # Time to check modules SQL database saving
-MIN_TIME_DB_UPDATE = 1
+MIN_TIME_DB_UPDATE = 10
 
 
 class SnifferManager():
