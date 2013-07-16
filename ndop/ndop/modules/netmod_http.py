@@ -61,19 +61,10 @@ class NetModChild(NetModule):
                         print info
                         print "----------"
 
-    def reset(self):
-        """
-        Clalled to reset module
-        """
-        pass
 
-    def save(self):
+    def database_save(self, db_class):
         """
         Called to save module data in sql database every savetime
-
-        return a list of sql request to save module content
-            else return None
-
         """
         return None
 

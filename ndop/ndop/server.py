@@ -5,6 +5,8 @@
 Network Display On Pi
 NDOP
 
+entry-point : main()
+
 @author: Olivier BLIN
 """
 
@@ -16,7 +18,7 @@ import datetime as dt
 
 # Project file import
 from core.sniffer import SnifferManager
-from core.wsserver import WsServer, ClientsList
+from core.wsserver import WsServer, WsData
 from core.daemon import Daemon
 from core.configCenter import ConfigChecker, ConfigCenter
 
@@ -37,9 +39,9 @@ def ndop_run(config):
     # Init websocket server (tornado)
     ws_serv = WsServer(config.ws_port)
     # Init websocket data
-    wsdata = ClientsList()
-    for prot in config.l_protocols:
-        wsdata.addProtocol(prot)
+    wsdata = WsData()
+    # Add authorized protocols in websocket data
+    wsdata.addListProtocols(config.l_protocols)
 
     # init packet capture system
     sniff = SnifferManager(config)

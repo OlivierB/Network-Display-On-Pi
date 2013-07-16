@@ -37,25 +37,22 @@ class NetModule(object):
     def __str__(self):
         return self.protocol
 
-    def get_data(self):
+    def trigger_data_update(self):
         """
         Manage call to update method with updatetime
         """
         if (time.time() - self.lastupdate) > self.updatetime:
             self.lastupdate = time.time()
             return self.update()
-        else:
-            return None
 
-    def get_sql(self):
+
+    def trigger_db_save(self, db_class):
         """
-        Manage call to save method with savetime
+        Manage call to database_save method with savetime
         """
         if time.time() - self.savetime > self.savewait:
             self.save_timewait()
-            return self.save()
-        else:
-            return None
+            self.database_save(db_class)
 
     def save_timewait(self):
         """
@@ -99,17 +96,6 @@ class NetModule(object):
             # default if error
             self.savecode = ('m', 30)
 
-    def update(self):
-        """
-        Refresh method called every updatetime
-
-        Return values to send to clients (websockets)
-        automatically convert in json
-
-        override this method
-        """
-        return None
-
     def pkt_handler(self, pkt):
         """
         Called by sniffer when a new packet arrive
@@ -120,15 +106,26 @@ class NetModule(object):
         """
         pass
 
-    def reset(self):
+    def update(self):
         """
-        Clalled to reset module
+        Refresh method called every updatetime
+
+        Return values to send to clients (websockets)
+        automatically converted in json
+
+        override this method
+        """
+        return None
+
+    def database_init(self, db_class):
+        """
+        Clalled to init module database
 
         override this method
         """
         pass
 
-    def save(self):
+    def database_save(self, db_class):
         """
         Called to save module data in sql database every savetime
 

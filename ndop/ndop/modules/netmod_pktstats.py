@@ -48,7 +48,21 @@ class NetModChild(NetModule):
     def pkt_handler(self, pkt):
         pass
 
-    def save(self):
+    def database_init(self, db_class):
+        req = \
+"""
+CREATE TABLE IF NOT EXISTS `packet_loss` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `packet_received` int(11) NOT NULL,
+  `packet_handled` int(11) NOT NULL,
+  `dtime_s` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
+"""
+        db_class.execute(req)
+
+    def database_save(self, db_class):
         req = "INSERT INTO packet_loss(date, packet_received, packet_handled, dtime_s) VALUES ("
 
         new = self.sysState()
@@ -63,9 +77,7 @@ class NetModChild(NetModule):
         req += str(res["dtime"])
 
         req += ")"
-        return req
-
-        return None
+        db_class.execute(req)
 
     def sysState(self):
         """

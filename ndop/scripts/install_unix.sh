@@ -32,7 +32,7 @@ if [ "$val" == "0" ]; then
         update-rc.d ndop defaults
     fi
 
-    if ! [ -r "/etc/ndop/server_conf.json" ]; then
+    if ! [ -r "/etc/ndop/server_conf.json" ] || [ "$1" == "-c" ]; then
         mkdir -p /etc/ndop/
         ./ndop/config/conf_generator.py -oe > /etc/ndop/server_conf.json
         echo "Add server config file in /etc/ndop/"

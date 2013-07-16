@@ -61,7 +61,7 @@ class ConfigChecker():
                 self.try_config_override(UNIX_CONF_FILE)
             self.check_network(args)
             logger.debug("%s : Check network : OK" % self.__class__.__name__)
-            self.check_sql(args, full=True)
+            self.check_database(args, full=True)
             logger.debug("%s : Check SQL : OK" % self.__class__.__name__)
             self.check_modules(args)
             logger.debug("%s : Check modules : OK" % self.__class__.__name__)
@@ -94,7 +94,7 @@ class ConfigChecker():
 
         # Check
         self.check_network(args)
-        self.check_sql(args)
+        self.check_database(args)
         self.check_modules(args)
 
         if self.daemon:
@@ -119,8 +119,6 @@ class ConfigChecker():
         parser.add_argument("-i", "--interface", help="sniffer device")
         parser.add_argument("-f", "--file", help="server configuration file")
         parser.add_argument("--daemon", action='store_true', help="daemon mode")
-        parser.add_argument("--init", action='store_true', help="Module database initialisation")
-        parser.add_argument("--reset", action='store_true', help="Module database reset")
         parser.add_argument("--test", action='store_true', help="Check configuration without start ndop")
         parser.add_argument('--version', action='version', version=('NDOP %s' % server_conf. __version__))
         return parser
@@ -180,20 +178,32 @@ class ConfigChecker():
         except:
             logger.debug("Override default config (%s) FAIL : %s" % (path, error))
 
-    def check_sql(self, args, full=False):
+    def check_database(self, args, full=False):
         """
-        Check SQL varibles
+        Check DB varibles
         """
-        self.sql_on = self.get_elem("sql_on")
-        if self.sql_on or full:
-            self.sql_conf = self.get_elem("sql_conf")
+        self.database = dict()
+        self.database["on"] = self.get_elem("db_on")
+
+        # Load database module
+        try:
+            database_mod = importlib.import_module("ndop.core.database")
+            self.database["class"] = getattr(database_mod, self.get_elem("db_class"))
+
+        except Exception as e:
+            raise ArgumentConfigError("Database %s : Cannot be loaded : %s" % (self.database["class"], e))
+
+        self.database["conf"] = dict()
+
+        if self.database["on"] or full:
+            self.database["conf"] = self.get_elem("db_conf")
             for elem in ["host", "user", "passwd", "database", "port"]:
-                if not elem in self.sql_conf.keys():
-                    raise ArgumentError("sql_conf : missing %s argument" % elem)
+                if not elem in self.database["conf"].keys():
+                    raise ArgumentError("db_conf : missing %s argument" % elem)
         else:
-            self.sql_conf = dict()
+            self.database["conf"] = dict()
             for elem in ["host", "user", "passwd", "database", "port"]:
-                self.sql_conf[elem] = ""
+                self.database["conf"][elem] = ""
 
     def check_network(self, args):
         """
@@ -237,7 +247,7 @@ class ConfigChecker():
 
     def check_logfile(self, args, daemon=False):
         if daemon:
-            self.log_file = self.get_elem("log_file")
+            self.log_file = self.get_elem("daemon_log_file")
             if not self.is_file_writable(self.log_file):
                     raise ArgumentConfigError("log file : Cannot write in %s" % self.log_file)
         else:

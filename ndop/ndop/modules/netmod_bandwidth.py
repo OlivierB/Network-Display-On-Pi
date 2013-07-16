@@ -69,7 +69,23 @@ class NetModChild(NetModule):
             elif bsrc and not bdst:
                 self.data["net_load_out"] += pkt.pktlen
 
-    def save(self):
+    def database_init(self, db_class):
+        req = \
+"""
+CREATE TABLE IF NOT EXISTS `bandwidth` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `global` int(11) NOT NULL,
+  `local` int(11) NOT NULL,
+  `incoming` int(11) NOT NULL,
+  `outcoming` int(11) NOT NULL,
+  `dtime_s` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
+"""
+        db_class.execute(req)
+
+    def database_save(self, db_class):
         req = "INSERT INTO bandwidth(date, global, local, incoming, outcoming, dtime_s) VALUES ("
 
         new = self.sysState()
@@ -86,7 +102,7 @@ class NetModChild(NetModule):
         req += str(res["dtime"])
 
         req += ")"
-        return req
+        db_class.execute(req)
 
     def sysState(self):
         """

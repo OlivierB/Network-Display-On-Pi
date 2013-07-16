@@ -33,13 +33,8 @@ class NetModChild(NetModule):
                     if pkt.Ether.payload.payload.payload.dns_name != '':
                         self.l_dns_name.append(pkt.Ether.payload.payload.payload.dns_name)
 
-    def reset(self):
-        """
-        Clalled to reset module
-        """
-        pass
 
-    def save(self):
+    def database_save(self, db_class):
         """
         Called to save module data
 

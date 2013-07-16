@@ -35,13 +35,13 @@ class NetModChild(NetModule):
         """
         pass
 
-    def reset(self):
+    def database_init(self, db_class):
         """
-        Clalled to reset module
+        Clalled to init module database
         """
         pass
 
-    def save(self):
+    def database_save(self, db_class):
         """
         Called to save module data in sql database every savetime
 

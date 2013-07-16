@@ -52,16 +52,18 @@ daemon_stderr = '/dev/null'
 daemon_pid_file = '/var/run/ndop.pid'
 
 # Log file
-log_file = "/var/log/ndoplog"
+daemon_log_file = "/var/log/ndoplog"
 
 
 ########################################
 # SQL Database connection
 
 # Disabled SQL Database
-sql_on = False
+db_on = False
 
-sql_conf = {
+db_class = "MySQL_database"
+
+db_conf = {
     "host": "192.168.1.144",
     "user": "ndop",
     "passwd": "ndop",

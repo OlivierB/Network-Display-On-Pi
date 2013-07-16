@@ -60,25 +60,28 @@ ex_code = \
     // Daemon files
 
     "daemon_pid_file": "/var/run/ndop.pid",
-    "log_file": "/var/log/ndoplog",
+    "daemon_log_file": "/var/log/ndoplog",
 
     // Output files standard and error
     "daemon_stdout": "/dev/null",
     "daemon_stderr": "/dev/null",
 
 ////////////////////////////
-    // SQL Config
+    // Database Config
 
-    // Enable or disable module's data saving in SQL database
-    "sql_on": false,
+    // Enable or disable database saving
+    "db_on": false,
 
-    // SQL Config
-    "sql_conf": {
-        "database": "NDOP",
+    // DB Type
+    "db_class": "MySQL_database",
+
+    // DB Config
+    "db_conf": {
         "host": "127.0.0.1",
+        "user": "ndop",
         "passwd": "ndop",
-        "port": 3306,
-        "user": "ndop"
+        "database": "NDOP",
+        "port": 3306
     }
 }
 """
