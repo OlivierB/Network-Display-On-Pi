@@ -23,9 +23,11 @@
 <script src="/widgets/Network3D/Network3D.conf.js"></script>
 
 <script type="text/javascript">
+$(function(){
 	var scene3D = new Scene3D('<?= $id ?>', <?= $params['quality'] ?>);
 	scene3D.animate();
 	scene3D.connect(dispatcher, 'local_communication');
+});
 </script>
 
 <link rel="stylesheet" type="text/css" href="/widgets/Network3D/style.css">

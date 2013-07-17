@@ -24,10 +24,12 @@
 </div>
 
 <script type="text/javascript">
+$(function(){
 	var serverStat = new ServerStat('<?= $id ?>');
 	serverStat.add('<?= $id ?>proc', 'proc_load', <?= $params['speed'] ?>);
 	serverStat.add('<?= $id ?>memory', 'mem_load', <?= $params['speed'] ?>);
 	serverStat.add('<?= $id ?>swap', 'swap_load', <?= $params['speed'] ?>);
 
 	serverStat.connect(dispatcher, 'server_stat');
+});
 </script>

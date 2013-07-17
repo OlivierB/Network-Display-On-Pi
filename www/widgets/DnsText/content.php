@@ -16,8 +16,10 @@
 </div>
 
 <script type="text/javascript">
+$(function(){
 	var display = new DnsDisplayerText("<?= $id ?>", <?= $params['nb_item'] ?>, <?= $params['font_size'] ?>);
 	display.connect(dispatcher, 'dns');
+});
 </script>
 
 <link rel="stylesheet" type="text/css" href="/widgets/DnsText/style.css">
