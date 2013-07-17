@@ -17,13 +17,9 @@
 	font-weight: bold;
 }
 
-/*#protocol-ethernet{
-	margin-top: 30px;
-}*/
 #protocol-ip{
 	margin-top: 30px;
 }
-
 
 .percent-chart-loader{
 	margin: auto;
@@ -32,4 +28,8 @@
 
 .server-stat-legend{
 	text-align: center;
+}
+
+.server-stat-legend .span4{
+	margin: auto;
 }

@@ -125,4 +125,4 @@ closedir($dir);
 
 
 
-// $this->redirect('widgets');
+$this->redirect('widgets');

@@ -4,7 +4,7 @@
 
 <?php
 
-if(count($params) > 0){
+if(count($params) > 0 && $params[0]['param_values'] != null ){
 	foreach($params as $index => $set) {
 		// var_dump($set);
 		$values = explode(',', $set['param_values']);
