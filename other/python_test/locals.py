@@ -8,9 +8,12 @@ import pcap
 # from scapy.all import *
 import types
 import time
-import copy
+import profile
+import cProfile
+import trace
 import json
 import base64
+import sys
 
 
 import core.network.packet as packet
@@ -71,7 +74,7 @@ def deepsL(s, d, p):
 
 # hexdump(pktd)
 
-if __name__ == "__main__":
+def main():
     p = fpcap()
     pktd = sniff(p)
 
@@ -79,9 +82,25 @@ if __name__ == "__main__":
 
     ###########################################
 
-    pktdec = packet.Packet(1200, pktd, 0)
+    # pktdec = packet.Packet(1200, pktd, 0)
 
-    print pktdec
+    # print pktdec
+
+    ##########################################
+
+    #  X Packet capture
+    isFile = True
+    try:
+        with open('ListPackets'): pass
+    except IOError:
+        isFile = False
+
+    if not isFile:
+        put_file("ListPackets", nb=100)
+        print "create"
+    
+    lpkt = get_file("ListPackets")
+
 
     ##########################################
     
@@ -170,13 +189,14 @@ if __name__ == "__main__":
     # print "dic time : ", (time.time() - a)
 
     
+    fntdec = packet.Packet
+    a = time.time()
+    for i in xrange(1000):
+        for p in lpkt:
+            pktdec = fntdec(1200, p, 0)
 
-    # a = time.time()
-    # for i in range(100000):
-    #     pktdec = packet.Packet(1200, pktd, 0)
-
-    # print "class - time : ", (time.time() - a)
-    # print pktdec
+    print "class - time : ", (time.time() - a)
+    print pktdec
 
     # a = time.time()
     # for i in range(1000000):
@@ -223,3 +243,25 @@ if __name__ == "__main__":
     #         pass
     # print "class - time : ", (time.time() - a)
 
+
+if __name__ == "__main__":
+    # pr = profile.Profile()
+    # for i in range(5):
+    #     your_computed_bias = pr.calibrate(10000)
+
+    # pr = profile.Profile(bias=your_computed_bias)
+
+
+    # cProfile.run('main()', "profile_tmp4")
+    main()
+
+
+    
+  # # create a Trace object, telling it what to ignore, and whether to
+  # # do tracing or line-counting or both.
+  # tracer = trace.Trace(ignoredirs=[sys.prefix, sys.exec_prefix,], trace=0, count=1)
+  # # run the new command using the given tracer
+  # tracer.run('main()')
+  # # make a report, placing output in /tmp
+  # r = tracer.results()
+  # r.write_results(show_missing=True, coverdir="/tmp")

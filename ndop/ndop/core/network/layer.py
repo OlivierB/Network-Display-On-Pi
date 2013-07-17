@@ -63,11 +63,17 @@ class Layer():
         return self.type == typ
 
 
-class ProtocolMismatch(Exception):
+class ProtocolException(Exception):
 
     """Protocol error"""
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
-        return repr(self.value)
+        return self.__class__.__name__ + " : " + repr(self.value)
+
+class ProtocolMismatch(ProtocolException):
+    pass
+
+class ProtocolError(ProtocolException):
+    pass

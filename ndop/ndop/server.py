@@ -102,7 +102,7 @@ def main():
         return ndop_run(conf)
 
     return 0
-
+    
 
 if __name__ == "__main__":
     sys.exit(main())
