@@ -21,7 +21,7 @@ BandwidthText.prototype.dataManager = function(data) {
     }else{
         obj = data;
     }
-    var res = '<table style="font-size:' + this.font_size + 'px"><thead><tr><th colspan="2">Total traffic</th></tr></thead>';
+    var res = '<table style="font-size:' + this.font_size + 'px;line-height:' + this.font_size + 'px;"><thead><tr><th colspan="2">Total traffic</th></tr></thead>';
 
     res += '<tr><td>Global</td>  <td><span class="bandwidth-number">' + TextFormatter.formatNumber(obj.Ko) + ' </span></td></tr>';
     res += '<tr><td>Local</td>  <td><span class="bandwidth-number">' + TextFormatter.formatNumber(obj.loc_Ko) + '  </span></td></tr>';
