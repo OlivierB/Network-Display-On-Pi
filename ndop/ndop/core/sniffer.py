@@ -200,6 +200,7 @@ class Sniffer(mp.Process):
             capture = True
 
             # Handler loop
+            # tt = (0, 0) 
             while not term.value:
                 pkt = p.next()
                 
@@ -207,10 +208,18 @@ class Sniffer(mp.Process):
                     
                     # Decode packet
                     pktdec = Packet(pkt[0], pkt[1], pkt[2])
-
+                    # a = time()
                     # send pkt to modules
                     for mod in lmod:
                         mod.pkt_handler(pktdec)
+
+                    # res = time() - a
+                    # a, b = tt
+                    # tt = (a+res, b+1)
+                    # if tt[1] > 100:
+                    #     print "Time sniff :", tt[0]/tt[1], "Time Tot :", tt[0]
+                    #     tt = (0,0)
+
                 
                 # Modules update call
                 if time() - last_update_t > MIN_TIME_MOD_UPDATE:
