@@ -1,13 +1,7 @@
-.height-half{
-	height: 40%;
-	margin-top: 2%;
-	margin-bottom: 2%;
+.height-half div{
+	height: 100%;
 }
 
-.height-full{
-	height: 96%;
-}
-
-div[class^=span] div{
+.height-full div{
 	height: 100%;
 }
