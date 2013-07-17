@@ -65,6 +65,7 @@ class WSHandler_admin(websocket.WebSocketHandler):
         except Exception:
             logger = logging.getLogger()
             logger.debug("WsServer send : Can't send to admin")
+        self.close()
 
     def on_message(self, message):
         pass
