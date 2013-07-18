@@ -24,19 +24,19 @@ function DnsDisplayerCanvas(id) {
     this.images = [];
 
     var img = new Image();
-    img.src = '/modules/dnsBubble/img/redBubble.png';
+    img.src = '/res/img/redBubble.png';
     this.images[0] = img;
 
     img = new Image();
-    img.src = '/modules/dnsBubble/img/blueBubble.png';
+    img.src = '/res/img/blueBubble.png';
     this.images[1] = img;
 
     img = new Image();
-    img.src = '/modules/dnsBubble/img/greenBubble.png';
+    img.src = '/res/img/greenBubble.png';
     this.images[2] = img;
 
     img = new Image();
-    img.src = '/modules/dnsBubble/img/bubble.png';
+    img.src = '/res/img/bubble.png';
     this.images[3] = img;
     img.onload = function() {
         this.busy = false;
