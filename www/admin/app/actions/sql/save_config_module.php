@@ -46,7 +46,7 @@ require "app/tools/image.php";
 
 	if(isset($_POST['module'])){
 		$module = json_decode($_POST['module'] );
-		$thumbnail = new Thumbnail($_POST['id']);
+		$thumbnail = new Thumbnail($id);
 		// var_dump($module);
 		foreach ($module as $index => $widget) {
 			if($widget != NULL){

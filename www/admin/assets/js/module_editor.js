@@ -59,7 +59,7 @@ ModuleConfig.prototype.refreshDroppable = function() {
             $(this).css('opacity', '1');
         }
     });
-}
+};
 
 ModuleConfig.prototype.refreshDropper = function(that) {
     $('#module_content').on({
@@ -81,42 +81,42 @@ ModuleConfig.prototype.refreshDropper = function(that) {
         dragover: function(e) {
             e.preventDefault();
         }
-    })
-}
+    });
+};
 
 ModuleConfig.prototype.refreshOnClickChosenWidget = function() {
     $('.chosen_widget').click({
         that: this
     }, this.clickOnChosenWidget);
-}
+};
 
 ModuleConfig.prototype.refreshSupprCallback = function() {
     // callback on the 'save' button
     $('.suppr').click({
         that: this
     }, this.supprWidget);
-}
+};
 
 ModuleConfig.prototype.resizePagesContainer = function() {
     $('#pages').height(window.innerHeight - 100);
     $('#panel').height(window.innerHeight - 100);
-}
+};
 
 ModuleConfig.prototype.refreshSubmitWidgetCallback = function() {
     // callback ont the submit button for the widget
     $('#add_widget_btn').click(this.addWidget.bind(this));
-}
+};
 
 // save the config in the database
 ModuleConfig.prototype.saveConfig = function() {
 
     this.module_name = $('#module_name').val();
     this.module_description = $('#module_description').val();
-    
 
-    if (this.module_name == '') {
+
+    if (this.module_name === '') {
         alert('You must define a name.');
-    } else if (this.module_description == '') {
+    } else if (this.module_description === '') {
         alert('You must define a description.');
     } else {
         $.ajax({
@@ -134,28 +134,28 @@ ModuleConfig.prototype.saveConfig = function() {
 
     function success(code_html, statut) {
 
-        console.log(code_html)
+        console.log(code_html);
         this.id_module = parseInt(code_html);
     }
 
-}
+};
 
 
 ModuleConfig.prototype.loadModule = function() {
     var id_str = $('#id_module').val();
 
-    if (id_str)
+    if (id_str){
         this.id_module = parseInt(id_str);
-
+    }
 
 
     function success(data) {
         // we fill our variable with the response of the ajax request
-        if (data[0]['id'] != null) {
+        if (data.length > 0 && data[0]['id']) {
             for (var i = 0; i < data.length; i++) {
                 var widget = new Widget(data[i]);
                 this.layout[widget.dom_id] = widget;
-            };
+            }
         }
 
         this.addAllWidgetsToDOM();
@@ -164,7 +164,7 @@ ModuleConfig.prototype.loadModule = function() {
         type: "GET",
         url: "/admin/sql/get_config_module.php?id=" + this.id_module,
         success: success.bind(this),
-        dataType: 'json',
+        dataType: 'json'
     });
 
 
