@@ -75,6 +75,7 @@ class HTTP(layer.Layer):
         if stype in ["HTTP", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH"]:
             self.type = stype
         else:
+            # self.type = "None"
             raise layer.ProtocolMismatch("Not HTTP protocol")
 
         self.data = pktdata
@@ -97,11 +98,11 @@ dPortsList = {
     # 17: {'callback': None, 'protocol': 'QOTD', 'description': 'Quote of the Day'},
     # 18: {'callback': None, 'protocol': 'MSP', 'description': 'Message Send Protocol'},
     # 19: {'callback': None, 'protocol': 'CHARGEN', 'description': 'Character Generator'},
-    # 20: {'callback': None, 'protocol': 'FTP-DATA', 'description': 'File Transfer [Default Data] [Jon_Postel]'},
-    # 21: {'callback': None, 'protocol': 'FTP', 'description': 'File Transfer [Control]'},
-    # 22: {'callback': None, 'protocol': 'SSH', 'description': 'The Secure Shell (SSH)'},
-    # 23: {'callback': None, 'protocol': 'TELNET', 'description': 'Telnet'},
-    # 25: {'callback': None, 'protocol': 'SMTP', 'description': 'Simple Mail Transfer'},
+    20: {'callback': None, 'protocol': 'FTP-DATA', 'description': 'File Transfer [Default Data] [Jon_Postel]'},
+    21: {'callback': None, 'protocol': 'FTP', 'description': 'File Transfer [Control]'},
+    22: {'callback': None, 'protocol': 'SSH', 'description': 'The Secure Shell (SSH)'},
+    23: {'callback': None, 'protocol': 'TELNET', 'description': 'Telnet'},
+    25: {'callback': None, 'protocol': 'SMTP', 'description': 'Simple Mail Transfer'},
     # 27: {'callback': None, 'protocol': 'NSW-FE', 'description': 'NSW User System FE'},
     # 29: {'callback': None, 'protocol': 'MSG-ICP', 'description': 'MSG ICP'},
     # 31: {'callback': None, 'protocol': 'MSG-AUTH', 'description': 'MSG Authentication'},
@@ -119,7 +120,7 @@ dPortsList = {
     # 48: {'callback': None, 'protocol': 'AUDITD', 'description': 'Digital Audit Daemon'},
     # 49: {'callback': None, 'protocol': 'TACACS', 'description': 'Login Host Protocol (TACACS) [Pieter_Ditmars]'},
     # 50: {'callback': None, 'protocol': 'RE-MAIL-CK', 'description': 'Remote Mail Checking'},
-    52: {'callback': None, 'protocol': 'XNS-TIME', 'description': 'XNS Time Protocol'},
+    # 52: {'callback': None, 'protocol': 'XNS-TIME', 'description': 'XNS Time Protocol'},
     53: {'callback': DNS, 'protocol': 'DNS', 'description': 'Domain Name Server'},
     # 54: {'callback': None, 'protocol': 'XNS-CH', 'description': 'XNS Clearinghouse'},
     # 55: {'callback': None, 'protocol': 'ISI-GL', 'description': 'ISI Graphics Language'},
@@ -168,16 +169,16 @@ dPortsList = {
     # 106: {'callback': None, 'protocol': '3COM-TSMUX', 'description': '3COM-TSMUX'},
     # 107: {'callback': None, 'protocol': 'RTELNET', 'description': 'Remote Telnet Service'},
     # 108: {'callback': None, 'protocol': 'SNAGAS', 'description': 'SNA Gateway Access Server'},
-    # 109: {'callback': None, 'protocol': 'POP2', 'description': 'Post Office Protocol -'},
-    # 110: {'callback': None, 'protocol': 'POP3', 'description': 'Post Office Protocol -'},
+    109: {'callback': None, 'protocol': 'POP2', 'description': 'Post Office Protocol -'},
+    110: {'callback': None, 'protocol': 'POP3', 'description': 'Post Office Protocol -'},
     # 111: {'callback': None, 'protocol': 'SUNRPC', 'description': 'SUN Remote Procedure Call'},
     # 112: {'callback': None, 'protocol': 'MCIDAS', 'description': 'McIDAS Data Transmission'},
     # 113: {'callback': None, 'protocol': 'IDENT', 'description': ''},
-    # 115: {'callback': None, 'protocol': 'SFTP', 'description': 'Simple File Transfer'},
+    115: {'callback': None, 'protocol': 'SFTP', 'description': 'Simple File Transfer'},
     # 116: {'callback': None, 'protocol': 'ANSANOTIFY', 'description': 'ANSA REX Notify'},
     # 117: {'callback': None, 'protocol': 'UUCP-PATH', 'description': 'UUCP Path Service'},
     # 118: {'callback': None, 'protocol': 'SQLSERV', 'description': 'SQL Services'},
-    # 119: {'callback': None, 'protocol': 'NNTP', 'description': 'Network News Transfer'},
+    119: {'callback': None, 'protocol': 'NNTP', 'description': 'Network News Transfer'},
     # 120: {'callback': None, 'protocol': 'CFDPTKT', 'description': 'CFDPTKT'},
     # 121: {'callback': None, 'protocol': 'ERPC', 'description': 'Encore Expedited Remote'},
     # 122: {'callback': None, 'protocol': 'SMAKYNET', 'description': 'SMAKYNET'},
@@ -201,7 +202,7 @@ dPortsList = {
     # 140: {'callback': None, 'protocol': 'EMFIS-DATA', 'description': 'EMFIS Data Service'},
     # 141: {'callback': None, 'protocol': 'EMFIS-CNTL', 'description': 'EMFIS Control Service'},
     # 142: {'callback': None, 'protocol': 'BL-IDM', 'description': 'Britton-Lee IDM'},
-    # 143: {'callback': None, 'protocol': 'IMAP', 'description': 'Internet Message Access'},
+    143: {'callback': None, 'protocol': 'IMAP', 'description': 'Internet Message Access'},
     # 144: {'callback': None, 'protocol': 'UMA', 'description': 'Universal Management'},
     # 145: {'callback': None, 'protocol': 'UAAC', 'description': 'UAAC Protocol'},
     # 146: {'callback': None, 'protocol': 'ISO-TP0', 'description': 'ISO-IP0'},

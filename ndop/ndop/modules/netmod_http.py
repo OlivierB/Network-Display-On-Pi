@@ -8,6 +8,9 @@ inherit from NetModule
 @author: Olivier BLIN
 """
 
+
+import pcap
+
 # Project file import
 from netmodule import NetModule
 
@@ -17,33 +20,19 @@ class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='http', *args, **kwargs)
 
-    def update(self):
-        """
-        Refresh method called every updatetime
+        self.last = list()
 
-        Return values to send to clients (websockets)
-        automatically convert in json
-        """
-        return None
+    def update(self):
+
+        val = dict()
+        val["info"] = self.last
+
+        return val
 
     def pkt_handler(self, pkt):
-        """
-        Called by sniffer when a new packet arrive
-
-        pkt is formated with Packet class
-        """
 
         res = pkt.get_protocol("Ethernet", "IPv4", "TCP", "HTTP")
         if res is not None and res.type != "":
-
-            # header_end = res.payload.find("\n\r")
-            # pos_start = res.payload.find("\n", 0, header_end)
-
-            # head = res.payload[0:pos_start].split(" ")
-            # print head
-            # header = res.payload[pos_start+1:header_end].split("\n")
-            # for h in header:
-            #     print h.split(": ")
 
             if res.type == "POST":
 
@@ -52,24 +41,28 @@ class NetModChild(NetModule):
                     info = res.data[header_end + 2:]
                     find = False
                     infoSearch = info.lower()
+                    lres = list()
                     for word in l_wd:
-                        if infoSearch.find(word) != -1:
+                        pos = infoSearch.find(word)
+                        if pos != -1:
                             find = True
-                            break
+                            lres.append(pos)
 
                     if find:
-                        print info
-                        print "----------"
+                        val = dict()
+                        val["src"] = pcap.ntoa(pkt.Ether.payload.src)
+                        val["dst"] = pcap.ntoa(pkt.Ether.payload.dst)
+                        val["res"] = list()
+                        for pos in lres:
+                            val["res"].append(info[pos:pos+50])
 
 
-    def database_save(self, db_class):
-        """
-        Called to save module data in sql database every savetime
-        """
-        return None
+                        self.last.append(val)
+                        if len(self.last) > 1000:
+                            self.last.pop(0)
 
 
 l_wd = [
-    "login", "pseudo", "email", "e-mail"
+    "login", "pseudo", "email", "e-mail",
     "mdp", "pass", "pwd",
 ]

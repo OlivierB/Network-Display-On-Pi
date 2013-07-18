@@ -11,7 +11,6 @@ inherit from NetModule
 """
 
 # Python lib import
-import time
 import psutil
 
 # Project file import
@@ -26,53 +25,14 @@ class NetModChild(NetModule):
         if psutil.__version__ < '0.7.0':
             self.logger.warning("Update psutil to 0.7.1")
 
-        # packet data
-        self.oldValues = self.sysState()
-
     def update(self):
-        # System state update
-        new = self.sysState()
-        state = self.diffState(self.oldValues, new)
-        self.oldValues = new
 
         # get data
         val = dict()
-        val["mem_load"] = state["mem"]
-        val["proc_load"] = state["cpu"]
-        val["swap_load"] = state["swap"]
+        val["mem_load"] = psutil.virtual_memory()[2]
+        val["swap_load"] = psutil.swap_memory()[3]
+        val["proc_load"] = psutil.cpu_percent(interval=0)
+        val["proc_load_perc"] = psutil.cpu_percent(interval=0, percpu=True)
 
         # send data
-        return val
-
-    def sysState(self):
-        """
-        Get system stats
-        """
-        val = dict()
-        val["time"] = time.time()
-        val["mem"] = psutil.virtual_memory()[2]
-        val["swap"] = psutil.swap_memory()[3]
-        val["cpu"] = psutil.cpu_percent(interval=0)
-
-        return val
-
-    def diffState(self, old, new):
-        """
-        System stats on diff time
-        """
-        val = dict()
-
-        diff = new["time"] - old["time"]
-        if diff <= 0:
-            diff = 1
-
-        # time in second.microsec
-        val["time"] = new["time"]
-        val["dtime"] = diff
-
-        # sys data in %
-        val["mem"] = new["mem"]
-        val["cpu"] = new["cpu"]
-        val["swap"] = new["swap"]
-
         return val

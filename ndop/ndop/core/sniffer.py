@@ -154,10 +154,14 @@ class Sniffer(mp.Process):
         capture = False
 
         # Optimizations
-        db_on = self.database
+        db_on = self.database["on"]
         lmod = self.lmod
         term = self.terminated
         pipe_send_fnt = self.pipe_sender.send
+
+        lfnt_pkthandle = list()
+        for mod in lmod:
+            lfnt_pkthandle.append(mod.pkt_handler)
 
 
         # List loaded module
@@ -168,11 +172,11 @@ class Sniffer(mp.Process):
         
         # Mysql database
         mydb = self.database["class"](
-            self.database["conf"]["host"],
-            self.database["conf"]["user"],
-            self.database["conf"]["passwd"],
-            self.database["conf"]["database"],
-            self.database["conf"]["port"])
+            host=self.database["conf"]["host"],
+            user=self.database["conf"]["user"],
+            passwd=self.database["conf"]["passwd"],
+            database=self.database["conf"]["database"],
+            port=self.database["conf"]["port"])
 
         if db_on:
             # connection to database
@@ -210,8 +214,8 @@ class Sniffer(mp.Process):
                     pktdec = Packet(pkt[0], pkt[1], pkt[2])
                     # a = time()
                     # send pkt to modules
-                    for mod in lmod:
-                        mod.pkt_handler(pktdec)
+                    for fnt_p in lfnt_pkthandle:
+                        fnt_p(pktdec)
 
                     # res = time() - a
                     # a, b = tt
@@ -234,7 +238,7 @@ class Sniffer(mp.Process):
                         pipe_send_fnt(l_res)
 
                 # Modules save call
-                if db_on and mydb.is_connect():
+                if db_on and mydb.connect is not None:
                     if time() - last_save_t > MIN_TIME_DB_UPDATE:
                         last_save_t = time()
                         for mod in lmod:
