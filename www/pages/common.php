@@ -97,7 +97,7 @@ function display_widget($id_widget, $id_widget_parameter_set, $width, $height) {
 	}
 	echo "<div class='span".$width." ".$class_height."' >";
 	if($id_widget > 0){
-		$id = $id_widget;
+		$id = ++NDOP::$nb_widget;
 		include "./widgets/".$widget['folder_name']."/content.php";
 	}else{
 

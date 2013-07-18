@@ -1,6 +1,6 @@
 <?php
-include 'pages/common.php';
 include 'ndop.conf.php';
+include 'pages/common.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
