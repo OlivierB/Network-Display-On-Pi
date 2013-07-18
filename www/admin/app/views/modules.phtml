@@ -21,7 +21,7 @@
     <?php foreach ($modules as $key => $value){ ?>
     <div class="masonry">
     	<div class="thumbnail">
-	        <!-- <img src="../modules/<?= $value['folder_name'] ?>/thumbnail.png" alt=""> -->
+	        <img src="<?= $this->asset('assets/images/module_thumbnail/'.$value['id'].'.png') ?>">
 	        <div class="caption">
 				<h3><?= $value['name'] ?></h3>
 				<p><?= $value['description'] ?></p>
