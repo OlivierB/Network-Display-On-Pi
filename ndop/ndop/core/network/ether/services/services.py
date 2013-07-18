@@ -75,6 +75,7 @@ class HTTP(layer.Layer):
         if stype in ["HTTP", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH"]:
             self.type = stype
         else:
+            # self.type = "None"
             raise layer.ProtocolMismatch("Not HTTP protocol")
 
         self.data = pktdata
