@@ -1,4 +1,6 @@
 <?php
+require "app/tools/image.php";
+
 	Atomik::disableLayout();
 	$this['database']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -39,11 +41,13 @@
 			'id_module' => $_POST['id']
 		));
 	}
-	
+
 
 
 	if(isset($_POST['module'])){
 		$module = json_decode($_POST['module'] );
+		$thumbnail = new Thumbnail($_POST['id']);
+		// var_dump($module);
 		foreach ($module as $index => $widget) {
 			if($widget != NULL){
 				// echo($widget->current_id_parameter_set);
@@ -57,9 +61,10 @@
 					'height' => $widget->height,
 					'id_widget_parameter_set' => $widget->current_id_parameter_set,
 				));
+				$thumbnail->add_widget($widget->x, $widget->y, $widget->width, $widget->height, $widget->folder_name, $widget->db_id);
 			}
 		}
+		$thumbnail->save();
 	}
 	
 	echo $id;
-	// print_r($_POST);
