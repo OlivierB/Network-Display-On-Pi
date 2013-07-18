@@ -10,13 +10,16 @@ import argparse
 import logging
 import logging.handlers
 from threading import Thread
+from time import sleep, time
+from socket import timeout
 
 
 # CONST
 DEF_ADDR = "127.0.0.1:9005"
 LOG_FILE = "/tmp/clientlog"
 MENU_WIDTH = 30
-GETCH_TIMEOUT = 200
+GETCH_TIMEOUT = 200  # ms
+SERVER_STATE_UPDATE = 1  # sec
 
 CURSES_FOLLOW_WIN_SIZE = -1
 
@@ -166,17 +169,28 @@ class CursesMenu(CursesPadManager):
 
 class CursesInfo(CursesPadManager):
 
-    def init(self):
+    def init(self, shared_server_state):
         self.nb_refresh = 0
+        self.server_state = True
+        shared_server_state.add_listener(self.new_state)
+
+    def new_state(self, val):
+        self.server_state = val
 
     def update(self):
         self.nb_refresh += 1
         h, w = self.screen.getmaxyx()
-        data = "width : %i - height : %i - refresh : %i" % (w, h, self.nb_refresh)
+        data = " - width : %i - height : %i - refresh : %i" % (w, h, self.nb_refresh)
 
         self.set_posinscreen(h - 1, 0)
 
-        self.exec_in_pad(0, 0, self.pad.addstr, data[0:self.screen.getmaxyx()[1] - 1])
+        if self.server_state:
+            self.exec_in_pad(0, 0, self.pad.addstr, "Online", curses.color_pair(5))
+            self.exec_in_pad(0, 6, self.pad.addstr, " ")
+        else:
+            self.exec_in_pad(0, 0, self.pad.addstr, "Offline", curses.color_pair(4))
+
+        self.exec_in_pad(0, 7, self.pad.addstr, data[0:self.screen.getmaxyx()[1] - 1])
 
 
 class CursesContent_handler(CursesPadManager):
@@ -313,6 +327,21 @@ class CursesContent_handler_system(CursesContent_handler):
             except:
                 pass
         
+        self.exec_in_pad(stt, 0, self.pad.addstr, "----------------------")
+        stt += 2
+        k = "proc_load_perc"
+        try:
+            self.exec_in_pad(stt, 0, self.pad.addstr, k , curses.color_pair(1))
+            # self.exec_in_pad(stt, len(k), self.pad.addstr, " -> " + str(data[k])+"%")
+            for val in data[k]:
+                self.draw(stt+1, 0, val)
+                self.exec_in_pad(stt+1, 22, self.pad.addstr, " " + str(val) +"%")
+                stt += 1
+            stt += 3
+        except:
+            pass
+
+        
 
     def draw(self, y, x, val):
         self.exec_in_pad(y, x, self.pad.addstr, "[")
@@ -388,7 +417,7 @@ class CursesWindow():
             self.element_init()
 
             # Websockets manager
-            screen_args = [self.screen, 0, MENU_WIDTH + 1, CURSES_FOLLOW_WIN_SIZE, CURSES_FOLLOW_WIN_SIZE]
+            screen_args = [self.screen, 0, MENU_WIDTH + 1, 45, 120]  # CURSES_FOLLOW_WIN_SIZE, CURSES_FOLLOW_WIN_SIZE]
             self.ws_manager = Websocket_manager(args.addr, self.l_proto, screen_args)
             self.ws_manager.start()
 
@@ -410,6 +439,18 @@ class CursesWindow():
                 self.screen.move(0, 0)
                 # block display and wait for keyboard input
                 self.keys_handler()
+
+                # Server state
+                if time() - self.state_time > SERVER_STATE_UPDATE and not self.term:
+                    self.state_time = time()
+                    if is_online(args.addr):
+                        self.shared_server_state.value = True
+                        self.shared_server_state.update()
+                    else:
+                        self.shared_server_state.value = False
+                        self.shared_server_state.update()
+
+
                 # Clean screen
                 self.screen.erase()
 
@@ -464,6 +505,8 @@ class CursesWindow():
         self.l_resize_func = list()
         self.shared_menupos = SharedValue("menu_pos", 0)
         self.shared_pagepos = SharedValue("page_pos", 0)
+        self.shared_server_state = SharedValue("server_state", True)
+        self.state_time = time()
         self.ws_manager = None
 
     def curses_end(self):
@@ -482,9 +525,11 @@ class CursesWindow():
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_YELLOW)
         curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_RED)
         curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_WHITE)
+        curses.init_pair(7, curses.COLOR_RED, curses.COLOR_WHITE)
 
     def element_init(self):
-        self.info = CursesInfo(self.screen, 0, 0, 1, CURSES_FOLLOW_WIN_SIZE)
+        self.info = CursesInfo(self.screen, 0, 0, 1, CURSES_FOLLOW_WIN_SIZE, self.shared_server_state)
         self.l_resize_func.append(self.info.win_resize)
 
         self.menu = CursesMenu(
@@ -563,17 +608,9 @@ class Websocket_handler(Thread):
         self.screen_content = CursesContent_handler(*sc_args)
 
     def run(self):
-
-        try:
-            self.ws = websocket.create_connection("ws://" + self.addr + "/", header=[
-                                                  "Sec-WebSocket-Protocol:" + self.subprotocol])
-            self.connect = True
-        except:
-            self.connect = False
-            pass
-
-        try:
-            while self.connect:
+        self.connection()
+        while self.connect:
+            try:
                 recv = self.ws.recv()
                 try:
                     decoded = json.loads(recv)
@@ -581,10 +618,20 @@ class Websocket_handler(Thread):
                     self.screen_content.update()
                 except:
                     pass
-        except:
-            self.connect = False
-
+            except timeout:
+                pass
+            except Exception:
+                if self.connect:
+                    sleep(1)
+                    self.connection()
         return 0
+
+    def connection(self):
+        try:
+            self.ws = websocket.create_connection("ws://" + self.addr + "/", 0.1, header=[
+                                                  "Sec-WebSocket-Protocol:" + self.subprotocol])
+        except:
+            pass
 
     def handle_data(self, data):
         self.last = data
@@ -605,8 +652,10 @@ class Websocket_handler(Thread):
 
     def stop(self):
         self.connect = False
-        if self.ws is not None:
+        try:
             self.ws.close()
+        except:
+            pass
 
     def refresh(self):
         self.screen_content.refresh()
@@ -620,7 +669,7 @@ class Websocket_subprotocol_bandwidth(Websocket_handler):
     def handle_data(self, data):
         self.last = data
         self.data.append(data)
-        if len(self.data) > 100:
+        if len(self.data) > 75:
             self.data.pop(0)
 
     def get_format(self):
@@ -696,6 +745,25 @@ def conf_logger(debug=False, p_file=None):
         logger.addHandler(file_handler)
 
 
+
+# --------------------------------
+# HTTP request
+import httplib
+def is_online(address):
+    try:
+        addr, port = address.split(":", 2)
+        port = int(port)
+        conn = httplib.HTTPConnection(addr, port, timeout=15)
+        conn.request("GET", "/online")
+        data = conn.getresponse().read()
+        if data[0:4] == "ndop":
+            return True
+    except:
+        pass
+    return False
+
+
+
 # --------------------------------
 # main function and loop
 def main():
@@ -709,6 +777,11 @@ def main():
         pass
 
     return 0
+
+
+class ConnectionLost(Exception):
+    pass
+
 
 if __name__ == "__main__":
     sys.exit(main())
