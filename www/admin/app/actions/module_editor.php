@@ -1,7 +1,7 @@
 <?php
 $this['database']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$select_widget = "SELECT * FROM `widget`";
+$select_widget = "SELECT * FROM `widget` ORDER BY `name`";
 $prep_select_widget = $this['database']->prepare($select_widget);
 $prep_select_widget->execute();
 $widgets = $prep_select_widget->fetchAll();
