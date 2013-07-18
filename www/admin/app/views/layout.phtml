@@ -7,7 +7,7 @@
 		<?php foreach ($modules as $key => $value) { ?>
 		<div class='module' draggable="true" id="module_<?= $value['id'] ?>">
 			<div class="legend" ><?= $value['name'] ?> </div>
-			<img src="./assets/images/default_thumbnail.png">
+			<img src="<?= $this->asset('assets/images/module_thumbnail/'.$value['id'].'.png') ?>">
 		</div>
 		<?php } ?>
 	</div>
@@ -25,7 +25,7 @@
 			<i id='suppr<?= $i ?>' class="suppr icon-remove"></i>
 			<div class='page-dropper module'  id="page<?= $i ?>">
 				<div class="legend" ><?= $value['name'] ?> </div>
-				<img src="./assets/images/default_thumbnail.png">
+				<img src="<?= $this->asset('assets/images/module_thumbnail/'.$value['id'].'.png') ?>">
 			</div>
 		</div>
 		<?php  } ?>
