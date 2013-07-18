@@ -2,7 +2,6 @@
 include 'pages/common.php';
 include 'ndop.conf.php';
 ?>
-<!-- <a href=""></a> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
