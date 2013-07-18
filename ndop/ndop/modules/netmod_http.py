@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Skeleton
@@ -13,6 +13,7 @@ from netmodule import NetModule
 
 
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='http', *args, **kwargs)
 
@@ -34,7 +35,7 @@ class NetModChild(NetModule):
 
         res = pkt.get_protocol("Ethernet", "IPv4", "TCP", "HTTP")
         if res is not None and res.type != "":
-            
+
             # header_end = res.payload.find("\n\r")
             # pos_start = res.payload.find("\n", 0, header_end)
 
@@ -47,8 +48,8 @@ class NetModChild(NetModule):
             if res.type == "POST":
 
                 header_end = res.data.find("\n\r")
-                if len(res.data) > header_end+2:
-                    info = res.data[header_end+2:]
+                if len(res.data) > header_end + 2:
+                    info = res.data[header_end + 2:]
                     find = False
                     infoSearch = info.lower()
                     for word in l_wd:
@@ -60,19 +61,10 @@ class NetModChild(NetModule):
                         print info
                         print "----------"
 
-    def reset(self):
-        """
-        Clalled to reset module
-        """
-        pass
 
-    def save(self):
+    def database_save(self, db_class):
         """
         Called to save module data in sql database every savetime
-        
-        return a list of sql request to save module content
-            else return None
-
         """
         return None
 

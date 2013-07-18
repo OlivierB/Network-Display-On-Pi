@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Client system monitoring
@@ -11,31 +11,33 @@ inherit from NetModule
 # Project file import
 from netmodule import NetModule
 
-
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
-        NetModule.__init__(self, protocol='classip', *args, **kwargs)
+        NetModule.__init__(self, updatetime=5, savetime=('m', 1), protocol='classip', *args, **kwargs)
+        self.last = None
+        self.logger
 
     def update(self):
-        return None
+        return self.last
 
     def pkt_handler(self, pkt):
-        if pkt.is_protocol("Ethernet", "*"):
-            print pkt.Ether
-        pass
+        if pkt.is_protocol("Ethernet", "IPv4"):
+            self.last = dict()
+            self.last["ip"] = pkt.Ether.payload.src
 
-    def reset(self):
-        """
-        Clalled to reset module
-        """
-        pass
+    def database_init(self, db_class):
+        req = \
+"""
+CREATE TABLE IF NOT EXISTS `test_table` (
+  `global` int(11) NOT NULL,
+  `local` int(11) NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+"""
 
-    def save(self):
-        """
-        Called to save module data in sql database every savetime
-        
-        return a list of sql request to save module content
-            else return None
+        db_class.execute(req)
 
-        """
-        return None
+    def database_save(self, db_class):
+        req = "INSERT INTO test_table(global, local) VALUES (10,5)"
+
+        db_class.execute(req)

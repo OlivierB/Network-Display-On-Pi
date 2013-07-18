@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Client system monitoring
@@ -19,11 +19,12 @@ from netmodule import NetModule
 
 
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, protocol='server_stat', *args, **kwargs)
 
         if psutil.__version__ < '0.7.0':
-            print "Update psutil to 0.7.1"
+            self.logger.warning("Update psutil to 0.7.1")
 
         # packet data
         self.oldValues = self.sysState()
@@ -52,7 +53,7 @@ class NetModChild(NetModule):
         val["mem"] = psutil.virtual_memory()[2]
         val["swap"] = psutil.swap_memory()[3]
         val["cpu"] = psutil.cpu_percent(interval=0)
-        
+
         return val
 
     def diffState(self, old, new):

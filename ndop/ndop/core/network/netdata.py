@@ -1,4 +1,4 @@
-#encoding: utf-8
+# -*- coding: utf-8 -*-
 
 """
 Network implementation data
@@ -38,4 +38,3 @@ PORTSLIST = services.dPortsList
 # Local variable
 for typ in services.dPortsList.keys():
     locals()["PORT_"+services.dPortsList[typ]["protocol"].replace(" ", "_")] = typ
-

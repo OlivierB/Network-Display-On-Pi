@@ -1,4 +1,4 @@
-#encoding: utf-8
+# -*- coding: utf-8 -*-
 
 """
 Server configuration
@@ -17,10 +17,10 @@ __description__ = "Network Sniffer with web display"
 # Network information
 
 # Websocket communication port
-websocket_port = 9000
+websocket_port = 9005
 
 # listening device for sniffing
-sniffer_device = "eth1"
+sniffer_device = "eth0"
 
 
 ########################################
@@ -52,17 +52,19 @@ daemon_stderr = '/dev/null'
 daemon_pid_file = '/var/run/ndop.pid'
 
 # Log file
-log_file = "/var/log/ndoplog"
+daemon_log_file = "/var/log/ndoplog"
 
 
 ########################################
 # SQL Database connection
 
 # Disabled SQL Database
-sql_on = True
+db_on = False
 
-sql_conf = {
-    "host": "192.168.1.144",
+db_class = "MySQL_database"
+
+db_conf = {
+    "host": "127.0.0.1",
     "user": "ndop",
     "passwd": "ndop",
     "database": "NDOP",

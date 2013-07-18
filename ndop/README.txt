@@ -9,11 +9,9 @@ NDOP main commands :
 
     help and commands list: ``ndop -h`` or ``ndop --help``
 
-    run in consol: ``ndop run``
+    run in consol: ``ndop``
 
-    start ndop daemon: ``ndop start``
-
-    stop bdop daemon: ``ndop stop``
+    start ndop daemon: ``ndop --daemon``
 
 
 see https://github.com/OlivierB/Network-Display-On-Pi.git

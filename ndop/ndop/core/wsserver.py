@@ -1,4 +1,4 @@
-#encoding: utf-8
+# -*- coding: utf-8 -*-
 
 """
 Websocket module
@@ -16,14 +16,14 @@ import logging
 import base64
 import json
 
-from time import sleep
 from threading import Thread, Lock
 from tornado import web, websocket, httpserver, ioloop
 
 
 class WSHandler_main(websocket.WebSocketHandler):
+
     """
-    handler for main server page ("/")
+    handler for main server page ("/") -> Websocket
     """
     def open(self):
         pass
@@ -32,7 +32,7 @@ class WSHandler_main(websocket.WebSocketHandler):
         pass
 
     def on_close(self):
-        cl = ClientsList()
+        cl = WsData()
         cl.delClient(self)
 
     def select_subprotocol(self, subprotocols):
@@ -41,42 +41,46 @@ class WSHandler_main(websocket.WebSocketHandler):
 
         If no protocol is given, the connection is closed
         """
-        cl = ClientsList()
+        cl = WsData()
         prot = cl.addClient(self, subprotocols)
-        if prot in cl.getProtocols():
+        if prot is not None:
             return prot
         else:
             self.close()
             return None
 
+
 class WSHandler_admin(websocket.WebSocketHandler):
+
     """
-    handler for main server page ("/")
+    handler for main server page ("/admin") -> Websocket
     """
     def open(self):
-        cl = ClientsList()
-        cl.addAdmin(self)
-
-    def on_message(self, message):
         try:
-            cl = ClientsList()
+            cl = WsData()
             data = base64.b64encode(json.dumps(cl.getProtocols()))
+            data = dict()
+            data["l_protocols"] = cl.getProtocols()
             self.write_message(data)
         except Exception:
             logger = logging.getLogger()
             logger.debug("WsServer send : Can't send to admin")
-        
+        self.close()
+
+    def on_message(self, message):
+        pass
 
     def on_close(self):
-        cl = ClientsList()
-        cl.delAdmin(self)
+        pass
 
     def select_subprotocol(self, subprotocols):
         pass
- 
+
+
 class WSHandler_online(web.RequestHandler):
+
     """
-    handler for main server page ("/")
+    handler for server page ("/online") -> HTTP
     """
     def open(self):
         pass
@@ -99,6 +103,7 @@ application = web.Application([
 
 
 class WsServer(Thread):
+
     """
     Thread class for tornado webserver
     """
@@ -109,12 +114,13 @@ class WsServer(Thread):
         # HTTP server
         self.http_server = httpserver.HTTPServer(application)
         self.http_server.listen(port)
-        self.clientList = ClientsList()
+        self.clientList = WsData()
 
         self.log = logging.getLogger()
+        self.port = port
 
     def run(self):
-        self.log.info("WsServer : Server started...")
+        self.log.info("WsServer : Server started on port %i" % self.port)
         try:
             ioloop.IOLoop.instance().start()
             self.log.info('WsServer : Server stopped...')
@@ -129,9 +135,12 @@ class WsServer(Thread):
         ioloop.IOLoop.instance().stop()
 
 
-class ClientsList(object):
+class WsData(object):
+
     """
-    Singleton class to collect client data
+    Singleton class to collect websocket data
+
+    clients management
     """
 
     # Singleton creation
@@ -139,12 +148,11 @@ class ClientsList(object):
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(ClientsList, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super(WsData, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
     #  class values
     cli_list = dict()
-    admin_list = list()
     protocols_list = list()
     mutex = Lock()
 
@@ -152,27 +160,22 @@ class ClientsList(object):
         """
         Add a websocket client only if it has a subprotocol
         """
+
         prot = None
-        if len(subprotocols) > 0:
-            # Select the first protocol
-            prot = subprotocols[0]
-            self.mutex.acquire()
+        for elem in subprotocols:
+            if elem in self.protocols_list:
+                prot = elem
+                break
+
+        self.mutex.acquire()
+        if prot is not None:
             if prot in self.cli_list.keys():
                 self.cli_list[prot] += [client]
             else:
                 self.cli_list[prot] = [client]
-            self.mutex.release()
+        self.mutex.release()
+
         return prot
-
-    def addAdmin(self, client):
-        self.mutex.acquire()
-        self.admin_list.append(client)
-        self.mutex.release()
-
-    def delAdmin(self, client):
-        self.mutex.acquire()
-        self.admin_list.remove(client)
-        self.mutex.release()
 
     def delClient(self, client):
         """
@@ -185,6 +188,9 @@ class ClientsList(object):
         self.mutex.release()
 
     def closeCom(self):
+        """
+        Close all websockets
+        """
         for k in self.cli_list.keys():
             for c in self.cli_list[k]:
                 try:
@@ -216,43 +222,28 @@ class ClientsList(object):
             for p in self.cli_list.keys():
                 for c in self.cli_list[p]:
                     self.__send(c, data)
-            
+
         elif type(proto) is type(str()):
             if proto in self.cli_list.keys():
                 for c in self.cli_list[proto]:
                     self.__send(c, data)
-            
+
         else:
             for p in proto:
                 if p in self.cli_list.keys():
                     for c in self.cli_list[p]:
                         self.__send(c, data)
 
-        for admin in self.admin_list:
-             self.__send(admin, base64.b64encode(json.dumps(dict(proto=proto, data=data))))
-
         self.mutex.release()
-
-    def listProto(self):
-        return self.cli_list.keys()
-
-    def getData(self):
-        return self.cli_list
 
     def addProtocol(self, prot):
         if prot is not None:
             self.protocols_list.append(prot)
 
+    def addListProtocols(self, lprot):
+        for prot in lprot:
+            if prot is not None:
+                self.protocols_list.append(prot)
+
     def getProtocols(self):
         return self.protocols_list
-
-
-if __name__ == "__main__":
-
-    ws = WsServer()
-    ws.start()
-    try:
-        while 1:
-            sleep(1)
-    except KeyboardInterrupt:
-        ws.stop()

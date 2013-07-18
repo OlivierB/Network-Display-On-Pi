@@ -1,4 +1,4 @@
-#encoding: utf-8
+# -*- coding: utf-8 -*-
 
 """
 Client system sniffer
@@ -9,16 +9,15 @@ Use pcap
 """
 
 # Python lib import
-import time
+from time import time, sleep
 import pcap
 import logging
 import threading
 import multiprocessing as mp
 
 # Project file import
-from ndop.core.wsserver import ClientsList
+from ndop.core.wsserver import WsData
 from ndop.core.network.packet import Packet
-from ndop.core.mysql import MySQLdata
 
 
 # Accept all packet or not
@@ -29,11 +28,12 @@ PCAP_SNIFFER_TIMEOUT = 300
 PCAP_PACKET_MAX_LEN = 1514
 # Time to check modules update
 MIN_TIME_MOD_UPDATE = 0.5
-# Time to check modules SQL database saving
-MIN_TIME_DB_UPDATE = 1
+# Time to check modules database saving
+MIN_TIME_DB_UPDATE = 10
 
 
 class SnifferManager():
+
     """
     Configure and Manage sniffers
     """
@@ -41,7 +41,7 @@ class SnifferManager():
         self.config = config
 
         # websocket data
-        self.ws_data = ClientsList()
+        self.ws_data = WsData()
 
         # sniffer list
         self.l_sniffer = list()
@@ -54,14 +54,9 @@ class SnifferManager():
         self.init()
 
     def init(self):
-        if self.config.sql_on:
-            sql_conf = self.config.sql_conf
-        else:
-            sql_conf = None
-
         nb_sniff = 1
         for lmod in self.config.ll_modules:
-            sniff = Sniffer(self.config.sniff_dev, lmod=lmod, sql=sql_conf, id=nb_sniff)
+            sniff = Sniffer(self.config.sniff_dev, lmod=lmod, database=self.config.database, id=nb_sniff)
             self.l_sniffer.append(sniff)
             self.l_sniffer_data.append(SnifferData(sniff.get_data, self.ws_data))
             nb_sniff += 1
@@ -69,7 +64,7 @@ class SnifferManager():
     def start(self):
         for sniff in self.l_sniffer:
             sniff.start()
-            time.sleep(0.5)
+            sleep(0.3)
         for sniff_data in self.l_sniffer_data:
             sniff_data.start()
 
@@ -90,6 +85,7 @@ class SnifferManager():
 
 
 class SnifferData(threading.Thread):
+
     """
     Get data from sniffer
     and send them to ws server
@@ -113,15 +109,15 @@ class SnifferData(threading.Thread):
         self.term = True
 
 
-
 class Sniffer(mp.Process):
+
     """
     Class for packet capture
 
     This class some modules which analyse packets and make stats
     """
-    
-    def __init__(self, dev, lmod=list(), sql=None, id=1):
+
+    def __init__(self, dev, lmod=list(), database=None, id=1):
         mp.Process.__init__(self)
 
         # stop condition
@@ -129,10 +125,10 @@ class Sniffer(mp.Process):
 
         # Var
         self.id = id
-        self.sql = sql
+        self.database = database
         self.dev = dev
         self.lmod = lmod
-        
+
         # communication between packet capture (pcap) and webserver
         # (tornado) [2 process]
         self.pipe_receiver, self.pipe_sender = mp.Pipe(duplex=False)
@@ -153,24 +149,39 @@ class Sniffer(mp.Process):
         logger.info("Sniffer %i : Capture started on %s" % (self.id, self.dev))
 
         # Init
-        last_update_t = time.time()
-        last_save_t = time.time()
+        last_update_t = time()
+        last_save_t = time()
         capture = False
+
+        # Optimizations
+        db_on = self.database
+        lmod = self.lmod
+        term = self.terminated
+        pipe_send_fnt = self.pipe_sender.send
+
 
         # List loaded module
         for mod in self.lmod:
             logger.info("Sniffer %i : Load network module - websocket subprotocol " % (self.id) + mod.__str__())
+
+
         
-        # connection to sql database
-        if self.sql is not None:
-            # Mysql database
-            mydb = MySQLdata(
-                self.sql["host"],
-                self.sql["user"],
-                self.sql["passwd"],
-                self.sql["database"])
-            # connection
+        # Mysql database
+        mydb = self.database["class"](
+            self.database["conf"]["host"],
+            self.database["conf"]["user"],
+            self.database["conf"]["passwd"],
+            self.database["conf"]["database"],
+            self.database["conf"]["port"])
+
+        if db_on:
+            # connection to database
             mydb.connection()
+
+            if mydb.is_connect():
+                for mod in lmod:
+                    data = mod.database_init(mydb)
+                mydb.commit()
 
         # Get device informations if possible (IP address assigned)
         try:
@@ -180,7 +191,6 @@ class Sniffer(mp.Process):
 
         # Create new pcap capture object
         p = pcap.pcapObject()
-        
 
         try:
             # (Dev, buffer, promiscuous mode, timeout)
@@ -190,37 +200,47 @@ class Sniffer(mp.Process):
             capture = True
 
             # Handler loop
-            while not self.terminated.value:
+            # tt = (0, 0) 
+            while not term.value:
                 pkt = p.next()
-
+                
                 if pkt is not None:
+                    
                     # Decode packet
                     pktdec = Packet(pkt[0], pkt[1], pkt[2])
-
+                    # a = time()
                     # send pkt to modules
-                    for mod in self.lmod:
+                    for mod in lmod:
                         mod.pkt_handler(pktdec)
 
+                    # res = time() - a
+                    # a, b = tt
+                    # tt = (a+res, b+1)
+                    # if tt[1] > 100:
+                    #     print "Time sniff :", tt[0]/tt[1], "Time Tot :", tt[0]
+                    #     tt = (0,0)
+
+                
                 # Modules update call
-                if time.time() - last_update_t > MIN_TIME_MOD_UPDATE:
-                    last_update_t = time.time()
+                if time() - last_update_t > MIN_TIME_MOD_UPDATE:
+                    last_update_t = time()
                     l_res = list()
-                    for mod in self.lmod:
-                        data = mod.get_data()
+                    for mod in lmod:
+                        data = mod.trigger_data_update()
                         if data is not None:
                             l_res.append((mod.protocol, data))
                     # Data to send with websocket
                     if len(l_res) > 0:
-                        self.pipe_sender.send(l_res)
+                        pipe_send_fnt(l_res)
 
                 # Modules save call
-                if self.sql is not None:
-                    if time.time() - last_save_t > MIN_TIME_DB_UPDATE:
-                        last_save_t = time.time()
-                        for mod in self.lmod:
-                            data = mod.get_sql()
-                            if data is not None:
-                                mydb.execute(data)
+                if db_on and mydb.is_connect():
+                    if time() - last_save_t > MIN_TIME_DB_UPDATE:
+                        last_save_t = time()
+                        for mod in lmod:
+                            mod.trigger_db_save(mydb)
+                        mydb.commit()
+                
 
         except KeyboardInterrupt:
             logger.info("Sniffer %i : Interruption signal" % self.id)
@@ -230,7 +250,7 @@ class Sniffer(mp.Process):
             print e
         finally:
             if capture:
-                if self.sql is not None:
+                if db_on:
                     mydb.close()
                 logger.info("Sniffer %i : Capture stopped..." % self.id)
                 pkt_recv, pkt_drop, pkt_devdrop = p.stats()
@@ -239,10 +259,11 @@ class Sniffer(mp.Process):
                 else:
                     lost = 0.0
                 logger.info('Sniffer %i : %i packets received, %i packets dropped, %i packets dropped by interface - %d%%'
-                % (self.id, pkt_recv, pkt_drop, pkt_devdrop, lost))
+                            % (self.id, pkt_recv, pkt_drop, pkt_devdrop, lost))
 
 
 class GetSniffer(object):
+
     """
     Singleton class to access to one sniffer process
 

@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 
 """
 Skeleton
@@ -15,6 +15,7 @@ from ndop.core.network import netdata
 
 
 class NetModChild(NetModule):
+
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='dns', *args, **kwargs)
         self.l_dns_name = list()
@@ -32,13 +33,8 @@ class NetModChild(NetModule):
                     if pkt.Ether.payload.payload.payload.dns_name != '':
                         self.l_dns_name.append(pkt.Ether.payload.payload.payload.dns_name)
 
-    def reset(self):
-        """
-        Clalled to reset module
-        """
-        pass
 
-    def save(self):
+    def database_save(self, db_class):
         """
         Called to save module data
 
