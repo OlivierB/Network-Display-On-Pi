@@ -11,3 +11,5 @@ dist/
 *.log
 
 *.jar
+
+www/test/
