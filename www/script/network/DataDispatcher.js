@@ -6,9 +6,9 @@
  **/
 
 function DataDispatcher(serverAddress) {
-	this.websocketManagers = [];
-	this.connections = [];
-	this.serverAddress = serverAddress;
+    this.websocketManagers = [];
+    this.connections = [];
+    this.serverAddress = serverAddress;
 }
 
 /**
@@ -18,14 +18,13 @@ function DataDispatcher(serverAddress) {
  * attempted using the protocol.
  **/
 DataDispatcher.prototype.register = function(websocketManager, protocol) {
-	if (this.websocketManagers[protocol] == null) {
+    if (!(protocol in this.websocketManagers)) {
+        this.websocketManagers[protocol] = [];
+        this.connectToProt(this.serverAddress, protocol);
+    }
 
-		this.websocketManagers[protocol] = [];
-		this.connectToProt(this.serverAddress, protocol);
-	}
-
-	this.websocketManagers[protocol].push(websocketManager)
-}
+    this.websocketManagers[protocol].push(websocketManager);
+};
 
 
 /**
@@ -34,46 +33,57 @@ DataDispatcher.prototype.register = function(websocketManager, protocol) {
  **/
 DataDispatcher.prototype.connectToProt = function(serverAddress, prot) {
 
-	var connection = new WebSocket(serverAddress, prot);
+    var connection = new WebSocket(serverAddress, prot);
 
-	// When the connection is open, informs all the modules
-	connection.onopen = function() {
-		console.log("Main connexion");
-		for (var i = 0; i < this.websocketManagers[prot].length; i++) {
-			this.websocketManagers[prot][i].onopen();
-		}
-		this.connections.push(connection);
-	}.bind(this);
+    // When the connection is open, informs all the modules
+    connection.onopen = function() {
+        console.log("Main connexion");
+        var i = 0,
+            length = this.websocketManagers[prot].length;
 
-	// Log errors
-	connection.onerror = function(error) {
-		console.log('WebSocket Error ' + error);
-		for (var i = 0; i < this.websocketManagers[prot].length; i++) {
-			this.websocketManagers[prot][i].onerror(error);
-		}
-		this.protocolNotSupported = true;
-	}.bind(this);
+        for (; i < length; i++) {
+            this.websocketManagers[prot][i].onopen();
+        }
+        this.connections.push(connection);
+    }.bind(this);
 
-	// dispatch messages from the server to the corresponding modules
-	connection.onmessage = function(e) {
-		var obj = JSON.parse(e.data);
-		for (var i = 0; i < this.websocketManagers[prot].length; i++) {
-			this.websocketManagers[prot][i].onmessage(obj);
-		}
-	}.bind(this);
+    // Log errors
+    connection.onerror = function(error) {
+        console.log('WebSocket Error ' + error);
+        var i = 0,
+            length = this.websocketManagers[prot].length;
 
-	connection.onclose = function(e) {
-		for (var i = 0; i < this.websocketManagers[prot].length; i++) {
-			this.websocketManagers[prot][i].onclose(e);
-		}
+        for (; i < length; i++) {
+            this.websocketManagers[prot][i].onerror(error);
+        }
+        this.protocolNotSupported = true;
+    }.bind(this);
 
-		if (this.protocolNotSupported) {
-			console.log('protocolNotSupported');
-		} else {
-			setTimeout(function() {
-				this.connectToProt(serverAddress, prot)
-			}.bind(this), 5000);
-		}
-	}.bind(this);
+    // dispatch messages from the server to the corresponding modules
+    connection.onmessage = function(e) {
+        var obj = JSON.parse(e.data);
+        var i = 0,
+            length = this.websocketManagers[prot].length;
 
-}
+        for (; i < length; i++) {
+            this.websocketManagers[prot][i].onmessage(obj);
+        }
+    }.bind(this);
+
+    connection.onclose = function(e) {
+        var i = 0,
+            length = this.websocketManagers[prot].length;
+        for (; i < length; i++) {
+            this.websocketManagers[prot][i].onclose(e);
+        }
+
+        if (this.protocolNotSupported) {
+            console.log('protocolNotSupported');
+        } else {
+            setTimeout(function() {
+                this.connectToProt(serverAddress, prot);
+            }.bind(this), 5000);
+        }
+    }.bind(this);
+
+};

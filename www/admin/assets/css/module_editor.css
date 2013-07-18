@@ -1,0 +1,50 @@
+.height-half{
+	height: 50%;
+}
+
+.height-full{
+	height: 100%;
+}
+
+
+
+.line{
+	height: 100%;
+}
+
+.line .module{
+	height: 100%;
+}
+.line .module img{
+	height: 100%;
+}
+
+#module_content{
+	padding: 10px;
+	background-color:#cccccc;
+	height:100%
+}
+
+#widget_param{
+	background-color:gray; 
+	height:100%;
+	padding: 2%;
+	
+}
+
+label{
+	display: inline;   
+	margin: 10%;
+	vertical-align: 30%;     
+}
+
+
+#widget_param div{
+	padding-left: 10%;
+}
+
+.selected_module{
+	border-style: solid;
+	border-color: red;
+	border-width: 1px;
+}

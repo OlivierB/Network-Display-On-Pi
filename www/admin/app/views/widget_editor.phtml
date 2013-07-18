@@ -1,0 +1,74 @@
+<link href="<?= $this->asset('assets/css/widget_editor.css') ?>" rel="stylesheet">
+<script src="<?= $this->asset('assets/js/widget_editor.js') ?>"></script>
+
+
+<?php
+
+if(count($params) > 0 && $params[0]['param_values'] != null ){
+	foreach($params as $index => $set) {
+		// var_dump($set);
+		$values = explode(',', $set['param_values']);
+		$ids = explode(',', $set['param_ids']);
+		$descriptions = explode(',', $set['param_descriptions']);
+		$names = explode(',', $set['param_names']);
+	?>
+	<div class="parameter_set">
+		<h2><strong>&ldquo;<?= $set['name'] ?>&rdquo;</strong>  parameter set</h2>
+		
+		<form action="<?= $this->url('sql/config_widget') ?>" method="POST" >
+			<fieldset>
+
+		<?php for ($i=0; $i < count($ids); $i++) { ?>
+					<div class="parameter" >
+						<dl>
+							<dt><?= $names[$i] ?></dt>
+							<dd><?= $descriptions[$i] ?></dd>
+						</dl>
+						<input name="<?= $ids[$i] ?>" type="text" placeholder="Value of your parameter" value='<?= $values[$i] ?>'>
+					</div>
+		<?php } ?>
+				<input type="hidden" value="<?= $set['id'] ?>" name="id_param_set">
+				<input type="hidden" value="<?= $this['request.widget'] ?>" name="id_widget">
+				<button type="submit" class="btn">Submit</button>
+			</fieldset>
+		</form>
+		<form action="<?= $this->url('sql/delete_parameter_set') ?>" method="POST" class="delete_form">
+			<input type="hidden" value="<?= $set['id'] ?>" name="id_set">
+			<input type="hidden" value="<?= $this['request.widget'] ?>" name="id_widget">
+			<button type="submit" class="btn">Delete</button>
+		</form>
+	</div>
+
+	<?php	
+	}
+	?>
+
+	<div class="parameter_set">
+		<form action="<?= $this->url('sql/config_widget') ?>" method="POST" >
+			<h2><strong>&ldquo;<input type="text" name="name_set" placeholder="New"/>&rdquo;</strong>  parameter set</h2>
+		
+		
+			<fieldset>
+
+		<?php for ($i=0; $i < count($ids); $i++) { ?>
+					<div class="parameter" >
+						<dl>
+							<dt><?= $names[$i] ?></dt>
+							<dd><?= $descriptions[$i] ?></dd>
+						</dl>
+						<input name="<?= $ids[$i] ?>" type="text" placeholder="Value of your parameter" value='<?= $values[$i] ?>'>
+					</div>
+		<?php } ?>
+				<input type="hidden" value="<?= $this['request.widget'] ?>" name="id_widget">
+				<button type="submit" class="btn">Create</button>
+			</fieldset>
+
+		</form>
+	</div>
+<?php
+}else{
+?>
+	<div class="parameter_set"><h2>You have no parameters for this widget</h2></div>
+<?php 
+}
+?>

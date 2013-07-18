@@ -108,7 +108,7 @@ LayoutConfig.prototype.saveConfig = function() {
     var nb = 0;
     var is_null = false;
     for (var elm in this.layout) {
-        // we check if the recorder page are 0, 1, 2, ...
+        // we check if the recorded pages are 0, 1, 2, ...
         if (elm != nb) {
             is_null = true;
         }
@@ -123,11 +123,12 @@ LayoutConfig.prototype.saveConfig = function() {
             type: "POST",
             url: "/admin/sql/save_config_layout.php",
             data: {
-                'pages[]': this.layout,
-                success: function() {
-                    alert('Layout saved.');
-                }
+                'pages[]': this.layout
+
             },
+            success: function() {
+                alert('Layout saved.');
+            }
         });
     }
 }

@@ -10,3 +10,6 @@ dist/
 *.sublime-workspace
 *.log
 
+*.jar
+
+www/test/

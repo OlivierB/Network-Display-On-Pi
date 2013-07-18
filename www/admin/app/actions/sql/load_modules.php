@@ -1,7 +1,7 @@
 <?php
 
 
-	$sql = 'UPDATE `modules` SET `updated`=FALSE;';
+	$sql = 'UPDATE `module` SET `updated`=FALSE;';
 	$this['database']->exec($sql);
 
 $dir = opendir('../modules') or die('Erreur');
@@ -17,7 +17,7 @@ while($entry = @readdir($dir)) {
 				isset($ini_data['INFOS']['name']) && 
 				isset($ini_data['INFOS']['description']))
 			{
-				$sql = "INSERT INTO `modules` (`id`, `folder_name`, `name`, `description`, `updated`) 
+				$sql = "INSERT INTO `module` (`id`, `folder_name`, `name`, `description`, `updated`) 
 					VALUES (NULL, '".$entry."', '".$ini_data['INFOS']['name']."', '".
 						$ini_data['INFOS']['description']."', TRUE) ON DUPLICATE KEY UPDATE ".
 						"folder_name=VALUES(folder_name), description=VALUES(description), updated=TRUE;";
@@ -31,7 +31,7 @@ while($entry = @readdir($dir)) {
 }
 closedir($dir);
 
-$sql = "DELETE FROM `modules` WHERE `updated`=FALSE";
+$sql = "DELETE FROM `module` WHERE `updated`=FALSE";
 $this['database']->exec($sql);
 
 $this->redirect('modules');

@@ -5,5 +5,5 @@
 	$sql = "SELECT * FROM  `layout` ";
 
 	$results = $this['database']->query($sql);
-	$layout = $results->fetchAll(PDO::FETCH_ASSOC);
+	$layout = $results->fetch(PDO::FETCH_ASSOC);
 	echo json_encode($layout);
