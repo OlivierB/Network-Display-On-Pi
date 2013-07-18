@@ -13,3 +13,4 @@ dist/
 *.jar
 
 www/test/
+www/admin/assets/images/*
