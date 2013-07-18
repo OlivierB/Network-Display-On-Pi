@@ -3,5 +3,5 @@
 		public static $app;
 	}
 
-	NDOP::$app['debug'] = false;
+	NDOP::$app['debug'] = true;
 	

@@ -1,6 +1,5 @@
 function BandwidthChart(id, initializes, dataLength) {
 
-
     this.id = id;
 
     this.dataLength = dataLength; // number of dataPoints visible at any point

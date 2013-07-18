@@ -34,6 +34,8 @@ $(function() {
             $('.slidesjs-previous').click();
         } else if (key === 39) { // 39 is right arrow
             $('.slidesjs-next').click();
+        } else if (key === 38) { // 39 is right arrow
+            resize();
         }
     });
 });
