@@ -14,6 +14,7 @@ entry-point : main()
 import sys
 import time
 import logging
+import signal
 import datetime as dt
 
 # Project file import
@@ -21,6 +22,14 @@ from core.sniffer import SnifferManager
 from core.wsserver import WsServer, WsData
 from core.daemon import Daemon
 from core.configCenter import ConfigChecker, ConfigCenter
+
+
+RUN = True
+
+
+def handler_int(signum, frame):
+    global RUN
+    RUN = False
 
 
 def ndop_run(config):
@@ -47,16 +56,17 @@ def ndop_run(config):
     sniff = SnifferManager(config)
 
     try:
+        signal.signal(signal.SIGINT, handler_int)
+
         # Start services
         ws_serv.start()
         time.sleep(0.5)
         sniff.start()
 
         # Loop
-        while 1:
+        while RUN:
             time.sleep(1)
 
-    except KeyboardInterrupt:
         logger.info("Stopping...")
 
     finally:
