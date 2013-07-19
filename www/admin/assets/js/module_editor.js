@@ -72,13 +72,10 @@ ModuleConfig.prototype.refreshDropper = function(that) {
 
             that.setFocus(widget);
 
-            // widget.addParameterPanelToDOM(that.container_parameter);
-            // that.refreshSubmitWidgetCallback();
-            // that.refreshDeleteWidgetCallback();
-
-            // that.layout[widget.dom_id] = widget;
             that.current_widget_id_dom = -1;
             that.new_widget = widget;
+
+            that.setPendingMode(true);
 
         },
 
@@ -240,6 +237,7 @@ ModuleConfig.prototype.addAllWidgetsToDOM = function() {
 
 // add a widget to the local variable from the form in the page
 ModuleConfig.prototype.addWidget = function() {
+
     var x, y, width, height;
     var correct_numbers = true;
 
@@ -295,6 +293,9 @@ ModuleConfig.prototype.addWidget = function() {
                 this.addAllWidgetsToDOM();
                 this.setFocus(widget);
                 // that.current_widget_id_dom = widget.id_dom;
+                if (this.current_widget_id_dom <= 0) {
+                    this.current_widget_id_dom = widget.dom_id;
+                }
             } else {
                 alert('Your widget is overlapping an existing widget or is out of bound.');
                 if (this.current_widget_id_dom > 0) {
@@ -305,9 +306,7 @@ ModuleConfig.prototype.addWidget = function() {
                     this.setFocus(widget_cpy);
                 }
             }
-            if (this.current_widget_id_dom <= 0) {
-                this.current_widget_id_dom = widget.dom_id;
-            }
+
         }
 
     } else {
@@ -362,6 +361,8 @@ ModuleConfig.prototype.setFocus = function(widget) {
 
     $('.selected_module').removeClass('selected_module');
     widget.setBorder();
+
+    this.setPendingMode(false);
 };
 
 ModuleConfig.prototype.supprWidget = function() {
@@ -369,7 +370,16 @@ ModuleConfig.prototype.supprWidget = function() {
         delete this.layout[this.current_widget_id_dom];
         this.clearModuleContent();
         this.addAllWidgetsToDOM();
-
-        this.container_parameter.html('');
     }
+    this.container_parameter.html('');
+    this.setPendingMode(false);
+};
+
+ModuleConfig.prototype.setPendingMode = function(pendingMode) {
+    if (pendingMode) {
+        $('.line').css('opacity', 0.3);
+    } else {
+        $('.line').css('opacity', 1);
+    }
+
 };
