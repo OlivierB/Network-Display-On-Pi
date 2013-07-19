@@ -42,7 +42,7 @@ function ModuleConfig() {
 
 
 
-    this.refreshSupprCallback();
+    // this.refreshSupprCallback();
 
 }
 
@@ -69,8 +69,12 @@ ModuleConfig.prototype.refreshDropper = function(that) {
             var id = parseInt(e.dataTransfer.getData('text').substr(7));
 
             var widget = new Widget(null, id);
-            widget.addParameterPanelToDOM(that.container_parameter);
-            that.refreshSubmitWidgetCallback();
+
+            that.setFocus(widget);
+
+            // widget.addParameterPanelToDOM(that.container_parameter);
+            // that.refreshSubmitWidgetCallback();
+            // that.refreshDeleteWidgetCallback();
 
             // that.layout[widget.dom_id] = widget;
             that.current_widget_id_dom = -1;
@@ -90,13 +94,6 @@ ModuleConfig.prototype.refreshOnClickChosenWidget = function() {
     }, this.clickOnChosenWidget);
 };
 
-ModuleConfig.prototype.refreshSupprCallback = function() {
-    // callback on the 'save' button
-    $('.suppr').click({
-        that: this
-    }, this.supprWidget);
-};
-
 ModuleConfig.prototype.resizePagesContainer = function() {
     $('#pages').height(window.innerHeight - 100);
     $('#panel').height(window.innerHeight - 100);
@@ -105,6 +102,11 @@ ModuleConfig.prototype.resizePagesContainer = function() {
 ModuleConfig.prototype.refreshSubmitWidgetCallback = function() {
     // callback ont the submit button for the widget
     $('#add_widget_btn').click(this.addWidget.bind(this));
+};
+
+ModuleConfig.prototype.refreshDeleteWidgetCallback = function() {
+    // callback ont the submit button for the widget
+    $('#delete_widget_btn').click(this.supprWidget.bind(this));
 };
 
 // save the config in the database
@@ -227,14 +229,10 @@ ModuleConfig.prototype.addAllWidgetsToDOM = function() {
                 width: diff
             });
             blank.addToDOM(this.container);
-            // this.addWidgetToDOM('', diff, '');
+            this.current_x += diff;
         }
         widget.addToDOM(this.container);
-        // this.addWidgetToDOM(widget['widget_name'], widget['width'], widget['folder_name'], widget['id']);
         this.current_x += widget.width;
-
-
-        // }
     }
     this.refreshOnClickChosenWidget();
 };
@@ -293,15 +291,23 @@ ModuleConfig.prototype.addWidget = function() {
             if (this.checkOverlapping(widget)) {
                 // if the position of the widget is correct, we add it to our layout
                 this.layout[widget.dom_id] = widget;
+                this.clearModuleContent();
+                this.addAllWidgetsToDOM();
+                this.setFocus(widget);
+                // that.current_widget_id_dom = widget.id_dom;
             } else {
                 alert('Your widget is overlapping an existing widget or is out of bound.');
-                if(this.current_widget_id_dom > 0) {
+                if (this.current_widget_id_dom > 0) {
                     // if it was a move and not a creation, we put the widget back to its previous place
                     this.layout[widget.dom_id] = widget_cpy;
+                    this.clearModuleContent();
+                    this.addAllWidgetsToDOM();
+                    this.setFocus(widget_cpy);
                 }
             }
-            this.clearModuleContent();
-            this.addAllWidgetsToDOM();
+            if (this.current_widget_id_dom <= 0) {
+                this.current_widget_id_dom = widget.dom_id;
+            }
         }
 
     } else {
@@ -344,10 +350,26 @@ ModuleConfig.prototype.clickOnChosenWidget = function(event) {
 
     var that = event.data.that;
     var id = parseInt(this.id.substr(14));
-    that.layout[id].addParameterPanelToDOM(that.container_parameter);
-    $('.selected_module').removeClass('selected_module');
-    that.layout[id].setBorder();
-    that.refreshSubmitWidgetCallback();
+    that.setFocus(that.layout[id]);
 
     that.current_widget_id_dom = id;
+};
+
+ModuleConfig.prototype.setFocus = function(widget) {
+    widget.addParameterPanelToDOM(this.container_parameter);
+    this.refreshSubmitWidgetCallback();
+    this.refreshDeleteWidgetCallback();
+
+    $('.selected_module').removeClass('selected_module');
+    widget.setBorder();
+};
+
+ModuleConfig.prototype.supprWidget = function() {
+    if (this.current_widget_id_dom in this.layout) {
+        delete this.layout[this.current_widget_id_dom];
+        this.clearModuleContent();
+        this.addAllWidgetsToDOM();
+
+        this.container_parameter.html('');
+    }
 };
