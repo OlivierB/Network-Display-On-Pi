@@ -14,7 +14,7 @@ Widget.number_widgets = 0;
 
 Widget.prototype.loadFromDatabase = function(id) {
 	function success(data) {
-		var data = data[0];
+		data = data[0];
 		this.db_id = parseInt(id);
 		this.name = data['widget_name'];
 		this.folder_name = data['folder_name'];
@@ -31,9 +31,9 @@ Widget.prototype.loadFromDatabase = function(id) {
 		url: "/admin/sql/get_widget.php?id=" + id,
 		success: success.bind(this),
 		dataType: 'json',
-		async: false,
-	});
-}
+		async: false
+	})
+};
 
 Widget.prototype.loadFromData = function(data) {
 	this.db_id = parseInt(data['id_widget']);
@@ -46,7 +46,7 @@ Widget.prototype.loadFromData = function(data) {
 	this.height = parseInt(data['height']);
 
 	this.current_id_parameter_set = parseInt(data['id_widget_parameter_set']);
-}
+};
 
 // Add a widget in the DOM, if an empty name is provided a blank widget is created
 Widget.prototype.addToDOM = function(container) {
@@ -60,7 +60,7 @@ Widget.prototype.addToDOM = function(container) {
 	}
 	html += '</div>';
 	container.append(html);
-}
+};
 
 // add the panel to configure the widget corresponding to id
 Widget.prototype.loadParameter = function() {
@@ -72,16 +72,16 @@ Widget.prototype.loadParameter = function() {
 				'id': data[i]['set_id'],
 				'name': data[i]['set_name']
 			});
-		};
+		}
 	}
 	$.ajax({
 		type: "GET",
 		url: "/admin/sql/get_widget.php?id=" + this.db_id,
 		success: success.bind(this),
 		dataType: 'json',
-		async: false,
+		async: false
 	});
-}
+};
 
 Widget.prototype.addParameterPanelToDOM = function(container) {
 
@@ -105,13 +105,15 @@ Widget.prototype.addParameterPanelToDOM = function(container) {
             <div>\
                 <select class='input-small' id='parameter_set'>";
 
+	var selected;
 	for (var i = 0; i < this.parameter_set.length; i++) {
-		if (parseInt(this.parameter_set[i]['id']) == this.current_id_parameter_set)
-			var selected = "selected='selected'";
-		else
-			var selected = "";
+		if (parseInt(this.parameter_set[i]['id']) == this.current_id_parameter_set) {
+			selected = "selected='selected'";
+		} else {
+			selected = "";
+		}
 		html += "   <option value='" + this.parameter_set[i]['id'] + "' " + selected + ">" + this.parameter_set[i]['name'] + "</option>";
-	};
+	}
 
 	html += "   </select>\
                 <label for='parameter_set'>Parameters</label>\
@@ -122,7 +124,7 @@ Widget.prototype.addParameterPanelToDOM = function(container) {
 	container.html(html);
 
 
-}
+};
 
 // ModuleConfig.prototype.supprWidget = function(event) {
 //     // TODO
@@ -132,5 +134,8 @@ Widget.prototype.addParameterPanelToDOM = function(container) {
 
 Widget.prototype.setBorder = function() {
 	$('#chosen_widget_' + this.dom_id).addClass('selected_module');
-}
+};
 
+Widget.prototype.clone = function() {
+	return $.extend(true, {}, this);
+};

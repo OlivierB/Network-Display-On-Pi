@@ -271,12 +271,16 @@ ModuleConfig.prototype.addWidget = function() {
 
         if (correct_numbers) {
             var widget;
+            var widget_cpy;
+
             if (this.current_widget_id_dom > 0) {
+                // if it's a move of a widget
                 widget = this.layout[this.current_widget_id_dom];
+                widget_cpy = widget.clone();
                 delete this.layout[this.current_widget_id_dom];
             } else {
+                // if it's a new widget
                 widget = this.new_widget;
-                // this.current_widget_id_dom = widget.dom_id;
             }
 
             widget.x = x;
@@ -287,13 +291,17 @@ ModuleConfig.prototype.addWidget = function() {
 
 
             if (this.checkOverlapping(widget)) {
+                // if the position of the widget is correct, we add it to our layout
                 this.layout[widget.dom_id] = widget;
-
-                this.clearModuleContent();
-                this.addAllWidgetsToDOM();
             } else {
                 alert('Your widget is overlapping an existing widget or is out of bound.');
+                if(this.current_widget_id_dom > 0) {
+                    // if it was a move and not a creation, we put the widget back to its previous place
+                    this.layout[widget.dom_id] = widget_cpy;
+                }
             }
+            this.clearModuleContent();
+            this.addAllWidgetsToDOM();
         }
 
     } else {
@@ -336,7 +344,6 @@ ModuleConfig.prototype.clickOnChosenWidget = function(event) {
 
     var that = event.data.that;
     var id = parseInt(this.id.substr(14));
-
     that.layout[id].addParameterPanelToDOM(that.container_parameter);
     $('.selected_module').removeClass('selected_module');
     that.layout[id].setBorder();
