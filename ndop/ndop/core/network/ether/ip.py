@@ -49,6 +49,27 @@ class IPv4(layer.Layer):
         self.payload = netutils.get_next_layer(self, self.type, dIPType, pktdata[4 * self.header_len:])
 
 
+class IPv6(layer.Layer):
+
+    def decode(self, pktdata):
+        # if len(pktdata) < 40:
+        #     raise layer.ProtocolMismatch("Not enough data")
+
+        self.version = (ord(pktdata[0]) & 0xf0) >> 4
+
+        self.total_len = socket.ntohs(struct.unpack('H', pktdata[4:6])[0])
+
+        self.type = ord(pktdata[6])
+
+        self.src = struct.unpack('IIII', pktdata[8:24])
+        self.dst = struct.unpack('IIII', pktdata[24:40])
+
+        # print "IPV6", self.version, self.total_len, self.type
+
+        # IP protocol decode
+        self.payload = netutils.get_next_layer(self, self.type, dIPType, pktdata[40:])
+
+
 class TCP(layer.Layer):
 
     def decode(self, pktdata):
@@ -132,7 +153,7 @@ dIPType = {
 #     38: {'callback': None, 'protocol': 'IDPR-CMTP', 'description': 'IDPR Control Message Transport Proto'},
 #     39: {'callback': None, 'protocol': 'TP++', 'description': 'TP++ Transport Protocol'},
 #     40: {'callback': None, 'protocol': 'IL', 'description': 'IL Transport Protocol'},
-    41: {'callback': None, 'protocol': 'IPv6', 'description': 'IPv6 encapsulation'},
+    41: {'callback': IPv6, 'protocol': 'IPv6', 'description': 'IPv6 encapsulation'},
 #     42: {'callback': None, 'protocol': 'SDRP', 'description': 'Source Demand Routing Protocol'},
 #     43: {'callback': None, 'protocol': 'IPv6-Route', 'description': 'Routing Header for IPv6'},
 #     44: {'callback': None, 'protocol': 'IPv6-Frag', 'description': 'Fragment Header for IPv6'},
