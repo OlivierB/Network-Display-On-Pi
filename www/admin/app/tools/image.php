@@ -24,7 +24,7 @@ Class Thumbnail
 		$this->save_file  = 'assets/images/module_thumbnail/'.$id_module.'.png';
 	}
 
-	function add_widget($x, $y, $w, $h, $folder_name, $id){
+	function add_widget($x, $y, $w, $h, $folder_name){
 
 		$widget_file = ("../widgets/".$folder_name."/thumbnail.png"); 
 		$widget = imagecreatefrompng($widget_file);

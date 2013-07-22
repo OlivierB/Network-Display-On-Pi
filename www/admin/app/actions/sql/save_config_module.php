@@ -30,15 +30,15 @@ require "app/tools/image.php";
 			'description'	=> $_POST['description']
 		));
 
-	if(!isset($_POST['id'])){
+	if($id == NULL){
 		$id = $this['database']->lastInsertId('id');
 	}
 
 
-	if(isset($_POST['id'])){
+	if(isset($_POST['id']) && $_POST['id'] != NULL){
 		// suppr the previous composition
 		$prep_suppr_composition->execute(array(
-			'id_module' => $_POST['id']
+			'id_module' => $id
 		));
 	}
 
@@ -53,7 +53,7 @@ require "app/tools/image.php";
 				// echo($widget->current_id_parameter_set);
 
 				$prep_insert_widget_composition->execute(array(
-					'id_module' => $_POST['id'],
+					'id_module' => $id,
 					'id_widget' => $widget->db_id,
 					'x' => $widget->x,
 					'y' => $widget->y,
@@ -61,7 +61,7 @@ require "app/tools/image.php";
 					'height' => $widget->height,
 					'id_widget_parameter_set' => $widget->current_id_parameter_set,
 				));
-				$thumbnail->add_widget($widget->x, $widget->y, $widget->width, $widget->height, $widget->folder_name, $widget->db_id);
+				$thumbnail->add_widget($widget->x, $widget->y, $widget->width, $widget->height, $widget->folder_name);
 			}
 		}
 		$thumbnail->save();

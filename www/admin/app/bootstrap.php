@@ -14,6 +14,6 @@ if( isset(NDOP::$app['database_address']) &&
     }
     catch(PDOException $e)
     {
-        // echo $e->getMessage();
+        
     }
 }

@@ -1,7 +1,9 @@
 <link href="<?= $this->asset('assets/css/masonry.css') ?>" rel="stylesheet">
+<link href="<?= $this->asset('assets/css/module_viewer.css') ?>" rel="stylesheet">
+
 <script src="<?= $this->asset('assets/js/masonry.pkgd.min.js') ?>"></script>
 <script src="<?= $this->asset('assets/js/masonry.perso.js') ?>"></script>
-
+<script src="<?= $this->asset('assets/js/module_viewer.js') ?>"></script>
 
 
 <div class="hero-unit">
@@ -21,6 +23,7 @@
     <?php foreach ($modules as $key => $value){ ?>
     <div class="masonry">
     	<div class="thumbnail">
+    		<i id='suppr<?= $value['id'] ?>' class="suppr icon-remove"></i>
 	        <img src="<?= $this->asset('assets/images/module_thumbnail/'.$value['id'].'.png') ?>">
 	        <div class="caption">
 				<h3><?= $value['name'] ?></h3>

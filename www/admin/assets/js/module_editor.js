@@ -42,7 +42,7 @@ function ModuleConfig() {
 
 
 
-    this.refreshSupprCallback();
+    // this.refreshSupprCallback();
 
 }
 
@@ -69,12 +69,13 @@ ModuleConfig.prototype.refreshDropper = function(that) {
             var id = parseInt(e.dataTransfer.getData('text').substr(7));
 
             var widget = new Widget(null, id);
-            widget.addParameterPanelToDOM(that.container_parameter);
-            that.refreshSubmitWidgetCallback();
 
-            // that.layout[widget.dom_id] = widget;
+            that.setFocus(widget);
+
             that.current_widget_id_dom = -1;
             that.new_widget = widget;
+
+            that.setPendingMode(true);
 
         },
 
@@ -90,13 +91,6 @@ ModuleConfig.prototype.refreshOnClickChosenWidget = function() {
     }, this.clickOnChosenWidget);
 };
 
-ModuleConfig.prototype.refreshSupprCallback = function() {
-    // callback on the 'save' button
-    $('.suppr').click({
-        that: this
-    }, this.supprWidget);
-};
-
 ModuleConfig.prototype.resizePagesContainer = function() {
     $('#pages').height(window.innerHeight - 100);
     $('#panel').height(window.innerHeight - 100);
@@ -105,6 +99,11 @@ ModuleConfig.prototype.resizePagesContainer = function() {
 ModuleConfig.prototype.refreshSubmitWidgetCallback = function() {
     // callback ont the submit button for the widget
     $('#add_widget_btn').click(this.addWidget.bind(this));
+};
+
+ModuleConfig.prototype.refreshDeleteWidgetCallback = function() {
+    // callback ont the submit button for the widget
+    $('#delete_widget_btn').click(this.supprWidget.bind(this));
 };
 
 // save the config in the database
@@ -133,8 +132,6 @@ ModuleConfig.prototype.saveConfig = function() {
     }
 
     function success(code_html, statut) {
-
-        console.log(code_html);
         this.id_module = parseInt(code_html);
     }
 
@@ -144,7 +141,7 @@ ModuleConfig.prototype.saveConfig = function() {
 ModuleConfig.prototype.loadModule = function() {
     var id_str = $('#id_module').val();
 
-    if (id_str){
+    if (id_str) {
         this.id_module = parseInt(id_str);
     }
 
@@ -174,7 +171,7 @@ ModuleConfig.prototype.clearConfig = function() {
     // clear our variable and the dom from the previsous layout config
     this.layout = [];
     this.clearModuleContent();
-}
+};
 
 ModuleConfig.prototype.clearModuleContent = function() {
     $('#first_line').html('');
@@ -186,7 +183,7 @@ ModuleConfig.prototype.clearModuleContent = function() {
 
     this.current_x = 0;
     this.current_y = 0;
-}
+};
 
 ModuleConfig.prototype.addAllWidgetsToDOM = function() {
     function compare(a, b) {
@@ -210,7 +207,7 @@ ModuleConfig.prototype.addAllWidgetsToDOM = function() {
 
         // if the widget is set to be on the second line then every following 
         // widgets willl be on the second line
-        if (widget.y == 1 && this.current_y == 0) {
+        if (widget.y == 1 && this.current_y === 0) {
             this.container = $('#second_line');
             this.current_x = 0;
             this.current_y = 1;
@@ -229,22 +226,18 @@ ModuleConfig.prototype.addAllWidgetsToDOM = function() {
                 width: diff
             });
             blank.addToDOM(this.container);
-            // this.addWidgetToDOM('', diff, '');
+            this.current_x += diff;
         }
         widget.addToDOM(this.container);
-        // this.addWidgetToDOM(widget['widget_name'], widget['width'], widget['folder_name'], widget['id']);
         this.current_x += widget.width;
-
-
-        // }
     }
     this.refreshOnClickChosenWidget();
-}
+};
 
 
 // add a widget to the local variable from the form in the page
 ModuleConfig.prototype.addWidget = function() {
-    console.log(this.layout)
+
     var x, y, width, height;
     var correct_numbers = true;
 
@@ -273,13 +266,17 @@ ModuleConfig.prototype.addWidget = function() {
         }
 
         if (correct_numbers) {
+            var widget;
+            var widget_cpy;
 
             if (this.current_widget_id_dom > 0) {
-                var widget = this.layout[this.current_widget_id_dom];
+                // if it's a move of a widget
+                widget = this.layout[this.current_widget_id_dom];
+                widget_cpy = widget.clone();
                 delete this.layout[this.current_widget_id_dom];
-            }else{
-                var widget = this.new_widget;
-                // this.current_widget_id_dom = widget.dom_id;
+            } else {
+                // if it's a new widget
+                widget = this.new_widget;
             }
 
             widget.x = x;
@@ -288,23 +285,34 @@ ModuleConfig.prototype.addWidget = function() {
             widget.height = height;
             widget.current_id_parameter_set = this.checkInput('parameter_set');
 
-            
 
             if (this.checkOverlapping(widget)) {
+                // if the position of the widget is correct, we add it to our layout
                 this.layout[widget.dom_id] = widget;
-
                 this.clearModuleContent();
                 this.addAllWidgetsToDOM();
+                this.setFocus(widget);
+                // that.current_widget_id_dom = widget.id_dom;
+                if (this.current_widget_id_dom <= 0) {
+                    this.current_widget_id_dom = widget.dom_id;
+                }
             } else {
-                alert('Your widget is overlapping an existing widget or is out of bound.')
+                alert('Your widget is overlapping an existing widget or is out of bound.');
+                if (this.current_widget_id_dom > 0) {
+                    // if it was a move and not a creation, we put the widget back to its previous place
+                    this.layout[widget.dom_id] = widget_cpy;
+                    this.clearModuleContent();
+                    this.addAllWidgetsToDOM();
+                    this.setFocus(widget_cpy);
+                }
             }
+
         }
 
-    }else{
+    } else {
         alert('Every inputs must be filled with number.');
     }
-    console.log(this.layout)
-}
+};
 
 ModuleConfig.prototype.checkInput = function(id) {
     var val = $('#' + id).val();
@@ -313,41 +321,65 @@ ModuleConfig.prototype.checkInput = function(id) {
     } else {
         return -1;
     }
-}
+};
 
 ModuleConfig.prototype.checkOverlapping = function(widget_to_check) {
+
     for (var id_dom in this.layout) {
-
         var widget = this.layout[id_dom];
-        console.log(widget_to_check)
-
         // every height must be equal, there can't be both a full and half height widgets at the same time
         if (widget_to_check.height != widget.height) {
             return false;
         }
         // check overlap
-        if ((widget.x + widget.width) > x && widget.x < (widget_to_check.x + width) && (widget.y + widget.height) > widget_to_check.y && widget.y < (widget_to_check.y + widget_to_check.height)) {
+        if ((widget.x + widget.width) > widget_to_check.x && widget.x < (widget_to_check.x + widget_to_check.width) && (widget.y + widget.height) > widget_to_check.y && widget.y < (widget_to_check.y + widget_to_check.height)) {
             return false;
         }
     }
 
     // check out of bounds
-    if ((x + width) > 12 || (y + height) > 2) {
+    if ((widget_to_check.x + widget_to_check.width) > 12 || (widget_to_check.y + widget_to_check.height) > 2) {
         return false;
     }
 
     return true;
-}
+};
 
 ModuleConfig.prototype.clickOnChosenWidget = function(event) {
 
     var that = event.data.that;
     var id = parseInt(this.id.substr(14));
-
-    that.layout[id].addParameterPanelToDOM(that.container_parameter);
-    $('.selected_module').removeClass('selected_module');
-    that.layout[id].setBorder();
-    that.refreshSubmitWidgetCallback();
+    that.setFocus(that.layout[id]);
 
     that.current_widget_id_dom = id;
-}
+};
+
+ModuleConfig.prototype.setFocus = function(widget) {
+    widget.addParameterPanelToDOM(this.container_parameter);
+    this.refreshSubmitWidgetCallback();
+    this.refreshDeleteWidgetCallback();
+
+    $('.selected_module').removeClass('selected_module');
+    widget.setBorder();
+
+    this.setPendingMode(false);
+};
+
+ModuleConfig.prototype.supprWidget = function() {
+    if (this.current_widget_id_dom in this.layout) {
+        delete this.layout[this.current_widget_id_dom];
+        this.clearModuleContent();
+        this.addAllWidgetsToDOM();
+    }
+    this.container_parameter.html('');
+    this.setPendingMode(false);
+};
+
+ModuleConfig.prototype.setPendingMode = function(pendingMode) {
+    if (pendingMode) {
+        $('.line').css('opacity', 0.3);
+    } else {
+        $('.line').css('opacity', 1);
+    }
+
+};

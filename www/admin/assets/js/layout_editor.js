@@ -57,7 +57,7 @@ LayoutConfig.prototype.refreshDroppable = function() {
             $(this).css('opacity', '1');
         }
     });
-}
+};
 
 LayoutConfig.prototype.refreshDropper = function(that) {
     $('.page-dropper').on({
@@ -78,8 +78,7 @@ LayoutConfig.prototype.refreshDropper = function(that) {
             e.preventDefault();
         }
     })
-}
-
+};
 LayoutConfig.prototype.addPage = function() {
     this.nb_page++;
     var html = "<div class='page thumbnail'>\
@@ -95,12 +94,12 @@ LayoutConfig.prototype.addPage = function() {
     // refresh the drag and drop callbacks
     this.refreshDropper(this);
     this.refreshSupprCallback();
-}
+};
 
 LayoutConfig.prototype.resizePagesContainer = function() {
     $('#pages').height(window.innerHeight - 100);
     $('#panel').height(window.innerHeight - 100);
-}
+};
 
 // save the config in the database
 LayoutConfig.prototype.saveConfig = function() {
@@ -114,10 +113,10 @@ LayoutConfig.prototype.saveConfig = function() {
         }
         nb++;
     }
-    console.log(this.layout)
+
     // if there is a blank page between the filled page
     if (is_null) {
-        alert("You can't let blank page.")
+        alert("You can't let blank page.");
     } else {
         $.ajax({
             type: "POST",
@@ -131,41 +130,40 @@ LayoutConfig.prototype.saveConfig = function() {
             }
         });
     }
-}
+};
 
 LayoutConfig.prototype.supprPage = function(event) {
     var id = parseInt(this.id.substr(5));
     var that = event.data.that;
 
     // erase the page from the layout variable and from the dom
-    if (that.layout[id] != null) {
+    if (id in that.layout) {
         delete that.layout[id];
         // a default image is stored in the page
         $('#page' + id).html($('#saveImage').html());
     }
-
-
-}
+};
 
 LayoutConfig.prototype.refreshSupprCallback = function() {
     // callback on the 'save' button
     $('.suppr').click({
         that: this
     }, this.supprPage);
-}
+};
 
 LayoutConfig.prototype.loadLayout = function() {
     function success(data) {
+
         // we fill our variabe with the response of the ajax request
         for (var i = 0; i < data.length; i++) {
             this.layout[parseInt(data[i].page)] = parseInt(data[i].id_module);
-        };
+        }
     }
     $.ajax({
         type: "GET",
         url: "/admin/sql/get_config_layout.php",
         success: success.bind(this),
-        dataType: 'json',
+        dataType: 'json'
     });
 
 };
@@ -175,4 +173,4 @@ LayoutConfig.prototype.clearConfig = function() {
     this.layout = [];
     $('#page-container').html('');
     this.nb_page = 0;
-}
+};
