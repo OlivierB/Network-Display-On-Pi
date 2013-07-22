@@ -300,10 +300,10 @@ class CursesContent_handler_bandwidth(CursesContent_handler):
 
             pos -= 1
             posw -= 1
-        self.exec_in_pad(y + h, x + w +space, self.pad.addstr, "-0 Ko")
+        self.exec_in_pad(y + h, x + w +space, self.pad.addstr, "+0 Ko")
         for i in range(y+1, y + h):
             self.exec_in_pad(i, x + w +space, self.pad.addstr, "|")
-        self.exec_in_pad(y, x + w +space, self.pad.addstr, "-%i Ko" % mv)
+        self.exec_in_pad(y, x + w +space, self.pad.addstr, "+%i Ko" % mv)
 
 
 class CursesContent_handler_system(CursesContent_handler):
