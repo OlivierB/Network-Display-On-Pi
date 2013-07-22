@@ -23,8 +23,29 @@ if( isset(NDOP::$app['database_address']) &&
 	if($this['database']){
 		$database_connection = true;
 		$database_state = 'alert-success';
+
+		
 	}else{
-		$database_state = 'alert-block';
+
+
+		try{
+			// if we can't reach the database, we try to create it
+	        $db_tmp = new PDO("mysql:host=".NDOP::$app['database_address'].";", NDOP::$app['database_login'], NDOP::$app['database_password']);
+	        
+	        $request = file_get_contents("../BDD/NDOP_GUI.sql");
+			$db_tmp->exec($request);
+
+			$dbh = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password']);
+
+			Atomik::set('database', $dbh);
+			$database_connection = true;
+			$database_state = 'alert-success';
+		}catch(PDOException $e)
+	    {
+	    	// if an exception occured, it means we can't reach mysql or the user can't create the database
+	        $database_state = 'alert-block';
+	    }
+		
 	}
 	
 }else{
