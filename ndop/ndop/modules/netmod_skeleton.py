@@ -2,7 +2,7 @@
 
 """
 Skeleton
-Module base
+Base Module
 
 inherit from NetModule
 
@@ -18,6 +18,14 @@ class NetModChild(NetModule):
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='skeleton', *args, **kwargs)
 
+    def pkt_handler(self, pkt):
+        """
+        Called by sniffer when a new packet arrive
+
+        pkt is formated with Packet class
+        """
+        pass
+
     def update(self):
         """
         Refresh method called every updatetime
@@ -26,14 +34,6 @@ class NetModChild(NetModule):
         automatically convert in json
         """
         return None
-
-    def pkt_handler(self, pkt):
-        """
-        Called by sniffer when a new packet arrive
-
-        pkt is formated with Packet class
-        """
-        pass
 
     def database_init(self, db_class):
         """
@@ -49,4 +49,4 @@ class NetModChild(NetModule):
             else return None
 
         """
-        return None
+        pass

@@ -15,8 +15,8 @@ from . import netutils
 class Ethernet(layer.Layer):
 
     def decode(self, pktdata):
-        self.src = pktdata[0:6]
-        self.dst = pktdata[6:12]
+        self.dst = pktdata[0:6]
+        self.src = pktdata[6:12]
         self.type = pktdata[12:14]
 
         # Ethernet protocol decode
