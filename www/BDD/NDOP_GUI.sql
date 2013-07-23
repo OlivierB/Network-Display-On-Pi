@@ -72,10 +72,10 @@ CREATE TABLE IF NOT EXISTS `module_composition_widget` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `server_informations`
+-- Table structure for table `server_information`
 --
 
-CREATE TABLE IF NOT EXISTS `server_informations` (
+CREATE TABLE IF NOT EXISTS `server_information` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   `ip` varchar(15) NOT NULL,

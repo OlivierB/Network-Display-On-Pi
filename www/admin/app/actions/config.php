@@ -66,7 +66,7 @@ $data_server_info = false;
 $data_server_connection = false;
 
 if($database_connection){
-	$sql = "SELECT * FROM server_informations WHERE  `name` =  'data_server'";
+	$sql = "SELECT * FROM server_information WHERE  `name` =  'data_server'";
 	$results = $this['database']->query($sql);
 	$data_server_infos = $results->fetch();
 
@@ -104,7 +104,7 @@ $freegeoip_server_info = false;
 $freegeoip_server_connection = false;
 
 if($database_connection){
-	$sql = "SELECT * FROM server_informations WHERE  `name` =  'freegeoip_server'";
+	$sql = "SELECT * FROM server_information WHERE  `name` =  'freegeoip_server'";
 	$results = $this['database']->query($sql);
 	$freegeoip_server_infos = $results->fetch();
 
