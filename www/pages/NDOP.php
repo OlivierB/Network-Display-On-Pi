@@ -27,21 +27,25 @@ Class NDOP {
 	}
 
 	public static function display_modules(){
-		if(NDOP::$app['db']){
+		$module_exist = false;
+
+		if(isset(NDOP::$app['db']) && NDOP::$app['db']){
 			
 			$sql = "SELECT `module`.`name`, `module`.`id` FROM `layout` JOIN `module` ON `layout`.`id_module` = `module`.`id` GROUP BY `layout`.`page`";
 			$results = NDOP::$app['db']->query($sql);
 			$pages = $results->fetchAll(PDO::FETCH_ASSOC);
 
 			foreach ($pages as $key => $value) {
+				$module_exist = true;
 				echo "<div>";
 				NDOP::display_module($value['name'], $value['id']);
 				echo "</div>";
 			}
 
-		}else{
+		}
+		if(!$module_exist){
 			echo "<div>";
-			include "modules/introduction/index.php";
+			include "static/introduction.php";
 			echo "</div>";
 		}
 	}
@@ -149,31 +153,33 @@ Class NDOP {
 	}
 
 	public static function load_JS_conf(){
+		if(isset(NDOP::$app['db']) && NDOP::$app['db']){
+			$obj = array();
 
-		$obj = array();
+			$sql = "SELECT * FROM  `server_information` WHERE name='data_server' ;";
+			$results = NDOP::$app['db']->query($sql);
+			$address = $results->fetch(PDO::FETCH_ASSOC);
 
-		$sql = "SELECT * FROM  `server_information` WHERE name='data_server' ;";
-		$results = NDOP::$app['db']->query($sql);
-		$address = $results->fetch(PDO::FETCH_ASSOC);
+			if(isset($address['ip']) && isset($address['port'])){
+				$obj['NDOPAddress'] = 'ws://'.$address['ip'].':'.$address['port'];
+			}
 
-		if(isset($address['ip']) && isset($address['port'])){
-			$obj['NDOPAddress'] = 'ws://'.$address['ip'].':'.$address['port'];
+			$sql = "SELECT * FROM  `server_information` WHERE name='freegeoip_server' ;";
+			$results = NDOP::$app['db']->query($sql);
+			$address = $results->fetch(PDO::FETCH_ASSOC);
+
+			if(isset($address['ip']) && isset($address['port'])){
+				$obj['freeGeoIpAdress'] = $address['ip'].':'.$address['port'];
+			}
+
+			$obj['webServerAddress'] = $_SERVER['SERVER_ADDR'];
+
+			$app = array();
+			// $app['App'] = $obj;
+
+			return 'var App = '.json_encode($obj).';';
 		}
-
-		$sql = "SELECT * FROM  `server_information` WHERE name='freegeoip_server' ;";
-		$results = NDOP::$app['db']->query($sql);
-		$address = $results->fetch(PDO::FETCH_ASSOC);
-
-		if(isset($address['ip']) && isset($address['port'])){
-			$obj['freeGeoIpAdress'] = $address['ip'].':'.$address['port'];
-		}
-
-		$obj['webServerAddress'] = $_SERVER['SERVER_ADDR'];
-
-		$app = array();
-		// $app['App'] = $obj;
-
-		return 'var App = '.json_encode($obj).';';
+		return '';
 	}
 }
 
