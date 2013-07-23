@@ -1,6 +1,5 @@
 <?php
 include 'ndop.conf.php';
-include 'pages/common.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,10 +16,11 @@ include 'pages/common.php';
     
 
     <!-- Load js IPs address configuration from the database -->
-    <script language="javascript" type="text/javascript" src="/pages/load_conf.php"></script>
+    <script language="javascript" type="text/javascript" >
+        <?= NDOP::load_JS_conf(); ?>
+    </script>
     
 <?php if(NDOP::$app['debug']){ ?>
-
 
     <!-- Personnal CSS -->
     <link rel="stylesheet" href="/style/slide.css">
@@ -119,37 +119,7 @@ include 'pages/common.php';
     
     
     <div id="slides" >
-
-        <?php
-        
-        NDOP::$app = parse_ini_file('ndop.conf.ini');
-
-        if( isset(NDOP::$app['database_address']) && 
-            isset(NDOP::$app['database_login']) && 
-            isset(NDOP::$app['database_password']) )
-        {
-            try {
-                NDOP::$app['db'] = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password']);
-                NDOP::$app['db']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-                $sql = "SELECT `module`.`name`, `module`.`id` FROM `layout` JOIN `module` ON `layout`.`id_module` = `module`.`id` GROUP BY `layout`.`page`";
-                $results = NDOP::$app['db']->query($sql);
-                $pages = $results->fetchAll(PDO::FETCH_ASSOC);
-
-                foreach ($pages as $key => $value) {
-                    echo "<div>";
-                    display_module($value['name'], $value['id']);
-                    echo "</div>";
-                }
-            }
-            catch(PDOException $e)
-            {
-                echo "<div>";
-                include "modules/introduction/index.php";
-                echo "</div>";
-            }
-        }
-        ?>
+        <?php NDOP::display_modules(); ?>
     </div>
 </body>
 </html>

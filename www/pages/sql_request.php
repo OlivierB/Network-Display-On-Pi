@@ -1,11 +1,11 @@
 <?php
-
+require "../ndop.conf.php";
 require 'sql_function.php';
 try {
 	// server connection
-	$dns = 'mysql:host=192.168.1.144;dbname=NDOP';
-	$user = 'ndop';
-	$password = 'ndop';
+	$dns = 'mysql:host='.NDOP::$app['database_address'].';dbname=NDOP';
+	$user = NDOP::$app['database_login'];
+	$password = NDOP::$app['database_password'];
 	$connection = new PDO( $dns, $user, $password );
 
 
