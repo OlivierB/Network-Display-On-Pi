@@ -24,6 +24,8 @@ def mac_to_string(data):
 def ip_to_string(data):
     return socket.inet_ntoa(data)
 
+def ipi_to_string(data):
+    return pcap.ntoa(data)
 
 def dumphex(s, sep="    "):
     bytes = map(lambda x: '%.2x' % x, map(ord, s))
