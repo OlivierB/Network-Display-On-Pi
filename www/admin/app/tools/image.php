@@ -18,8 +18,11 @@ Class Thumbnail
 		$this->step_w = $this->width / 12;
 		$this->step_h = $this->height / 2;
 
-		$this->image = @ImageCreate ($this->width, $this->height);
+		$this->image = @imagecreatetruecolor ($this->width, $this->height);
 		ImageColorAllocate ($this->image, 204, 204, 204); 
+		$bg = imagecolorallocate ( $this->image, 204, 204, 204 );
+		imagefill ( $this->image, 0, 0, $bg );
+
 
 		$this->save_file  = 'assets/images/module_thumbnail/'.$id_module.'.png';
 	}
