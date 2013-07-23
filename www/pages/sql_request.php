@@ -31,15 +31,22 @@ try {
 
 		}
 
+		if(isset($_GET['group'])){
+
+			$group = $_GET['group'];
+		}else{
+			$group = "";
+		}
+
 		
 
 		if ($_GET['request'] == 'subprotocol_ipv4')
 		{
-			echo json_encode(getSubProtocolIpv4($connection, $date_begin, $date_end) );
+			echo json_encode(getSubProtocolIpv4($connection, $date_begin, $date_end, $group) );
 		}
 		elseif($_GET['request'] == 'protocol_ethernet')
 		{
-			echo json_encode(getProtocolEthernet($connection, $date_begin, $date_end) );
+			echo json_encode(getProtocolEthernet($connection, $date_begin, $date_end, $group) );
 		}
 		elseif ($_GET['request'] == 'bandwidth') 
 		{

@@ -1,6 +1,6 @@
 <?php
 
-function getProtocol($connection, $date_begin, $date_end, $table){
+function getProtocol($connection, $date_begin, $date_end, $table, $group){
 
 	if($date_begin != '' && $date_end != ''){
 		$where_statement = '  WHERE date BETWEEN ('. $date_begin .') AND ('. $date_end .')';
@@ -15,25 +15,48 @@ function getProtocol($connection, $date_begin, $date_end, $table){
 	$req = $connection->prepare($sql);
 	$req->execute();
 
-	// PDO::FETCH_NUM : request only an array without associative index
-	$result = $req->fetchAll(PDO::FETCH_NUM);
+	// PDO::FETCH_COLUMN, 0 : request only the first column
+	$result = $req->fetchAll(PDO::FETCH_COLUMN, 0);
 
 	// final container
 	$obj = array();
 
-	// build of the protocol list 
-	$tab = array();
-	foreach ($result as $row) {
-		$tab[] = $row[0];
+	$obj['listProt'] = $result;
+
+	// handle the group by statement. To make sure every protocols stay in the same group, we add 
+	// an id_date wich correspond to the group statement
+	if($group == "HOUR"){
+		$group_by = "HOUR(`date`), DAYOFYEAR(`date`), YEAR(`date`)";
+		$concat_id_date = "CONCAT(HOUR(`date`), '-',DAYOFYEAR(`date`),'-', YEAR(`date`))";
+
+	}elseif($group == "DAY"){
+		$group_by = "DAYOFYEAR(`date`), YEAR(`date`)";
+		$concat_id_date = "CONCAT(DAYOFYEAR(`date`),'-', YEAR(`date`))";
+
+	}elseif ($group == "WEEK") {
+		$group_by = "WEEKOFYEAR(`date`), YEAR(`date`)";
+		$concat_id_date = "CONCAT(WEEKOFYEAR(`date`),'-', YEAR(`date`))";
+
+	}elseif ($group == "MONTH") {
+		$group_by = "MONTH(`date`), YEAR(`date`)";
+		$concat_id_date = "CONCAT(MONTH(`date`),'-', YEAR(`date`))";
+
+	}else{
+		$group_by = "";
+		$concat_id_date = "`date`";
 	}
-	$obj['listProt'] = $tab;
 
-
+	if($group_by != ''){
+		$group_statement = 'GROUP BY '.$group_by.' , `protocol` ';
+	}else{
+		$group_statement = 'GROUP BY `date`, `protocol` ';
+	}
 
 	// request the protocol use
-	$sql = 'SELECT * FROM `'.$table.'` '.$where_statement;
+	$sql = 'SELECT '.$concat_id_date.' as id_date, `date`, `protocol`, SUM(`number`) as number FROM `'.$table.'` '.$where_statement.' '.$group_statement .'ORDER BY `date`';
 	$req = $connection->prepare($sql);
 	$req->execute();
+
 
 	// PDO::FETCH_ASSOC : request with associative array
 	$result = $req->fetchAll(PDO::FETCH_ASSOC);
@@ -45,13 +68,14 @@ function getProtocol($connection, $date_begin, $date_end, $table){
 	// build of the list of protocol use
 	foreach ($result as $row) {
 		
-		// group result per day, create a new group when a new date appears
-		if($row['date'] != $date){
+		// group result per group, create a new group when a new id_date appears
+		// here we use the id_date we create earlier
+		if($row['id_date'] != $date){
 			$i++;
-			$date = $row['date'];
+			$date = $row['id_date'];
 
 			$tab[] = array();
-			$tab[$i]['date'] = $date;
+			$tab[$i]['date'] = $row['date'];
 			$tab[$i]['value'] = array();
 		}
 		$tab[$i]['value'][$row['protocol']] = $row['number'];
@@ -63,12 +87,12 @@ function getProtocol($connection, $date_begin, $date_end, $table){
 
 
 
-function getProtocolEthernet($connection, $date_begin, $date_end){
-	return getProtocol($connection, $date_begin, $date_end, 'protocols_ether');
+function getProtocolEthernet($connection, $date_begin, $date_end, $group){
+	return getProtocol($connection, $date_begin, $date_end, 'protocols_ether', $group);
 }
 
-function getSubProtocolIpv4($connection, $date_begin, $date_end){
-	return getProtocol($connection, $date_begin, $date_end, 'protocols_ip');
+function getSubProtocolIpv4($connection, $date_begin, $date_end, $group){
+	return getProtocol($connection, $date_begin, $date_end, 'protocols_ip', $group);
 }
 
 
