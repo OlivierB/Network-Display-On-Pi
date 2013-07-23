@@ -20,7 +20,7 @@ from .. import netutils
 class ARP(layer.Layer):
 
     def decode(self, pktdata):
-        if len(pktdata) < 20:
+        if len(pktdata) < 10:
             raise layer.ProtocolMismatch("Not enough data")
 
         self.hardware_type = socket.ntohs(struct.unpack('H', pktdata[0:2])[0])
