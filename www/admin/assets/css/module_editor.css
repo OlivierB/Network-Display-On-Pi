@@ -34,7 +34,7 @@
 
 label{
 	display: inline;   
-	margin: 10%;
+	margin-left: 10%;
 	vertical-align: 30%;     
 }
 
@@ -47,4 +47,8 @@ label{
 	border-style: solid;
 	border-color: red;
 	border-width: 1px;
+}
+
+.text-input-area{
+	margin: 5px;
 }

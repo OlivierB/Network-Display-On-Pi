@@ -1,4 +1,4 @@
-<link href="<?php echo $this->asset('assets/css/drag_drop.css') ?>" rel="stylesheet">
+<link href="<?php echo $this->asset('assets/css/drag_drop.css') ?>" rel="stylesheet" type="text/css" >
 <script src="<?= $this->asset('assets/js/layout_editor.js') ?>" ></script>
 
 <div id='panel' >
@@ -7,7 +7,7 @@
 		<?php foreach ($modules as $key => $value) { ?>
 		<div class='module' draggable="true" id="module_<?= $value['id'] ?>">
 			<div class="legend" ><?= $value['name'] ?> </div>
-			<img src="<?= $this->asset('assets/images/module_thumbnail/'.$value['id'].'.png') ?>">
+			<img src="<?= $this->asset('assets/images/module_thumbnail/'.$value['id'].'.png') ?>"  alt="thumbnail">
 		</div>
 		<?php } ?>
 	</div>
@@ -25,7 +25,7 @@
 			<i id='suppr<?= $i ?>' class="suppr icon-remove"></i>
 			<div class='page-dropper module'  id="page<?= $i ?>">
 				<div class="legend" ><?= $value['name'] ?> </div>
-				<img src="<?= $this->asset('assets/images/module_thumbnail/'.$value['id'].'.png') ?>">
+				<img src="<?= $this->asset('assets/images/module_thumbnail/'.$value['id'].'.png') ?>" alt="thumbnail">
 			</div>
 		</div>
 		<?php  } ?>
@@ -34,7 +34,7 @@
 	<div class="page thumbnail" id='add_page'>
 		<div class='legend_page'>Add</div>
 		<div class='module' >		
-			<img src="<?= $this->asset('assets/images/add_thumbnail.png') ?>">
+			<img src="<?= $this->asset('assets/images/add_thumbnail.png') ?>" alt="add a module">
 		</div>
 	</div>
 	
@@ -42,6 +42,6 @@
 </div>
 
 <div id='saveImage' style='display:none;'>
-	<img src="<?= $this->asset('assets/images/default_thumbnail.png') ?>">
+	<img src="<?= $this->asset('assets/images/default_thumbnail.png') ?>"  alt="drag your module">
 </div>
 <div id="nb_page" style="display:none;"><?= $nb_page ?></div>
