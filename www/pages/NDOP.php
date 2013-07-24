@@ -8,7 +8,7 @@ Class NDOP {
 	public static function init() {
 		NDOP::$nb_widget = 0;
 
-		NDOP::$app = parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/ndop.conf.ini');
+		NDOP::$app = @parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/ndop.conf.ini');
 
 		if( isset(NDOP::$app['database_address']) && 
 			isset(NDOP::$app['database_login']) && 
