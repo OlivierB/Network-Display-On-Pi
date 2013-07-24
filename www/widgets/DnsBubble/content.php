@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
 $(function(){
-	var display = new DnsDisplayerCanvas("<?= $id ?>");
+	var display = new DnsDisplayerCanvas("<?= $id ?>", <?= $params['font_size'] ?>);
 	display.connect(dispatcher, 'dns');
 });
 </script>
