@@ -160,8 +160,13 @@ class Sniffer(mp.Process):
         pipe_send_fnt = self.pipe_sender.send
 
         lfnt_pkthandle = list()
+        lfnt_trigger_update = list()
+        lfnt_trigger_save = list()
         for mod in lmod:
             lfnt_pkthandle.append(mod.pkt_handler)
+            lfnt_trigger_update.append(mod.trigger_data_update)
+            lfnt_trigger_save.append(mod.trigger_db_save)
+
 
 
         # List loaded module
@@ -184,7 +189,7 @@ class Sniffer(mp.Process):
 
             if mydb.is_connect():
                 for mod in lmod:
-                    data = mod.database_init(mydb)
+                    mod.database_init(mydb)
                 mydb.commit()
 
         # Get device informations if possible (IP address assigned)
@@ -214,8 +219,7 @@ class Sniffer(mp.Process):
                     pktdec = Packet(pkt[0], pkt[1], pkt[2])
                     # a = time()
                     # send pkt to modules
-                    for fnt_p in lfnt_pkthandle:
-                        fnt_p(pktdec)
+                    map(lambda x: x(pktdec), lfnt_pkthandle)
 
                     # res = time() - a
                     # a, b = tt
@@ -233,6 +237,7 @@ class Sniffer(mp.Process):
                         data = mod.trigger_data_update()
                         if data is not None:
                             l_res.append((mod.protocol, data))
+                    
                     # Data to send with websocket
                     if len(l_res) > 0:
                         pipe_send_fnt(l_res)
@@ -241,8 +246,7 @@ class Sniffer(mp.Process):
                 if db_on and mydb.connect is not None:
                     if time() - last_save_t > MIN_TIME_DB_UPDATE:
                         last_save_t = time()
-                        for mod in lmod:
-                            mod.trigger_db_save(mydb)
+                        map(lambda x: x(mydb), lfnt_trigger_save)
                         mydb.commit()
                 
 

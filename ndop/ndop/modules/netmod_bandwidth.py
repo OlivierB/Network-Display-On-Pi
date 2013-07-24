@@ -31,7 +31,6 @@ class NetModChild(NetModule):
 
         # packet data
         self.data = dict()
-        self.data["pkt_nbr"] = 0
         self.data["net_load_loc"] = 0
         self.data["net_load_in"] = 0
         self.data["net_load_out"] = 0
@@ -48,12 +47,10 @@ class NetModChild(NetModule):
         state = self.diffState(self.oldValues, new)
         self.oldValues = new
 
-        # print state["net_lost"]
         # send data
         return state
 
     def pkt_handler(self, pkt):
-        self.data["pkt_nbr"] += 1
 
         if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
             pkt_ipv4 = pkt.Ether.payload
@@ -108,19 +105,17 @@ CREATE TABLE IF NOT EXISTS `bandwidth` (
         """
         Get system stats
         """
-
         val = dict()
         val["time"] = time.time()
         val["net_load_loc"] = self.data["net_load_loc"]
         val["net_load_in"] = self.data["net_load_in"]
         val["net_load_out"] = self.data["net_load_out"]
 
-        val["net_nbpkt_handle"] = self.data["pkt_nbr"]
-
         res_net = psutil.network_io_counters(pernic=True)
         # bytes_sent, bytes_recv, packets_sent, packets_recv, errin, errout, dropin, dropout
         if self.dev in res_net.keys():
             val["net"] = res_net[self.dev]
+            print val["net"]
         else:
             val["net"] = psutil.network_io_counters(pernic=False)
 

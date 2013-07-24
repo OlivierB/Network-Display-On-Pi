@@ -277,7 +277,7 @@ class ConfigChecker():
                         getattr(module, "NetModChild")
 
                         # Create an instance
-                        modclass = module.NetModChild()
+                        modclass = module.NetModChild(dev=args.interface)
 
                         # Add protocol and module
                         l_modules.append(modclass)
