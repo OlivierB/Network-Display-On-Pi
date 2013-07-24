@@ -9,7 +9,7 @@ New submodule need to override some of these methods
 """
 
 # Python lib import
-import time
+from time import time
 import datetime
 import logging
 
@@ -26,7 +26,7 @@ class NetModule(object):
 
         # Time management for update function
         self.updatetime = updatetime
-        self.lastupdate = 0
+        self.lastupdate = time()
 
         # Time management for save function
         self.save_timecode(savetime)
@@ -43,8 +43,8 @@ class NetModule(object):
         """
         Manage call to update method with updatetime
         """
-        if (time.time() - self.lastupdate) > self.updatetime:
-            self.lastupdate = time.time()
+        if (time() - self.lastupdate) > self.updatetime:
+            self.lastupdate = time()
             return self.update()
 
 
@@ -52,7 +52,7 @@ class NetModule(object):
         """
         Manage call to database_save method with savetime
         """
-        if time.time() - self.savetime > self.savewait:
+        if time() - self.savetime > self.savewait:
             self.save_timewait()
             self.database_save(db_class)
 
@@ -62,14 +62,14 @@ class NetModule(object):
         """
         if self.savecode[0] == 'm':
             d = datetime.datetime.today()
-            self.savetime = time.time()
+            self.savetime = time()
             self.savewait = (self.savecode[1] - (d.minute % self.savecode[1])) * 60 - d.second
         elif self.savecode[0] == 'h':
             d = datetime.datetime.today()
-            self.savetime = time.time()
+            self.savetime = time()
             self.savewait = (self.savecode[1] - (d.hour % self.savecode[1])) * 3600 - (d.minute * 60) - d.second
         else:
-            self.savetime = time.time()
+            self.savetime = time()
             self.savewait = 30 * 60
             print "NetModule : Time save error"
 
