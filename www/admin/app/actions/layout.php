@@ -10,7 +10,7 @@ require "app/tools/image.php";
 	$results = $this['database']->query($select_modules);
 	$modules = $results->fetchAll(PDO::FETCH_ASSOC);
 
-	$select_layout = "SELECT id, name FROM  `layout` JOIN `module` ON id_module = id";
+	$select_layout = "SELECT id, name FROM  `layout` JOIN `module` ON id_module = id ORDER BY `layout`.`page`";
 
 	$results = $this['database']->query($select_layout);
 	$pages = $results->fetchAll(PDO::FETCH_ASSOC);
