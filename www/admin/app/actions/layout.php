@@ -1,4 +1,5 @@
 <?php
+require "app/tools/image.php";
 	$this['layout_page'] = 'active';
 
 	$this['database']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -15,5 +16,5 @@
 	$pages = $results->fetchAll(PDO::FETCH_ASSOC);
 
 	$nb_page =  count($pages);
-	// if($nb_page < 0)
-	// 	$nb_page = 0;
+	
+	Thumbnail::check_thumbnails_existence($modules, $this['database']);
