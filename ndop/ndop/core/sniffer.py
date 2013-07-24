@@ -163,6 +163,10 @@ class Sniffer(mp.Process):
         for mod in lmod:
             lfnt_pkthandle.append(mod.pkt_handler)
 
+        # change network device
+        for mod in lmod:
+            mod.dev = self.dev
+
 
         # List loaded module
         for mod in self.lmod:
