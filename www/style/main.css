@@ -79,3 +79,36 @@ li{
 	font-size: 25px;
 	list-style: none;
 }
+
+
+.frame{
+	text-align: center;
+	background-color: white;
+	border-radius: 15px;
+	width: 80%;
+	margin: auto;
+	background-image: url('../res/img/logo_transparent.png');
+	background-repeat: no-repeat;
+	background-position:center; 
+}
+
+.frame h2{
+
+	font-size: 45px;
+	padding: 45px;
+	line-height: 50px;
+}
+
+.frame h2 strong{
+	color: #599B1B;
+	font-weight: bold;
+}
+
+.frame div{
+	margin-top: 150px;
+	font-size: 35px;
+}
+
+.frame a{
+	color: blue;
+}

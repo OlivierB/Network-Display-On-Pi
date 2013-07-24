@@ -4,9 +4,11 @@
  * @author Matrat Erwan
  **/
 
-function IpLocationMapOffline(id) {
+function IpLocationMapOffline(id, dither, opacity) {
 
     this.id = id;
+    this.dither = dither;
+    this.opacity = opacity;
 
     // inheritance from IpLocationMap
     IpLocationMap.call(this, id);
@@ -67,20 +69,21 @@ IpLocationMapOffline.prototype.addPoint = function(lat, longi, color) {
     var x = this.mapWidth * (180 + longi) / 360 + this.paddingWidth;
     var y = this.mapHeight * (90 - lat) / 180 + this.paddingHeight;
 
+    x += (Math.random()-0.5) * this.dither;
+    y += (Math.random()-0.5) * this.dither;
+
     this.drawCircle(x, y, 3, color);
 
 };
 
 
 IpLocationMapOffline.prototype.drawCircle = function(centerX, centerY, radius, color) {
+    this.context.globalAlpha = this.opacity;
     this.context.beginPath();
     this.context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
     this.context.fillStyle = color;
     this.context.fill();
-    this.context.lineWidth = 1;
-    this.context.strokeStyle = 'black';
-    this.context.stroke();
-};
+ };
 
 IpLocationMapOffline.prototype.resize = function() {
     this.canvas.width = $('#' + this.id).width();

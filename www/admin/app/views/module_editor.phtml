@@ -1,6 +1,4 @@
-<link href="<?php echo $this->asset('assets/css/drag_drop.css') ?>" rel="stylesheet">
-<link href="<?php echo $this->asset('assets/css/module_editor.css') ?>" rel="stylesheet">
-
+<link href="<?php echo $this->asset('assets/css/drag_drop.css') ?>" rel="stylesheet" type="text/css" >
 <script src="<?= $this->asset('assets/js/Widget.js') ?>" ></script>
 <script src="<?= $this->asset('assets/js/module_editor.js') ?>" ></script>
 
@@ -10,7 +8,7 @@
 		<?php foreach ($widgets as $key => $value) { ?>
 		<div class='module' draggable="true" id="widget_<?= $value['id'] ?>">
 			<div class="legend" ><?= $value['name'] ?> </div>
-			<img src="/widgets/<?= $value['folder_name'] ?>/thumbnail.png">
+			<img src="../../../widgets/<?= $value['folder_name'] ?>/thumbnail.png" alt="thumnail">
 		</div>
 		<?php } ?>
 	</div>
@@ -21,13 +19,13 @@
 		<button class="btn btn-large btn-primary btn-wide" type="button" id="save">Save this configuration</button>
 		<button class="btn btn-large btn-inverse btn-wide" type="button" id="clear">Clear this configuration</button>
 	</div>
-	<p>
+	<div class="text-input-area">
 		<form class="form-inline">
 			<input id="module_name" type="text" class="input-small" placeholder="Name" value='<?= $module["module_name"] ?>'>
 			
 			<textarea id="module_description" rows="1" placeholder="Description" ><?= $module["module_description"] ?></textarea>
 		</form>
-	</p>
+	</div>
 	<div class="row-fluid" style="height:400px">
 		<div class="span8 row-fluid" id="module_content">
 			<div class='height-half' id='first_line'>

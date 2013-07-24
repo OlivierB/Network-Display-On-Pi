@@ -1,4 +1,5 @@
 <?php
+require "app/tools/image.php";
 	$this['layout_page'] = 'active';
 
 	$this['database']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -9,11 +10,11 @@
 	$results = $this['database']->query($select_modules);
 	$modules = $results->fetchAll(PDO::FETCH_ASSOC);
 
-	$select_layout = "SELECT id, name FROM  `layout` JOIN `module` ON id_module = id";
+	$select_layout = "SELECT id, name FROM  `layout` JOIN `module` ON id_module = id ORDER BY `layout`.`page`";
 
 	$results = $this['database']->query($select_layout);
 	$pages = $results->fetchAll(PDO::FETCH_ASSOC);
 
 	$nb_page =  count($pages);
-	// if($nb_page < 0)
-	// 	$nb_page = 0;
+	
+	Thumbnail::check_thumbnails_existence($modules, $this['database']);

@@ -20,6 +20,7 @@ Network Display On Pi (NDOP) is a network monitoring service which provides you 
 * [psutil 0.6.4](https://code.google.com/p/psutil/)
 * python-tornado
 * python-argparse
+* python-importlib
 
 
 ## Installation

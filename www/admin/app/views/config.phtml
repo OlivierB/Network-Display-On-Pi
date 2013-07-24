@@ -26,15 +26,15 @@
 					<div id="collapseOne" class="accordion-body collapse <?php if(!$database_connection){echo 'in';} ?>">
 						<div class="accordion-inner">
 							<label>Adress</label>
-							<input name="database_address" type="text" placeholder="Ip of your database server" value='<?= $database_address ?>'>
+							<input name="database_address" type="text" placeholder="IP of your database server" value='<?= $database_address ?>'>
 							<span class="help-block">Ex: 192.168.1.15 or www.myhostname.com</span>
 
 							<label>Login</label>
-							<input name="database_login"type="text" placeholder="Login of your database server" value='<?= $database_login ?>'>
+							<input name="database_login" type="text" placeholder="Login of your database server" value='<?= $database_login ?>'>
 							<span class="help-block">Ex: mydatabaselogin</span>
 
 							<label>Password</label>
-							<input name="database_password"type="password" placeholder="Password of your database server" value='<?= $database_password ?>'>
+							<input name="database_password" type="password" placeholder="Password of your database server" value='<?= $database_password ?>'>
 							<span class="help-block">Ex: mydatabasepassword</span>
 
 							<button type="submit" class="btn">Submit</button>
@@ -46,18 +46,18 @@
 
 
 	</div>
-
+<?php if($database_connection){ ?>
 	<h2>Servers configuration</h2>
 
 	<div class='alert <?= $data_server_state ?>' >
 		<h3>NDOP data server</h3>
-		<?php if($data_server_connection){ ?>
-		Your data server is online, you can continue.
-		<?php }elseif($data_server_info){ ?>
-		Cannot connect to the data server, please retry.
-		<?php }else{ ?>
-		Please fill in the form.
-		<?php } ?>
+		<?php if($data_server_connection){ 
+			echo "Your data server is online, you can continue.";
+		}elseif($data_server_info){ 
+			echo "Cannot connect to the data server, please retry.";
+		}else{ 
+			echo "Please fill in the form.";
+		} ?>
 
 
 		<div class="accordion" id="accordion2">
@@ -71,7 +71,7 @@
 					<div id="collapseTwo" class="accordion-body collapse <?php if(!$data_server_connection){echo 'in';} ?>">
 						<div class="accordion-inner">
 							<label>Adress</label>
-							<input name="data_server_address" type="text" placeholder="Ip of your NDOP data  server" value='<?= $data_server_address ?>'>
+							<input name="data_server_address" type="text" placeholder="IP of your NDOP data  server" value='<?= $data_server_address ?>'>
 							<span class="help-block">Ex: 192.168.1.15 or www.myhostname.com</span>
 
 							<label>Port</label>
@@ -89,11 +89,11 @@
 	<div class='alert <?= $freegeoip_server_state ?>' >
 		<h3>Freegoip server</h3>
 		<?php if($freegeoip_server_connection){ ?>
-		The freegeoip server is online, you can continue.
+			The freegeoip server is online, you can continue.
 		<?php }elseif($freegeoip_server_info){ ?>
-		Cannot connect to the freegeoip server, please retry.
+			Cannot connect to the freegeoip server, please retry.
 		<?php }else{ ?>
-		Please fill in the form.
+			Please fill in the form.
 		<?php } ?>
 
 
@@ -108,7 +108,7 @@
 					<div id="collapseThree" class="accordion-body collapse <?php if(!$freegeoip_server_connection){echo 'in';} ?>">
 						<div class="accordion-inner">
 							<label>Adress</label>
-							<input name="freegeoip_server_address" type="text" placeholder="Ip of your freegeoip  server" value='<?= $freegeoip_server_address ?>'>
+							<input name="freegeoip_server_address" type="text" placeholder="IP of your freegeoip  server" value='<?= $freegeoip_server_address ?>'>
 							<span class="help-block">Ex: 192.168.1.15 or www.freegeoip.net</span>
 
 							<label>Port</label>
@@ -122,6 +122,6 @@
 			</div>
 		</div>
 	</div>
-
+<?php } ?>
 
 </div>

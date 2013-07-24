@@ -44,4 +44,26 @@ Class Thumbnail
 	function __destruct() {
         imagedestroy($this->image);
     }
+
+    public static function check_thumbnails_existence($modules, $db){
+    	$select_module_widgets = "SELECT * FROM `module` JOIN `module_composition_widget` ON `module`.`id` = `module_composition_widget`.`id_module` JOIN `widget` ON `module_composition_widget`.`id_widget` = `widget`.`id` WHERE `module`.`id` = :id_module";
+		$prep_select_module_widgets = $db->prepare($select_module_widgets);
+
+		foreach ($modules as $key => $value) {
+			if(!file_exists('assets/images/module_thumbnail/'.$value['id'].'.png')){
+				Thumbnail::create_thumbnail_from_id($value['id'], $prep_select_module_widgets);
+			}
+			
+		}
+    }
+
+    public static function create_thumbnail_from_id($id, $prep_request){
+		$prep_request->execute(array("id_module" => $id));
+		$widgets = $prep_request->fetchAll(PDO::FETCH_OBJ);
+		$thumbnail = new Thumbnail($id);
+		foreach ($widgets as $key => $widget) {
+			$thumbnail->add_widget($widget->x, $widget->y, $widget->width, $widget->height, $widget->folder_name);
+		}
+		$thumbnail->save();
+	}
 }

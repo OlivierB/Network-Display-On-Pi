@@ -1,8 +1,8 @@
-<?php
-	Class NDOP {
-		public static $app;
-		public static $nb_widget;
-	}
+<?php 
 
-	NDOP::$app['debug'] = false;
-	NDOP::$nb_widget = 0;
+require_once "pages/NDOP.php";
+
+NDOP::init();
+
+NDOP::$app['debug'] = true;
+

@@ -24,7 +24,7 @@ function getProtocol($connection, $date_begin, $date_end, $table, $group){
 	$obj['listProt'] = $result;
 
 	// handle the group by statement. To make sure every protocols stay in the same group, we add 
-	// an id_date wich correspond to the group statement
+	// an id_date wich corresponds to the group statement
 	if($group == "HOUR"){
 		$group_by = "HOUR(`date`), DAYOFYEAR(`date`), YEAR(`date`)";
 		$concat_id_date = "CONCAT(HOUR(`date`), '-',DAYOFYEAR(`date`),'-', YEAR(`date`))";

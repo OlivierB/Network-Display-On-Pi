@@ -1,7 +1,7 @@
-.height-half div{
+.height-half > div{
 	height: 100%;
 }
 
-.height-full div{
+.height-full > div{
 	height: 100%;
 }

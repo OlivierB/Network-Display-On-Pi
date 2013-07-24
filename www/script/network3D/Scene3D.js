@@ -135,7 +135,7 @@ Scene3D.prototype.initMaterial = function() {
 
     if (this.detail3D > 5) {
         this.OutputMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.ImageUtils.loadTexture('/modules/network3D/res/img/texture/Earth-Clouds.jpg')
+            map: new THREE.ImageUtils.loadTexture('/res/img/Earth-Clouds.jpg')
         });
     } else {
         this.OutputMaterial = new THREE.MeshLambertMaterial({

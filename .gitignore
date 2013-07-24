@@ -13,4 +13,4 @@ dist/
 *.jar
 
 www/test/
-www/admin/assets/images/*
+#www/admin/assets/images/module_thumbnail/
