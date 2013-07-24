@@ -7,13 +7,6 @@ include 'ndop.conf.php';
     <meta charset="utf-8">
     <title>NDOP</title>
     
-    <!-- library CSS-->
-    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/lib/rendro-easy-pie/jquery.easy-pie-chart.css">
-    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/lib/leaflet/leaflet.css" />
-
-    
 
     <!-- Load js IPs address configuration from the database -->
     <script language="javascript" type="text/javascript" >
@@ -21,6 +14,13 @@ include 'ndop.conf.php';
     </script>
     
 <?php if(NDOP::$app['debug']){ ?>
+
+    <!-- library CSS -->
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/lib/rendro-easy-pie/jquery.easy-pie-chart.css">
+    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/lib/leaflet/leaflet.css" />
+   
 
     <!-- Personnal CSS -->
     <link rel="stylesheet" href="/style/slide.css">
