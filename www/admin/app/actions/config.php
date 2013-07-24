@@ -30,12 +30,12 @@ if( isset(NDOP::$app['database_address']) &&
 
 		try{
 			// if we can't reach the database, we try to create it
-	        $db_tmp = new PDO("mysql:host=".NDOP::$app['database_address'].";", NDOP::$app['database_login'], NDOP::$app['database_password']);
+	        $db_tmp = new PDO("mysql:host=".NDOP::$app['database_address'].";", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
 	        
 	        $request = file_get_contents("../BDD/NDOP_GUI.sql");
 			$db_tmp->exec($request);
 
-			$dbh = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password']);
+			$dbh = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
 
 			Atomik::set('database', $dbh);
 			$database_connection = true;
@@ -76,7 +76,7 @@ if($database_connection){
 		$data_server_info = true;
 
 		$url = 'http://'.$data_server_address.':'.$data_server_port.'/online';
-		$ctx = stream_context_create(array('http'=>array('timeout' => 5 )));
+		$ctx = stream_context_create(array('http'=>array('timeout' => 2 )));
 		$content = @file_get_contents($url, false, $ctx);
 		if($content === 'ndop'){
 			$data_server_connection = true;
@@ -114,7 +114,7 @@ if($database_connection){
 		$freegeoip_server_info = true;
 
 		$url = 'http://'.$freegeoip_server_address.':'.$freegeoip_server_port.'/csv/255.255.255.255';
-		$ctx = stream_context_create(array('http'=>array('timeout' => 5 )));
+		$ctx = stream_context_create(array('http'=>array('timeout' => 2 )));
 		$content = @file_get_contents($url, false, $ctx);
 
 		if(explode(',', $content)[0] === '"255.255.255.255"'){
