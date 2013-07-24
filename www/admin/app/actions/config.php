@@ -94,6 +94,10 @@ if($database_connection){
 		$data_server_port = '';
 	}
 	
+}else{
+	$data_server_state = 'alert-error';
+	$data_server_address = '';
+	$data_server_port = '';
 }
 
 // check the freegeoip server connection
@@ -130,4 +134,8 @@ if($database_connection){
 		$freegeoip_server_port = '';
 	}
 	
+}else{
+	$freegeoip_server_state = 'alert-error';
+	$freegeoip_server_address = '';
+	$freegeoip_server_port = '';
 }
