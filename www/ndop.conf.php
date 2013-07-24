@@ -4,5 +4,5 @@ require_once "pages/NDOP.php";
 
 NDOP::init();
 
-NDOP::$app['debug'] = false;
+NDOP::$app['debug'] = true;
 

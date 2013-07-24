@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
 $(function(){
-	var IpMap = new IpLocationMapOnline("<?= $id ?>");
+	var IpMap = new IpLocationMapOnline("<?= $id ?>", <?= $params['dither'] ?>, <?= $params['opacity'] ?>);
 	IpMap.connect(dispatcher, 'iplist');
 });
 </script>

@@ -4,7 +4,10 @@
  * @author Matrat Erwan
  **/
 
-function IpLocationMapOnline(id){
+function IpLocationMapOnline(id, dither, opacity){
+
+    this.dither = dither;
+    this.opacity = opacity;
 
     IpLocationMap.call(this, id);
 
@@ -23,9 +26,12 @@ IpLocationMapOnline.prototype.addPoint = function(lat, longi, color) {
 
     color = color || "red";
 
+    lat += (Math.random()-0.5) * this.dither;
+    longi += (Math.random()-0.5) * this.dither;
+
     L.circle([lat, longi], 100, {
         color: color,
         fillColor: color,
-        fillOpacity: 0.5
+        fillOpacity: this.opacity
     }).addTo(this.map);
 };
