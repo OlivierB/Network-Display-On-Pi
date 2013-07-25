@@ -1,5 +1,7 @@
 <?php
-require "../ndop.conf.php";
+require_once "NDOP.php";
+NDOP::init('../ndop.conf.ini');
+
 require 'sql_function.php';
 try {
 	// server connection
