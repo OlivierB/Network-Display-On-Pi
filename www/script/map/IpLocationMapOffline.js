@@ -25,7 +25,7 @@ function IpLocationMapOffline(id, dither, opacity) {
 
     // Map Load
     var imageObj = new Image();
-    imageObj.src = '/res/img/earth_bw.png';
+    imageObj.src = 'res/img/earth_bw.png';
 
     imageObj.onload = function() {
 
