@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 24, 2013 at 10:27 AM
+-- Generation Time: Jul 25, 2013 at 10:14 AM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
 
@@ -35,6 +35,19 @@ CREATE TABLE IF NOT EXISTS `layout` (
   KEY `id_module` (`id_module`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `layout`
+--
+
+INSERT INTO `layout` (`page`, `id_module`) VALUES
+(6, 359),
+(1, 360),
+(0, 363),
+(3, 363),
+(2, 364),
+(4, 366),
+(5, 367);
+
 -- --------------------------------------------------------
 
 --
@@ -61,8 +74,8 @@ INSERT INTO `module` (`id`, `name`, `description`) VALUES
 (363, 'DNS Bubble', 'A display for DNS requests as bubble.'),
 (364, 'DNS request', 'Display dns requests in a table.'),
 (365, 'IP map offline', 'Display the location of IPs source or target of packets going through the network. This display don''t use the openStreetMap database.'),
-(366, 'Ip map online.', 'Display the location of IPs source or target of packet going through the network. Map from Leaflet and OpenStreetMap.'),
-(367, 'NDOP Server statisti', 'Dysplay the state of the machine hosting the NDOP program.'),
+(366, 'IP map online', 'Display the location of IPs source or target of packet going through the network. Map from Leaflet and OpenStreetMap.'),
+(367, 'NDOP Server statistics', 'Dysplay the state of the machine hosting the NDOP program.'),
 (368, 'SNORT IDS', 'Display alerts from the SNORT IDS. You need to install SNORT on your system to use this module.'),
 (369, 'Summary', 'Display the total bandwidth used by the network.');
 
@@ -85,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `module_composition_widget` (
   KEY `id_widget` (`id_widget`),
   KEY `id_widget_parameter_set` (`id_widget_parameter_set`),
   KEY `id_module` (`id_module`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=369 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=371 ;
 
 --
 -- Dumping data for table `module_composition_widget`
@@ -106,15 +119,15 @@ INSERT INTO `module_composition_widget` (`id`, `id_module`, `id_widget`, `x`, `y
 (352, 362, 407, 6, 1, 6, 1, 395),
 (353, 363, 372, 0, 0, 12, 2, 307),
 (354, 364, 364, 0, 0, 12, 2, 299),
-(356, 366, 377, 0, 0, 12, 2, 312),
-(357, 367, 370, 3, 0, 6, 1, 305),
 (358, 368, 363, 0, 0, 12, 2, 298),
 (359, 369, 368, 2, 0, 8, 2, 303),
 (364, 358, 373, 0, 0, 12, 2, 396),
 (365, 359, 375, 0, 0, 8, 1, 310),
 (366, 359, 366, 8, 0, 4, 1, 313),
 (367, 359, 402, 0, 1, 6, 1, 351),
-(368, 365, 369, 0, 0, 12, 2, 304);
+(368, 365, 369, 0, 0, 12, 2, 304),
+(369, 367, 370, 3, 0, 6, 1, 305),
+(370, 366, 377, 0, 0, 12, 2, 312);
 
 -- --------------------------------------------------------
 
@@ -145,7 +158,7 @@ CREATE TABLE IF NOT EXISTS `widget` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `folder_name` (`folder_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=441 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=521 ;
 
 --
 -- Dumping data for table `widget`
@@ -184,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_design` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_widget` (`id_widget`,`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=452 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=573 ;
 
 --
 -- Dumping data for table `widget_parameter_design`
@@ -200,17 +213,23 @@ INSERT INTO `widget_parameter_design` (`id_widget`, `type`, `description`, `name
 (368, 'int', 'Number of milliseconds between 2 refreshes.', 'refresh_time', 367, 1),
 (370, 'int', 'Speed of the animation.', 'speed', 368, 1),
 (371, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 369, 1),
-(371, 'int', 'Number of days you want the statistics count for. 30 days means the statistics will be compute with ', 'nb_day', 370, 1),
+(371, 'int', 'Number of days you want the statistics count for. 30 days means the statistics will be compute with the last 30 days.', 'nb_day', 370, 1),
 (371, 'int', 'Size of the font.', 'font_size', 371, 1),
 (373, 'int', 'Quality of the 3D from 1 to infinite. The bigger, the fancier.', 'quality', 372, 1),
 (403, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 403, 1),
 (403, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 404, 1),
 (403, 'str', 'Title of the chart.', 'title', 405, 1),
-(403, 'str', 'You can group results by packet to get an easier to read chart. You can choose, HOUR, DAY, WEEK, MON', 'group_by', 406, 1),
+(403, 'str', 'You can group results by packet to get an easier to read chart. You can choose, HOUR, DAY, WEEK, MONTH. If you don''t want to group your data, choose N', 'group_by', 406, 1),
 (407, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 408, 1),
 (407, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 409, 1),
 (407, 'str', 'Title of the chart.', 'title', 410, 1),
-(407, 'str', 'You can group results by packet to get an easier to read chart. You can choose, HOUR, DAY, WEEK, MON', 'group_by', 411, 1);
+(407, 'str', 'You can group results by packet to get an easier to read chart. You can choose, HOUR, DAY, WEEK, MONTH. If you don''t want to group your data, choose N', 'group_by', 411, 1),
+(369, 'int', 'Size of the random dither in px.', 'dither', 459, 1),
+(369, 'float', 'Opacity of each point on the map, between 0 and 1.', 'opacity', 460, 1),
+(377, 'int', 'Size of the random dither in degree.', 'dither', 496, 1),
+(377, 'float', 'Opacity of each point on the map, between 0 and 1.', 'opacity', 497, 1),
+(372, 'int', 'Size of the font used in the bubble in px.', 'font_size', 535, 1),
+(372, 'bool', 'Indicate wether the text will be in a bubble or not. true or false.', 'draw_bubble', 561, 1);
 
 -- --------------------------------------------------------
 
@@ -225,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_set` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`id_widget`),
   KEY `id_widget` (`id_widget`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=397 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=477 ;
 
 --
 -- Dumping data for table `widget_parameter_set`
@@ -290,11 +309,17 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (300, 365, '1'),
 (301, 366, '15'),
 (303, 367, '100000'),
+(304, 459, '7'),
+(304, 460, '0.25'),
 (305, 368, '100'),
 (306, 369, '600000'),
 (306, 370, '1'),
 (306, 371, '15'),
+(307, 535, '30'),
+(307, 561, 'true'),
 (308, 372, '5'),
+(312, 496, '2'),
+(312, 497, '0.25'),
 (313, 366, '45'),
 (314, 364, '10000'),
 (314, 365, '1'),

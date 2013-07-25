@@ -3,7 +3,7 @@
  * @author Matrat Erwam
  **/
 
-function DnsDisplayerCanvas(id, font_size) {
+function DnsDisplayerCanvas(id, font_size, draw_bubble) {
     // inheritance from DnsDisplayer
     DnsDisplayer.call(this, id);
 
@@ -11,6 +11,7 @@ function DnsDisplayerCanvas(id, font_size) {
 
     this.id = id;
     this.font_size = font_size;
+    this.draw_bubble = draw_bubble;
 
     // add the canvas to the DOM
     this.canvas = document.createElement('canvas');
@@ -83,7 +84,7 @@ DnsDisplayerCanvas.prototype.addBubble = function(dnsName) {
     // var y = this.canvas.height ;
     var indexImg = Math.floor(Math.random()*this.images.length);
 
-    var bubble = new BubbleDns(this.context, this.canvas.width, this.canvas.height, dnsName, 0, this.images[indexImg], this.font_size);
+    var bubble = new BubbleDns(this.context, this.canvas.width, this.canvas.height, dnsName, 0, this.images[indexImg], this.font_size, this.draw_bubble);
 
     this.bubbles.push(bubble);
 };
