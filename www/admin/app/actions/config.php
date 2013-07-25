@@ -1,13 +1,13 @@
 <?php
 $this['config_page'] = 'active';
 
-require_once '../ndop.conf.php';
-
 // will be true if some connection infomations exist in the ndop.config.ini file.
 $database_info = false;
 // will be true if the connection to the database works
 $database_connection = false;
-
+$database_login = '';
+$database_password = '';
+$database_address='';
 // check the database connection
 if( isset(NDOP::$app['database_address']) && 
 	isset(NDOP::$app['database_login']) && 
@@ -18,6 +18,7 @@ if( isset(NDOP::$app['database_address']) &&
 	$database_address = NDOP::$app['database_address'];
 	$database_login = NDOP::$app['database_login'];
 	$database_password = NDOP::$app['database_password'];
+
 
 	// we need to check if the connection went well
 	if($this['database']){

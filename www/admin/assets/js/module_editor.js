@@ -120,7 +120,7 @@ ModuleConfig.prototype.saveConfig = function() {
     } else {
         $.ajax({
             type: "POST",
-            url: "/admin/sql/save_config_module.php",
+            url: "../../../admin/sql/save_config_module.php",
             data: {
                 module: JSON.stringify(this.layout),
                 'id': this.id_module,
@@ -159,7 +159,7 @@ ModuleConfig.prototype.loadModule = function() {
     }
     $.ajax({
         type: "GET",
-        url: "/admin/sql/get_config_module.php?id=" + this.id_module,
+        url: "../../../admin/sql/get_config_module.php?id=" + this.id_module,
         success: success.bind(this),
         dataType: 'json'
     });

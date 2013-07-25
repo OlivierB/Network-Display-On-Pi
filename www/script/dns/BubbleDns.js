@@ -3,28 +3,39 @@
  * @author Matrat Erwan
  **/
 
-function BubbleDns(context, x, y, text, limitY, image, size) {
+function BubbleDns(context, canvas_width, canvas_height, text, limitY, image, font_size, draw_bubble) {
     this.context = context;
-    this.x = x;
-    this.y = y;
+
+    this.canvas_width = canvas_width;
+    this.canvas_height = canvas_height;
+
     this.text = text;
     this.limitY = limitY;
     this.image = image;
-    this.size = size;
+    this.font_size = font_size;
+    this.draw_bubble = draw_bubble;
+
 
     this.moveX = 0;
+
+
+    this.context.font = "bold "+this.font_size+"pt ChampWoff";
+    this.context.textAlign = 'center';
+
+    this.size = this.context.measureText(this.text).width + 20;
+    this.semi_size = this.size / 2;
+
+    this.x = Math.random() * (this.canvas_width - this.size) + this.semi_size;
+    this.y = this.canvas_height + this.semi_size;
 
 }
 
 BubbleDns.prototype.display = function() {
-    this.context.font = "bold 15pt ChampWoff";
-    this.context.textAlign = 'center';
-    var size = this.context.measureText(this.text).width + 20;
-    this.context.fillText(this.text, this.x + size/2, this.y + size/2);
 
-    this.context.drawImage(this.image, this.x, this.y, size, size);
-
-    this.size = size;
+    this.context.fillText(this.text, this.x + 0, this.y + 0);
+    if(this.draw_bubble){
+        this.context.drawImage(this.image, this.x - this.semi_size, this.y - this.semi_size, this.size, this.size);
+    }
 };
 
 // Make the bubble go up and give a random change of direction

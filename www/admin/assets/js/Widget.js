@@ -28,7 +28,7 @@ Widget.prototype.loadFromDatabase = function(id) {
     }
     $.ajax({
         type: "GET",
-        url: "/admin/sql/get_widget.php?id=" + id,
+        url: "../../../admin/sql/get_widget.php?id=" + id,
         success: success.bind(this),
         dataType: 'json',
         async: false
@@ -55,7 +55,7 @@ Widget.prototype.addToDOM = function(container) {
 
     if (this.name) {
         html += "<div class='module chosen_widget' id='chosen_widget_" + this.dom_id + "'>";
-        html += "   <img src='/widgets/" + this.folder_name + "/thumbnail.png'>";
+        html += "   <img src='../../../widgets/" + this.folder_name + "/thumbnail.png'>";
         html += "</div>";
     }
     html += '</div>';
@@ -76,7 +76,7 @@ Widget.prototype.loadParameter = function() {
     }
     $.ajax({
         type: "GET",
-        url: "/admin/sql/get_widget.php?id=" + this.db_id,
+        url: "../../../admin/sql/get_widget.php?id=" + this.db_id,
         success: success.bind(this),
         dataType: 'json',
         async: false

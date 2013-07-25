@@ -22,4 +22,4 @@ $(function(){
 });
 </script>
 
-<link rel="stylesheet" type="text/css" href="/widgets/DnsText/style.css">
+<link rel="stylesheet" type="text/css" href="widgets/DnsText/style.css">

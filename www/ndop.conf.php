@@ -2,7 +2,7 @@
 
 require_once "pages/NDOP.php";
 
-NDOP::init();
+NDOP::init('ndop.conf.ini');
 
 NDOP::$app['debug'] = true;
 

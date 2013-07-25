@@ -14,7 +14,7 @@
 	width: 13px;
 	height: 0;
 	padding-top: 13px;
-	background-image: url(/res/img/pagination.png);
+	background-image: url(../res/img/pagination.png);
 	background-position: 0 0;
 	float: left;
 	overflow: hidden;
@@ -68,7 +68,7 @@
 
 .slidesjs-play {
 	font-family: FontAwesome;
-	background-image: url(/res/img/play.png);
+	background-image: url(../res/img/play.png);
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	
@@ -80,7 +80,7 @@
 }
 .slidesjs-play:hover  {
 	font-family: FontAwesome;
-	background-image: url(/res/img/play.png);
+	background-image: url(../res/img/play.png);
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	
@@ -92,7 +92,7 @@
 
 .slidesjs-stop{
 	font-family: FontAwesome;
-	background-image: url(/res/img/pause.png);
+	background-image: url(../res/img/pause.png);
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	
@@ -102,7 +102,7 @@
 
 .slidesjs-stop:hover{
 	font-family: FontAwesome;
-	background-image: url(/res/img/pause.png);
+	background-image: url(res/img/pause.png);
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	

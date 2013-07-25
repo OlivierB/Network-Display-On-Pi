@@ -24,7 +24,7 @@ AjaxManager.prototype.load = function() {
 
     $.ajax({
         type: "GET",
-        url: "http://" + this.address + this.path,
+        url: this.path,
         async: true,
         success: function(data) {
             data = $.parseJSON(data);

@@ -3,13 +3,15 @@
  * @author Matrat Erwam
  **/
 
-function DnsDisplayerCanvas(id) {
+function DnsDisplayerCanvas(id, font_size, draw_bubble) {
     // inheritance from DnsDisplayer
     DnsDisplayer.call(this, id);
 
     this.bubbles = [];
 
     this.id = id;
+    this.font_size = font_size;
+    this.draw_bubble = draw_bubble;
 
     // add the canvas to the DOM
     this.canvas = document.createElement('canvas');
@@ -24,19 +26,19 @@ function DnsDisplayerCanvas(id) {
     this.images = [];
 
     var img = new Image();
-    img.src = '/res/img/redBubble.png';
+    img.src = 'res/img/redBubble.png';
     this.images[0] = img;
 
     img = new Image();
-    img.src = '/res/img/blueBubble.png';
+    img.src = 'res/img/blueBubble.png';
     this.images[1] = img;
 
     img = new Image();
-    img.src = '/res/img/greenBubble.png';
+    img.src = 'res/img/greenBubble.png';
     this.images[2] = img;
 
     img = new Image();
-    img.src = '/res/img/bubble.png';
+    img.src = 'res/img/bubble.png';
     this.images[3] = img;
     img.onload = function() {
         this.busy = false;
@@ -78,12 +80,12 @@ DnsDisplayerCanvas.prototype.addItem = function() {
 };
 
 DnsDisplayerCanvas.prototype.addBubble = function(dnsName) {
-    var x = Math.random() * (this.canvas.width - this.bubbleSize);
-    var y = this.canvas.height ;
-
+    // var x = Math.random() * (this.canvas.width - this.bubbleSize/2);
+    // var y = this.canvas.height ;
     var indexImg = Math.floor(Math.random()*this.images.length);
 
-    var bubble = new BubbleDns(this.context, x, y, dnsName, 0, this.images[indexImg], this.bubbleSize);
+    var bubble = new BubbleDns(this.context, this.canvas.width, this.canvas.height, dnsName, 0, this.images[indexImg], this.font_size, this.draw_bubble);
+
     this.bubbles.push(bubble);
 };
 

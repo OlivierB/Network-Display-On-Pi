@@ -20,7 +20,7 @@
 		</div>
 	</div>
 
-<script src="/widgets/Network3D/Network3D.conf.js"></script>
+<script src="widgets/Network3D/Network3D.conf.js"></script>
 
 <script type="text/javascript">
 $(function(){
@@ -30,6 +30,6 @@ $(function(){
 });
 </script>
 
-<link rel="stylesheet" type="text/css" href="/widgets/Network3D/style.css">
+<link rel="stylesheet" type="text/css" href="widgets/Network3D/style.css">
 
 
