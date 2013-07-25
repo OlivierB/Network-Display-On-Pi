@@ -159,7 +159,7 @@ ModuleConfig.prototype.loadModule = function() {
     }
     $.ajax({
         type: "GET",
-        url: "./admin/sql/get_config_module.php?id=" + this.id_module,
+        url: "../../../admin/sql/get_config_module.php?id=" + this.id_module,
         success: success.bind(this),
         dataType: 'json'
     });
