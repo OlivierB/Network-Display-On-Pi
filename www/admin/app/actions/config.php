@@ -58,6 +58,60 @@ if( isset(NDOP::$app['database_address']) &&
 	$database_password = '';
 }
 
+// *******************************************************
+
+// will be true if some connection infomations exist in the database.
+$ndop_database_info = false;
+// will be true if the connection to the server works
+$ndop_database_connection = false;
+
+if($database_connection){
+	$sql = "SELECT * FROM server_information WHERE  `name` =  'ndop_database'";
+	$results = $this['database']->query($sql);
+	$data_server_infos = $results->fetch();
+
+	if(isset($data_server_infos['ip']) && $data_server_infos['port']){
+		$ndop_database_address = $data_server_infos['ip'];
+		$ndop_database_port = $data_server_infos['port'];
+		$ndop_database_login = $data_server_infos['login'];
+		$ndop_database_password = $data_server_infos['password'];
+		$ndop_database_info = true;
+
+		try{
+			$db_tmp =  new PDO("mysql:host=".$ndop_database_address.';port='.$ndop_database_port.";", $ndop_database_login, $ndop_database_password,array(PDO::ATTR_TIMEOUT => "1"));
+		
+			$ndop_database_connection = true;
+			$ndop_database_state = 'alert-success';
+		}catch(PDOException $e)
+	    {
+	    	$ndop_database_state = 'alert-block';
+	    }
+
+		
+		
+
+
+	}else{
+		$ndop_database_state = 'alert-error';
+		$ndop_database_address = '';
+		$ndop_database_port = '';
+		$ndop_database_login = '';
+		$ndop_database_password = '';
+	}
+	
+}else{
+	$ndop_database_state = 'alert-error';
+	$ndop_database_address = '';
+	$ndop_database_port = '';
+	$ndop_database_login = '';
+	$ndop_database_password = '';
+}
+
+
+
+// ************************************************
+
+
 
 // check the NDOP data server connection
 

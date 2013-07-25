@@ -47,6 +47,53 @@
 
 	</div>
 <?php if($database_connection){ ?>
+	<h2>NDOP database configuration</h2>
+	<div class='alert <?= $ndop_database_state ?>' >
+		<?php if($ndop_database_connection){ ?>
+		The NDOP database is correctly configured, you can continue.
+		<?php }elseif($ndop_database_info){ ?>
+		Some Information you provided to access the database are not correct, please retry. Check the IP of the machine which hosts the database program and check that the user you provided has enough priviliges to use SELECT in it.
+		<?php }else{ ?>
+		Please fill in the form.
+		<?php } ?>
+
+
+		<div class="accordion" id="accordion4">
+			<div class="accordion-group">
+				<form action="<?= $this->url('sql/config_NDOP_database') ?>" method="POST">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#collapseFour">
+							NDOP database form
+						</a>
+					</div>
+					<div id="collapseFour" class="accordion-body collapse <?php if(!$ndop_database_connection){echo 'in';} ?>">
+						<div class="accordion-inner">
+							<label>Adress</label>
+							<input name="ndop_database_address" type="text" placeholder="IP of your NDOP database" value='<?= $ndop_database_address ?>'>
+							<span class="help-block">Ex: 192.168.1.15 or www.myhostname.com</span>
+
+							<label>Port</label>
+							<input name="ndop_database_port" type="number" placeholder="Port of your NDOP database" value='<?= $ndop_database_port ?>'>
+							<span class="help-block">Ex: 3306 by default</span>
+
+							<label>Login</label>
+							<input name="ndop_database_login" type="text" placeholder="Login of your NDOP database" value='<?= $ndop_database_login ?>'>
+							<span class="help-block">Ex: myndopdatabaselogin</span>
+
+							<label>Password</label>
+							<input name="ndop_database_password" type="password" placeholder="Password of your NDOP database" value='<?= $ndop_database_password ?>'>
+							<span class="help-block">Ex: myndopdatabasepassword</span>
+
+							<button type="submit" class="btn">Submit</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
 	<h2>Servers configuration</h2>
 
 	<div class='alert <?= $data_server_state ?>' >

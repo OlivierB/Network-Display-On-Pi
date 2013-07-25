@@ -13,3 +13,14 @@
 
 - module admin
 	- check the right for 'ndop.conf.ini' on another pc
+
+
+
+- instructions
+	- changer le proprietaire du dossier www
+	- activer htaccess + module rewriteip 
+	- PDO active
+	- base sql ouvert a l'exterieur (fichier my.cnf bind=127.0.0.1 a commenter)
+	- autoriser son utilisateur a creer des db ou utiliser le fichier de creation contenu dans BDD/
+
+	-BASE ?
