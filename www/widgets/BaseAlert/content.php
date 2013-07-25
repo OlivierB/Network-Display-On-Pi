@@ -9,4 +9,4 @@ $(function(){
 });
 </script>
 
-<link rel="stylesheet" href="/widgets/BaseAlert/style.css">
+<link rel="stylesheet" href="widgets/BaseAlert/style.css">
