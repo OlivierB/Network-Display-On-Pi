@@ -3,7 +3,7 @@
  * Called by the config page to save the database id to the ndop.conf.ini file.
  **/
 
-if($file = fopen('../ndop.conf.ini', 'w')){
+if($file = @fopen('../ndop.conf.ini', 'w')){
 	if( isset($_POST['database_address']) && 
 		isset($_POST['database_login']) && 
 		isset($_POST['database_password']))
@@ -20,7 +20,7 @@ if($file = fopen('../ndop.conf.ini', 'w')){
 	}
 		
 }else{
-	echo 'Cannot write in the file <strong>ndop.conf.ini</strong>';
+	echo 'Cannot write in the file <strong>ndop.conf.ini</strong>. The owner of the NDOP www/ folder need to be www-data (or the user who run the web server program).';
 }
 
 
