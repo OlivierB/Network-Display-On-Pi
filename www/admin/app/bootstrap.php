@@ -2,7 +2,7 @@
 require_once '../ndop.conf.php';
 
 
-NDOP::$app = parse_ini_file('../ndop.conf.ini');
+NDOP::$app = @parse_ini_file('../ndop.conf.ini');
 
 if( isset(NDOP::$app['database_address']) && 
     isset(NDOP::$app['database_login']) && 
