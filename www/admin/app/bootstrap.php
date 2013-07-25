@@ -2,5 +2,6 @@
 
 require_once "../pages/NDOP.php";
 NDOP::init('../ndop.conf.ini');
-
-Atomik::set('database', NDOP::$app['db']);
+if(isset(NDOP::$app['db'])){
+	Atomik::set('database', NDOP::$app['db']);
+}
