@@ -1,5 +1,5 @@
 <?php
-include 'ndop.conf.php';
+require 'ndop.conf.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
