@@ -55,7 +55,7 @@ Widget.prototype.addToDOM = function(container) {
 
     if (this.name) {
         html += "<div class='module chosen_widget' id='chosen_widget_" + this.dom_id + "'>";
-        html += "   <img src='/widgets/" + this.folder_name + "/thumbnail.png'>";
+        html += "   <img src='../../../widgets/" + this.folder_name + "/thumbnail.png'>";
         html += "</div>";
     }
     html += '</div>';
