@@ -1,8 +1,6 @@
 <?php
 $this['config_page'] = 'active';
 
-require_once '../ndop.conf.php';
-
 // will be true if some connection infomations exist in the ndop.config.ini file.
 $database_info = false;
 // will be true if the connection to the database works
