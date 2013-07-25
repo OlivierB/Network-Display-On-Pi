@@ -76,7 +76,7 @@ Widget.prototype.loadParameter = function() {
     }
     $.ajax({
         type: "GET",
-        url: "/admin/sql/get_widget.php?id=" + this.db_id,
+        url: "../../../admin/sql/get_widget.php?id=" + this.db_id,
         success: success.bind(this),
         dataType: 'json',
         async: false
