@@ -28,7 +28,7 @@ Widget.prototype.loadFromDatabase = function(id) {
     }
     $.ajax({
         type: "GET",
-        url: "/admin/sql/get_widget.php?id=" + id,
+        url: "../../../admin/sql/get_widget.php?id=" + id,
         success: success.bind(this),
         dataType: 'json',
         async: false
