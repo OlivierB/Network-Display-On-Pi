@@ -120,7 +120,7 @@ LayoutConfig.prototype.saveConfig = function() {
     } else {
         $.ajax({
             type: "POST",
-            url: "/admin/sql/save_config_layout.php",
+            url: "./sql/save_config_layout.php",
             data: {
                 'pages[]': this.layout
 
