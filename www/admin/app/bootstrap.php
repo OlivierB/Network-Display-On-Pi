@@ -1,19 +1,6 @@
 <?php
-require_once '../ndop.conf.php';
 
+require_once "../pages/NDOP.php";
+NDOP::init('../ndop.conf.ini');
 
-NDOP::$app = @parse_ini_file('../ndop.conf.ini');
-
-if( isset(NDOP::$app['database_address']) && 
-    isset(NDOP::$app['database_login']) && 
-    isset(NDOP::$app['database_password']) )
-{
-    try {
-        $dbh = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
-        Atomik::set('database', $dbh);
-    }
-    catch(PDOException $e)
-    {
-        
-    }
-}
+Atomik::set('database', NDOP::$app['db']);
