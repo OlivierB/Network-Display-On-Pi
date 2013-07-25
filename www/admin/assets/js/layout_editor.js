@@ -161,7 +161,7 @@ LayoutConfig.prototype.loadLayout = function() {
     }
     $.ajax({
         type: "GET",
-        url: "/admin/sql/get_config_layout.php",
+        url: "./admin/sql/get_config_layout.php",
         success: success.bind(this),
         dataType: 'json'
     });
