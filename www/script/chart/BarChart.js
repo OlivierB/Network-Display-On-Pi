@@ -26,6 +26,9 @@ function BarChart(id, title) {
             labelFontColor: 'black'
 
         },
+        axisY: {
+            title: "Packet number"
+        },
 
         data: [{
                 type: "column",

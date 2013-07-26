@@ -69,23 +69,27 @@ PacketLossChart.prototype.updateChart = function(total_, handled_, time_) {
 		this.xVal = new Date(time_);
 		// console.log('p '+this.xVal)
 	}
-	else
+	else{
 		this.xVal = new Date();
-	if(total_ != 0)
-		var percent_loss = ((total_ - handled_)/total_)*100;
-	else
-		var percent_loss = 0;
-	
+	}
+	var percent_loss;
+	if(total_ !== 0){
+		percent_loss = ((total_ - handled_)/total_)*100;
+	}
+	else{
+		percent_loss = 0;
+	}
+
 	yVal1 = total_;
 	this.number_packets_total.push({
 		x: this.xVal,
-		y: yVal1,
+		y: yVal1
 	});
 
 	yVal2 = percent_loss;
 	this.number_packets_loss.push({
 		x: this.xVal,
-		y: yVal2,
+		y: yVal2
 	});
 
 
@@ -96,14 +100,14 @@ PacketLossChart.prototype.updateChart = function(total_, handled_, time_) {
 		this.number_packets_loss.shift();
 	}
 
-}
+};
 
 
 PacketLossChart.prototype.clean = function() {
 	this.number_packets_total.length = 0;
 	this.number_packets_loss.length = 0;
-}
+};
 
 PacketLossChart.prototype.refresh = function() {
 	this.chart.render();
-}
+};
