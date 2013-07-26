@@ -127,6 +127,38 @@ python client --addr ADDRESS:PORT
 ```
 
 # Integrated web client
+
+## Requirements
+
+* web server :
+	* Apache
+		* htaccess activated
+		* rewrite module (a2enmod)
+	* Php 5
+		* PDO activated
+	* Mysql
+
+* optionnal installation
+	* Freegeoip : You can use the www.freegeoip.net free website but the number of request per day is limited, you might want to install your own server. It's free and quite easy. Go to https://github.com/fiorix/freegeoip.
+
+## Installation
+
+Download the git repository or clone it:
+```git clone https://github.com/OlivierB/Network-Display-On-Pi.git```
+
+Put the www/ folder into your Apache directory or change your Apache configuration to bind it to the www/ folder:
+```mv www/ /var/www/ndop/```
+
+You will probably need to change the owner of this folder. By default Apache is running under www-data user and group.
+```chown -R www-data /var/www/ndop/```
+
+Go to the URL corresponding to the location you chose in your browser. You should see a page telling you to go to the administration page. You can now follow instructions given on the website.
+
+
+## Uninstall
+
+If you want to erase the NDOP GUI from your system you can erase the folder you created during the installation (/var/www/ndop/ in the example). You should also erase the database, its name is NDOP_GUI.
+
 ## Configure a basic monitoring computer
 
 ### Install :
