@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 26, 2013 at 12:51 PM
+-- Generation Time: Jul 26, 2013 at 03:32 PM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
 
@@ -40,7 +40,17 @@ CREATE TABLE IF NOT EXISTS `layout` (
 --
 
 INSERT INTO `layout` (`page`, `id_module`) VALUES
-(0, 358);
+(6, 370),
+(0, 371),
+(1, 372),
+(2, 373),
+(3, 374),
+(10, 375),
+(9, 376),
+(7, 377),
+(8, 378),
+(4, 379),
+(5, 381);
 
 -- --------------------------------------------------------
 
@@ -53,25 +63,25 @@ CREATE TABLE IF NOT EXISTS `module` (
   `name` varchar(100) NOT NULL,
   `description` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=370 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=382 ;
 
 --
 -- Dumping data for table `module`
 --
 
 INSERT INTO `module` (`id`, `name`, `description`) VALUES
-(358, 'Network 3D', 'Display communications between machins in a 3D scene.'),
-(359, 'Live statistics', 'Display the current data about the bandwidth and type of protocols.'),
-(360, 'Daily statistics', 'Display the data for the last 4 hours about the bandwidth and type of protocols.'),
-(361, 'Weekly traffic', 'Network Statistics for the last 7 days.'),
-(362, 'Monthly statistics', 'Network statistics for the last 30 days.'),
-(363, 'DNS Bubble', 'A display for DNS requests as bubble.'),
-(364, 'DNS request', 'Display dns requests in a table.'),
-(365, 'IP map offline', 'Display the location of IPs source or target of packets going through the network. This display don''t use the openStreetMap database.'),
-(366, 'IP map online', 'Display the location of IPs source or target of packet going through the network. Map from Leaflet and OpenStreetMap.'),
-(367, 'NDOP Server statistics', 'Dysplay the state of the machine hosting the NDOP program.'),
-(368, 'SNORT IDS', 'Display alerts from the SNORT IDS. You need to install SNORT on your system to use this module.'),
-(369, 'Summary', 'Display the total bandwidth used by the network.');
+(370, 'Network 3D', 'Display communications between machins in a 3D scene.'),
+(371, 'Live statistics', 'Display the current data about the bandwidth and type of protocols.'),
+(372, 'Daily statistics', 'Display the data for the last 24 hours about the bandwidth and type of protocols.'),
+(373, 'Weekly statistics', 'Display data for the last 7 days about the bandwidth and type of protocols.'),
+(374, 'Monthly statistics', 'Network statistics for the last 30 days.'),
+(375, 'DNS Bubble', 'A display for DNS requests as bubble.'),
+(376, 'DNS request', 'Display dns requests in a table.'),
+(377, 'IP map offline', 'Display the location of IPs source or target of packets going through the network. This display don''''t use the openStreetMap database.'),
+(378, 'IP map online', 'Display the location of IPs source or target of packet going through the network. Map from Leaflet and OpenStreetMap.'),
+(379, 'NDOP Server statistics', 'Dysplay the state of the machine hosting the NDOP program.'),
+(380, 'SNORT IDS', 'Display alerts from the SNORT IDS. You need to install SNORT on your system to use this module.'),
+(381, 'Summary', 'Display the total bandwidth used by the network.');
 
 -- --------------------------------------------------------
 
@@ -92,35 +102,37 @@ CREATE TABLE IF NOT EXISTS `module_composition_widget` (
   KEY `id_widget` (`id_widget`),
   KEY `id_widget_parameter_set` (`id_widget_parameter_set`),
   KEY `id_module` (`id_module`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=372 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=401 ;
 
 --
 -- Dumping data for table `module_composition_widget`
 --
 
 INSERT INTO `module_composition_widget` (`id`, `id_module`, `id_widget`, `x`, `y`, `width`, `height`, `id_widget_parameter_set`) VALUES
-(341, 360, 365, 0, 0, 8, 1, 314),
-(342, 360, 371, 8, 0, 4, 1, 322),
-(343, 360, 403, 0, 1, 6, 1, 374),
-(344, 360, 407, 6, 1, 6, 1, 393),
-(345, 361, 365, 0, 0, 8, 1, 317),
-(346, 361, 371, 8, 0, 4, 1, 321),
-(347, 361, 403, 0, 1, 6, 1, 391),
-(348, 361, 407, 6, 1, 6, 1, 394),
-(349, 362, 365, 0, 0, 8, 1, 318),
-(350, 362, 371, 8, 0, 4, 1, 323),
-(351, 362, 403, 0, 1, 6, 1, 392),
-(352, 362, 407, 6, 1, 6, 1, 395),
-(353, 363, 372, 0, 0, 12, 2, 307),
-(354, 364, 364, 0, 0, 12, 2, 299),
-(358, 368, 363, 0, 0, 12, 2, 298),
-(359, 369, 368, 2, 0, 8, 2, 303),
-(365, 359, 375, 0, 0, 8, 1, 310),
-(366, 359, 366, 8, 0, 4, 1, 313),
-(367, 359, 402, 0, 1, 6, 1, 351),
-(368, 365, 369, 0, 0, 12, 2, 304),
-(369, 367, 370, 3, 0, 6, 1, 305),
-(370, 366, 377, 0, 0, 12, 2, 312);
+(373, 370, 868, 0, 0, 12, 2, 824),
+(374, 371, 870, 0, 0, 8, 1, 826),
+(375, 371, 860, 8, 0, 4, 1, 816),
+(376, 371, 869, 0, 1, 6, 1, 825),
+(377, 371, 866, 6, 1, 6, 1, 822),
+(382, 373, 859, 0, 0, 8, 1, 830),
+(383, 373, 867, 0, 1, 6, 1, 833),
+(384, 373, 871, 6, 1, 6, 1, 836),
+(385, 373, 864, 8, 0, 4, 1, 839),
+(386, 372, 859, 0, 0, 8, 1, 815),
+(387, 372, 864, 8, 0, 4, 1, 838),
+(388, 372, 867, 0, 1, 6, 1, 832),
+(389, 372, 871, 6, 1, 6, 1, 835),
+(390, 374, 859, 0, 0, 8, 1, 831),
+(391, 374, 867, 0, 1, 6, 1, 834),
+(392, 374, 871, 6, 1, 6, 1, 837),
+(393, 374, 864, 8, 0, 4, 1, 820),
+(394, 375, 865, 0, 0, 12, 2, 821),
+(395, 376, 858, 0, 0, 12, 2, 814),
+(396, 377, 862, 0, 0, 12, 2, 818),
+(397, 378, 872, 0, 0, 12, 2, 828),
+(398, 379, 863, 3, 0, 6, 1, 819),
+(399, 380, 857, 0, 0, 12, 2, 813),
+(400, 381, 861, 2, 0, 8, 2, 817);
 
 -- --------------------------------------------------------
 
@@ -139,6 +151,7 @@ CREATE TABLE IF NOT EXISTS `server_information` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 
+
 -- --------------------------------------------------------
 
 --
@@ -153,29 +166,29 @@ CREATE TABLE IF NOT EXISTS `widget` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `folder_name` (`folder_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=713 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=873 ;
 
 --
 -- Dumping data for table `widget`
 --
 
 INSERT INTO `widget` (`id`, `name`, `description`, `folder_name`, `updated`) VALUES
-(363, 'Snort table', 'This widget shows every alerts from the SNORT system. SNORT is a an open source network intrusion prevention and detection system (IDS/IPS) developed by Sourcefire (http://snort.org). The BASE GUI is used to display the datas (http://base.secureideas.net).', 'BaseAlert', 1),
-(364, 'DNS request list', 'Display the name of the domain requested by every DNS request going through the network in a list.', 'DnsText', 1),
-(365, 'Ajax Bandwidth chart', 'This widget shows the bandwidth data for a given number of days.', 'BandwidthChartAjax', 1),
-(366, 'Live bandwidth text', 'This widget shows the current bandwidth in a text form.', 'BandwidthTextWebsocket', 1),
-(368, 'Summary bamdwidth', 'Displays the global bandwidth used since the first record in the database.', 'Summary', 1),
-(369, 'Map offline', 'Display source and target IPs from the packets going through the network. This display works with a local map but required to configure freegeoip on the configuration page.', 'MapOffline', 1),
-(370, 'Server statistics', 'This widget shows memory, processor and swap use percentage.', 'ServerStat', 1),
-(371, 'Total Bandwidth text', 'This widget shows the total bandwidth for a given number of days in a text form.', 'BandwidthTextAjax', 1),
-(372, 'DNS request bubbles', 'Display the name of the domain requested by every DNS request going through the network as a bubble.', 'DnsBubble', 1),
-(375, 'Live bandwidth chart', 'This widget shows the current bandwidth data in a chart.', 'BandwidthChartWebsocket', 1),
-(377, 'Map online', 'Display source and target IPs from the packets going through the network. This display works with OpenstreetMap and LeafletJS but required to configure freegeoip on the configuration page.', 'MapOnline', 1),
-(402, 'Live IPV4 protocol chart', 'This widget shows the current number of packets going through the network for each IPV4 protocols (TCP, UDP, etc...) in a chart.', 'ProtocolIPV4Websocket', 1),
-(403, 'Ethernet protocol use chart', 'This widget shows rates of used protocols on the network.', 'ProtocolEthernetChartAjax', 1),
-(405, 'Live ethernet protocol chart', 'This widget shows the current number of packets going through the network for each ethernet protocols (IPV4, IPV6, etc...) in a chart.', 'ProtocolEthernetWebsocket', 1),
-(407, 'IPV4 subProtocol use chart', 'This widget shows the use of IPV4 subprotocols on the network. Datas are given for a number of days.', 'ProtocolIPV4Ajax', 1),
-(596, 'Network 3D', 'This widget displays the incoming, outcoming and local packet going through the network. Each computer is an entity in the 3D scene and packets are displayed as rays between computer.', 'Network3D', 1);
+(857, 'Snort table', 'This widget shows every alerts from the SNORT system. SNORT is a an open source network intrusion prevention and detection system (IDS/IPS) developed by Sourcefire (http://snort.org). The BASE GUI is used to display the datas (http://base.secureideas.net).', 'BaseAlert', 1),
+(858, 'DNS request list', 'Display the name of the domain requested by every DNS request going through the network in a list.', 'DnsText', 1),
+(859, 'Ajax Bandwidth chart', 'This widget shows the bandwidth data for a given number of days.', 'BandwidthChartAjax', 1),
+(860, 'Live bandwidth text', 'This widget shows the current bandwidth in a text form.', 'BandwidthTextWebsocket', 1),
+(861, 'Summary bamdwidth', 'Displays the global bandwidth used since the first record in the database.', 'Summary', 1),
+(862, 'Map offline', 'Display source and target IPs from the packets going through the network. This display works with a local map but required to configure freegeoip on the configuration page.', 'MapOffline', 1),
+(863, 'Server statistics', 'This widget shows memory, processor and swap use percentage.', 'ServerStat', 1),
+(864, 'Total Bandwidth text', 'This widget shows the total bandwidth for a given number of days in a text form.', 'BandwidthTextAjax', 1),
+(865, 'DNS request bubbles', 'Display the name of the domain requested by every DNS request going through the network as a bubble.', 'DnsBubble', 1),
+(866, 'Live IPV4 protocol chart', 'This widget shows the current number of packets going through the network for each IPV4 protocols (TCP, UDP, etc...) in a chart.', 'ProtocolIPV4Websocket', 1),
+(867, 'Ethernet protocol use chart', 'This widget shows rates of used protocols on the network.', 'ProtocolEthernetChartAjax', 1),
+(868, 'Network 3D', 'This widget displays the incoming, outcoming and local packet going through the network. Each computer is an entity in the 3D scene and packets are displayed as rays between computer.', 'Network3D', 1),
+(869, 'Live ethernet protocol chart', 'This widget shows the current number of packets going through the network for each ethernet protocols (IPV4, IPV6, etc...) in a chart.', 'ProtocolEthernetWebsocket', 1),
+(870, 'Live bandwidth chart', 'This widget shows the current bandwidth data in a chart.', 'BandwidthChartWebsocket', 1),
+(871, 'IPV4 subProtocol use chart', 'This widget shows the use of IPV4 subprotocols on the network. Datas are given for a number of days.', 'ProtocolIPV4Ajax', 1),
+(872, 'Map online', 'Display source and target IPs from the packets going through the network. This display works with OpenstreetMap and LeafletJS but required to configure freegeoip on the configuration page.', 'MapOnline', 1);
 
 -- --------------------------------------------------------
 
@@ -192,39 +205,40 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_design` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_widget` (`id_widget`,`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=886 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1156 ;
 
 --
 -- Dumping data for table `widget_parameter_design`
 --
 
 INSERT INTO `widget_parameter_design` (`id_widget`, `type`, `description`, `name`, `id`, `updated`) VALUES
-(363, 'int', 'number of milliseconds between two refreshes', 'refresh_time', 361, 1),
-(364, 'int', 'Number of items in the list at any time.', 'nb_item', 362, 1),
-(364, 'int', 'Size of the font use in the table.', 'font_size', 363, 1),
-(365, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 364, 1),
-(365, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 365, 1),
-(366, 'int', 'Size of the font.', 'font_size', 366, 1),
-(368, 'int', 'Number of milliseconds between 2 refreshes.', 'refresh_time', 367, 1),
-(370, 'int', 'Speed of the animation.', 'speed', 368, 1),
-(371, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 369, 1),
-(371, 'int', 'Number of days you want the statistics count for. 30 days means the statistics will be compute with the last 30 days.', 'nb_day', 370, 1),
-(371, 'int', 'Size of the font.', 'font_size', 371, 1),
-(403, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 403, 1),
-(403, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 404, 1),
-(403, 'str', 'Title of the chart.', 'title', 405, 1),
-(403, 'str', 'You can group results by packet to get an easier to read chart. You can choose&#44; HOUR&#44; DAY&#44; WEEK&#44; MONTH. If you don''t want to group your data&#44; choose NONE.', 'group_by', 406, 1),
-(407, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 408, 1),
-(407, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 409, 1),
-(407, 'str', 'Title of the chart.', 'title', 410, 1),
-(407, 'str', 'You can group results by packet to get an easier to read chart. You can choose&#44; HOUR&#44; DAY&#44; WEEK&#44; MONTH. If you don''t want to group your data&#44; choose NONE.', 'group_by', 411, 1),
-(369, 'int', 'Size of the random dither in px.', 'dither', 459, 1),
-(369, 'float', 'Opacity of each point on the map&#44; between 0 and 1.', 'opacity', 460, 1),
-(377, 'int', 'Size of the random dither in degree.', 'dither', 496, 1),
-(377, 'float', 'Opacity of each point on the map&#44; between 0 and 1.', 'opacity', 497, 1),
-(372, 'int', 'Size of the font used in the bubble in px.', 'font_size', 535, 1),
-(372, 'bool', 'Indicate wether the text will be in a bubble or not. true or false.', 'draw_bubble', 561, 1),
-(596, 'int', 'Quality of the 3D from 1 to infinite. The bigger&#44; the fancier.', 'quality', 697, 1);
+(857, 'int', 'number of milliseconds between two refreshes', 'refresh_time', 1129, 1),
+(858, 'int', 'Number of items in the list at any time.', 'nb_item', 1130, 1),
+(858, 'int', 'Size of the font use in the table.', 'font_size', 1131, 1),
+(859, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 1132, 1),
+(859, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 1133, 1),
+(860, 'int', 'Size of the font.', 'font_size', 1134, 1),
+(861, 'int', 'Number of milliseconds between 2 refreshes.', 'refresh_time', 1135, 1),
+(862, 'int', 'Size of the random dither in px.', 'dither', 1136, 1),
+(862, 'float', 'Opacity of each point on the map&#44; between 0 and 1.', 'opacity', 1137, 1),
+(863, 'int', 'Speed of the animation.', 'speed', 1138, 1),
+(864, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 1139, 1),
+(864, 'int', 'Number of days you want the statistics count for. 30 days means the statistics will be compute with the last 30 days.', 'nb_day', 1140, 1),
+(864, 'int', 'Size of the font.', 'font_size', 1141, 1),
+(865, 'int', 'Size of the font used in the bubble in px.', 'font_size', 1142, 1),
+(865, 'bool', 'Indicate wether the text will be in a bubble or not. true or false.', 'draw_bubble', 1143, 1),
+(867, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 1144, 1),
+(867, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 1145, 1),
+(867, 'str', 'Title of the chart.', 'title', 1146, 1),
+(867, 'str', 'You can group results by packet to get an easier to read chart. You can choose&#44; HOUR&#44; DAY&#44; WEEK&#44; MONTH. If you don''t want to group your data&#44; choose NONE.', 'group_by', 1147, 1),
+(868, 'int', 'Quality of the 3D from 1 to infinite. The bigger&#44; the fancier.', 'quality', 1148, 1),
+(868, 'str', 'You can change the color of some IPs by giving an address&#44; a mask&#44; a background color and a font color. The exemple below makes the 192.168.1.144 IP displayed in blue and black and every other IP from the 192.168.1.0/24 range in blue and white. If an element corresponds to several criterias&#44; it will respect the first it will meet. So you have to put the more precise criterias in the first places.<br>\n	{<br>\n		&nbsp;&nbsp;&nbsp;address: ''192.168.1.144''&#44;<br>\n		&nbsp;&nbsp;&nbsp;mask: 32&#44;<br>\n		&nbsp;&nbsp;&nbsp;textureColor: ''#7DC3F7''&#44;<br>\n		&nbsp;&nbsp;&nbsp;fontColor: ''black''<br>\n	}&#44;{<br>\n		&nbsp;&nbsp;&nbsp;address: ''192.168.1.0''&#44;<br>\n		&nbsp;&nbsp;&nbsp;mask: 24&#44;<br>\n		&nbsp;&nbsp;&nbsp;textureColor: ''blue''&#44;<br>\n		&nbsp;&nbsp;&nbsp;fontColor: ''#FFFFFF''<br>\n	}<br>', 'mask_customize', 1149, 1),
+(871, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 1150, 1),
+(871, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 1151, 1),
+(871, 'str', 'Title of the chart.', 'title', 1152, 1),
+(871, 'str', 'You can group results by packet to get an easier to read chart. You can choose&#44; HOUR&#44; DAY&#44; WEEK&#44; MONTH. If you don''t want to group your data&#44; choose NONE.', 'group_by', 1153, 1),
+(872, 'int', 'Size of the random dither in degree.', 'dither', 1154, 1),
+(872, 'float', 'Opacity of each point on the map&#44; between 0 and 1.', 'opacity', 1155, 1);
 
 -- --------------------------------------------------------
 
@@ -239,42 +253,41 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_set` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`id_widget`),
   KEY `id_widget` (`id_widget`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=669 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=841 ;
 
 --
 -- Dumping data for table `widget_parameter_set`
 --
 
 INSERT INTO `widget_parameter_set` (`id`, `name`, `id_widget`) VALUES
-(313, 'Big text', 366),
-(314, 'daily', 365),
-(322, 'daily', 371),
-(374, 'daily', 403),
-(393, 'daily', 407),
-(298, 'default', 363),
-(299, 'default', 364),
-(300, 'default', 365),
-(301, 'default', 366),
-(303, 'default', 368),
-(304, 'default', 369),
-(305, 'default', 370),
-(306, 'default', 371),
-(307, 'default', 372),
-(310, 'default', 375),
-(312, 'default', 377),
-(351, 'default', 402),
-(352, 'default', 403),
-(354, 'default', 405),
-(356, 'default', 407),
-(552, 'default', 596),
-(318, 'monthly', 365),
-(323, 'monthly', 371),
-(392, 'monthly', 403),
-(395, 'monthly', 407),
-(317, 'weekly', 365),
-(321, 'Weekly', 371),
-(391, 'weekly', 403),
-(394, 'weekly', 407);
+(829, 'daily', 859),
+(838, 'daily', 864),
+(832, 'daily', 867),
+(835, 'daily', 871),
+(813, 'default', 857),
+(814, 'default', 858),
+(815, 'default', 859),
+(816, 'default', 860),
+(817, 'default', 861),
+(818, 'default', 862),
+(819, 'default', 863),
+(820, 'default', 864),
+(821, 'default', 865),
+(822, 'default', 866),
+(823, 'default', 867),
+(824, 'default', 868),
+(825, 'default', 869),
+(826, 'default', 870),
+(827, 'default', 871),
+(828, 'default', 872),
+(831, 'monthly', 859),
+(840, 'monthly', 864),
+(834, 'monthly', 867),
+(837, 'monthly', 871),
+(830, 'weekly', 859),
+(839, 'weekly', 864),
+(833, 'weekly', 867),
+(836, 'weekly', 871);
 
 -- --------------------------------------------------------
 
@@ -296,72 +309,72 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_value` (
 --
 
 INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
-(298, 361, '10000'),
-(299, 362, '15'),
-(299, 363, '30'),
-(300, 364, '10000'),
-(300, 365, '1'),
-(301, 366, '15'),
-(303, 367, '100000'),
-(304, 459, '7'),
-(304, 460, '0.25'),
-(305, 368, '100'),
-(306, 369, '600000'),
-(306, 370, '1'),
-(306, 371, '15'),
-(307, 535, '30'),
-(307, 561, 'false'),
-(312, 496, '2'),
-(312, 497, '0.25'),
-(313, 366, '45'),
-(314, 364, '10000'),
-(314, 365, '1'),
-(317, 364, '10000'),
-(317, 365, '7'),
-(318, 364, '10000'),
-(318, 365, '30'),
-(321, 369, '600000'),
-(321, 370, '7'),
-(321, 371, '45'),
-(322, 369, '600000'),
-(322, 370, '1'),
-(322, 371, '45'),
-(323, 369, '600000'),
-(323, 370, '30'),
-(323, 371, '45'),
-(352, 403, '10000'),
-(352, 404, '1'),
-(352, 405, ''),
-(352, 406, 'NONE'),
-(356, 408, '10000'),
-(356, 409, '1'),
-(356, 410, ''),
-(356, 411, 'NONE'),
-(374, 403, '10000'),
-(374, 404, '1'),
-(374, 405, 'Daily protocol use'),
-(374, 406, 'NONE'),
-(391, 403, '10000'),
-(391, 404, '7'),
-(391, 405, 'Weekly protocol use'),
-(391, 406, 'HOUR'),
-(392, 403, '10000'),
-(392, 404, '30'),
-(392, 405, 'Monthly protocol use'),
-(392, 406, 'DAY'),
-(393, 408, '10000'),
-(393, 409, '1'),
-(393, 410, 'Daily IPV4 subprotocols use'),
-(393, 411, 'NONE'),
-(394, 408, '10000'),
-(394, 409, '7'),
-(394, 410, 'Weekly IPV4 subprotocols use'),
-(394, 411, 'HOUR'),
-(395, 408, '10000'),
-(395, 409, '30'),
-(395, 410, 'Monthly  IPV4 subprotocols use'),
-(395, 411, 'DAY'),
-(552, 697, '5');
+(813, 1129, '30000'),
+(814, 1130, '15'),
+(814, 1131, '30'),
+(815, 1132, '10000'),
+(815, 1133, '1'),
+(816, 1134, '45'),
+(817, 1135, '65000'),
+(818, 1136, '10'),
+(818, 1137, '0.25'),
+(819, 1138, '100'),
+(820, 1139, '600000'),
+(820, 1140, '1'),
+(820, 1141, '45'),
+(821, 1142, '20'),
+(821, 1143, 'true'),
+(823, 1144, '10000'),
+(823, 1145, '1'),
+(823, 1146, ''),
+(823, 1147, 'NONE'),
+(824, 1148, '5'),
+(824, 1149, ''),
+(827, 1150, '10000'),
+(827, 1151, '1'),
+(827, 1152, ''),
+(827, 1153, 'NONE'),
+(828, 1154, '2'),
+(828, 1155, '0.25'),
+(829, 1132, '600000'),
+(829, 1133, '1'),
+(830, 1132, '2100000'),
+(830, 1133, '7'),
+(831, 1132, '4500000'),
+(831, 1133, '30'),
+(832, 1144, '600000'),
+(832, 1145, '1'),
+(832, 1146, 'Daily protocol use '),
+(832, 1147, 'NONE'),
+(833, 1144, '2100000'),
+(833, 1145, '7'),
+(833, 1146, 'Weekly protocol use '),
+(833, 1147, 'HOUR'),
+(834, 1144, '4500000'),
+(834, 1145, '30'),
+(834, 1146, 'Monthly protocol use '),
+(834, 1147, 'DAY'),
+(835, 1150, '600000'),
+(835, 1151, '1'),
+(835, 1152, 'Daily IPV4 subprotocols use'),
+(835, 1153, 'NONE'),
+(836, 1150, '2100000'),
+(836, 1151, '7'),
+(836, 1152, 'Weekly IPV4 subprotocols use'),
+(836, 1153, 'HOUR'),
+(837, 1150, '4500000'),
+(837, 1151, '30'),
+(837, 1152, 'Monthly IPV4 subprotocols use'),
+(837, 1153, 'DAY'),
+(838, 1139, '600000'),
+(838, 1140, '1'),
+(838, 1141, '45'),
+(839, 1139, '2100000'),
+(839, 1140, '7'),
+(839, 1141, '45'),
+(840, 1139, '4500000'),
+(840, 1140, '30'),
+(840, 1141, '45');
 
 --
 -- Constraints for dumped tables
