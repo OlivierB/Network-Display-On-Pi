@@ -10,12 +10,14 @@ $database_password = '';
 $database_address='';
 // check the database connection
 if( isset(NDOP::$app['database_address']) && 
+	isset(NDOP::$app['database_port']) &&
 	isset(NDOP::$app['database_login']) && 
 	isset(NDOP::$app['database_password']) )
 {
 	// at this point we know the databases informations exists
 	$database_info = true;
 	$database_address = NDOP::$app['database_address'];
+	$database_port = NDOP::$app['database_port'];
 	$database_login = NDOP::$app['database_login'];
 	$database_password = NDOP::$app['database_password'];
 
@@ -31,12 +33,12 @@ if( isset(NDOP::$app['database_address']) &&
 
 		try{
 			// if we can't reach the database, we try to create it
-	        $db_tmp = new PDO("mysql:host=".NDOP::$app['database_address'].";", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
+	        $db_tmp = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".$database_port.";", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
 	        
 	        $request = file_get_contents("../BDD/NDOP_GUI.sql");
 			$db_tmp->exec($request);
 
-			$dbh = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
+			$dbh = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".$database_port.";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
 
 			Atomik::set('database', $dbh);
 			$database_connection = true;

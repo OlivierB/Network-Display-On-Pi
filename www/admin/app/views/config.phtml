@@ -17,7 +17,7 @@
 
 		<div class="accordion" id="accordion1">
 			<div class="accordion-group">
-				<form action="<?= $this->url('config_database') ?>" method="POST">
+				<form action="<?= $this->url('sql/config_database') ?>" method="POST">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#collapseOne">
 							Database form
@@ -28,6 +28,10 @@
 							<label>Adress</label>
 							<input name="database_address" type="text" placeholder="IP of your database server" value='<?= $database_address ?>'>
 							<span class="help-block">Ex: 192.168.1.15 or www.myhostname.com</span>
+
+							<label>Port</label>
+							<input name="database_port" type="number" placeholder="Port of your database" value='<?= $database_port ?>'>
+							<span class="help-block">Ex: 3306 by default</span>
 
 							<label>Login</label>
 							<input name="database_login" type="text" placeholder="Login of your database server" value='<?= $database_login ?>'>

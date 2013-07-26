@@ -11,11 +11,12 @@ Class NDOP {
 		NDOP::$app = parse_ini_file($path_ini_file);
 
 		if( isset(NDOP::$app['database_address']) && 
+			isset(NDOP::$app['database_port']) && 
 			isset(NDOP::$app['database_login']) && 
 			isset(NDOP::$app['database_password']) )
 		{
 			try {
-				NDOP::$app['db'] = new PDO("mysql:host=".NDOP::$app['database_address'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
+				NDOP::$app['db'] = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".NDOP::$app['database_port'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
 				NDOP::$app['db']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			}
