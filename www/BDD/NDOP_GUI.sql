@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 25, 2013 at 10:14 AM
+-- Generation Time: Jul 26, 2013 at 11:01 AM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
 
@@ -40,13 +40,18 @@ CREATE TABLE IF NOT EXISTS `layout` (
 --
 
 INSERT INTO `layout` (`page`, `id_module`) VALUES
-(6, 359),
-(1, 360),
-(0, 363),
-(3, 363),
+(8, 358),
+(5, 359),
+(0, 360),
+(11, 361),
+(6, 362),
+(1, 363),
 (2, 364),
+(3, 365),
 (4, 366),
-(5, 367);
+(7, 367),
+(9, 368),
+(10, 369);
 
 -- --------------------------------------------------------
 
@@ -140,8 +145,10 @@ CREATE TABLE IF NOT EXISTS `server_information` (
   `name` varchar(30) NOT NULL,
   `ip` varchar(150) NOT NULL,
   `port` int(11) NOT NULL,
+  `login` varchar(100) NOT NULL,
+  `password` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 
 -- --------------------------------------------------------
@@ -316,7 +323,7 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (306, 370, '1'),
 (306, 371, '15'),
 (307, 535, '30'),
-(307, 561, 'true'),
+(307, 561, 'false'),
 (308, 372, '5'),
 (312, 496, '2'),
 (312, 497, '0.25'),
