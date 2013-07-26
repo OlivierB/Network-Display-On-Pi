@@ -1,5 +1,5 @@
 /**
- * BarChart, Displays data as bar chart. Te data provided can be any array
+ * BarChart, Displays data as bar chart. The data provided can be any array
  * with couple (label, value) for each entry.
  * @author Matrat Erwan
  */

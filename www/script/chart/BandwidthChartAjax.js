@@ -1,3 +1,9 @@
+/**
+ * BandwidthChartAjax, class receiving local, out, in and global bandwidth from ajax request
+ * and displaying it in a chart.
+ * @author Matrat Erwan
+ **/
+
 function BandwidthChartAjax(id) {
 
     // inheritance from BandwidthChart

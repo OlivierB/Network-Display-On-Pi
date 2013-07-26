@@ -51,7 +51,7 @@ function Scene3D(id, quality) {
 // inheritance from WebSocketManager
 Scene3D.prototype = Object.create(WebSocketManager.prototype);
 
-
+// function needed by the WebSocketManager inheritance
 Scene3D.prototype.dataManager = function(obj) {
 
     // if (obj.remove_ip != null) {
@@ -237,9 +237,6 @@ Scene3D.prototype.animate = function() {
 };
 
 Scene3D.prototype.render = function() {
-
-
-    // console.log('ajout depuis rafr : ' + this.numberSatellitesAddedSinceRefresh);
     this.needDisplay = false;
 
 
@@ -250,7 +247,6 @@ Scene3D.prototype.render = function() {
 
     var i = this.rays.length;
     for ( ;i--;) {
-        // console.log(i);
         var ray = this.rays[i];
 
         if (!ray.update()) {

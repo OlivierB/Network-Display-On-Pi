@@ -1,3 +1,9 @@
+/**
+ * InformationsDisplay, display in a table the IPs corresponding 
+ * to the mask given by the parameter. Give the number of IPs for each range of IPs.
+ * @author Matrat Erwan
+ **/
+
 function InformationsDisplay(id_container) {
     this.loadConf();
     this.infos = [];
@@ -6,7 +12,7 @@ function InformationsDisplay(id_container) {
 }
 
 
-
+// Load the configuration giving the mask and transform into an Hexa number
 InformationsDisplay.prototype.loadConf = function() {
 
     for (var i = 0; i < Network3DMaskList.length; i++) {
@@ -20,11 +26,11 @@ InformationsDisplay.prototype.loadConf = function() {
 
 };
 
-
+// check if the IP corresponds to on of our masks and put it in an array
 InformationsDisplay.prototype.addIp = function(ip) {
     var i = 0,
         length = Network3DMaskList.length;
-
+    // search for the first corresponding mask
     while (i < length && (Network3DMaskList[i].addressHexa != this.maskIp(ip, Network3DMaskList[i].mask))) {
         i++;
     }
@@ -46,13 +52,14 @@ InformationsDisplay.prototype.addIp = function(ip) {
     }
 };
 
-
+// return true if the IP corresponds to the mask
 InformationsDisplay.prototype.maskIp = function(ip, mask) {
     var maskBin = 0xFFFFFFFF >>> (32 - mask);
 
     return (ip & maskBin);
 };
 
+// display the result in the dom
 InformationsDisplay.prototype.refreshDisplay = function() {
     var result = '<table class="table"><thead><tr><th>Network / IP</th><th>Number</th></tr></thead>';
 

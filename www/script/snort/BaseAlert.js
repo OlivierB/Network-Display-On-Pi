@@ -1,4 +1,9 @@
-BaseAlert = function(id) {
+/**
+ * BaseAlert, display the data from an Ajax request on the BASE page.
+ * @author Matrat Erwan
+ **/
+
+function BaseAlert(id) {
     this.id = id;
     this.alertContainer = $("#" + this.id + "-alert");
     this.container = $("#" + this.id);

@@ -1,3 +1,9 @@
+/**
+ * ServerStat, class receiving the NDOP server statistics via websocket
+ * and displaying it in a PercentCounterChart.
+ * @author Matrat Erwan
+ **/
+
 function ServerStat(id) {
 	// inheritance from WebSocketManager
 	WebSocketManager.call(this, id + '-alert');
@@ -17,7 +23,6 @@ ServerStat.prototype.dataManager = function(obj) {
 			chart.updateChart(obj[chart.id_data]);
 		}
 	}
-
 };
 
 ServerStat.prototype.add = function(id, id_data, speed) {

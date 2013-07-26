@@ -1,3 +1,10 @@
+/**
+ * StackedColumnChartAjax, class receiving data from ajax request
+ * and displaying it in a StackedColumnChart.
+ * @author Matrat Erwan
+ **/
+
+
 function StackedColumnChartAjax(id, title){
 	// inheritance from AjaxManager
 	AjaxManager.call(this, id + '-alert');

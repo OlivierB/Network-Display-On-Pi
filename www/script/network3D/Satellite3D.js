@@ -1,15 +1,21 @@
+/**
+ * Satellite3D, represents and displays one IP as a Satellite (any form given by the parameter geometry)
+ * @author Matrat Erwan
+ **/
+
 function Satellite3D(geometry, ip, distance, material, textureColor, fontColor) {
 
 
-
+    // inheritance of THREE.Object3D
     THREE.Object3D.call(this);
 
-    // var pivot = new THREE.Object3D();
+    // initial location
     this.rotation.z = Math.random() * Math.PI * 2;
     this.rotation.y = Math.random() * Math.PI * 2;
     this.rotation.x = Math.random() * Math.PI * 2;
 
 
+    // initialize the movement
     var vx = Math.random() / 3;
     var vy = (Math.random() * (1 - vx)) / 2;
     var vz = 1 - vx - vy;
@@ -20,7 +26,7 @@ function Satellite3D(geometry, ip, distance, material, textureColor, fontColor) 
         (vz - 0.33)/50
     ];
 
-
+    // if no material is given, it will be created to display the IP via a canvas
     material =  material || this.createMaterialFromIp(ip, textureColor, fontColor);
 
 
@@ -32,6 +38,7 @@ function Satellite3D(geometry, ip, distance, material, textureColor, fontColor) 
 
 }
 
+// inherirance
 Satellite3D.prototype = Object.create(THREE.Object3D.prototype);
 
 Satellite3D.prototype.rotate = function(x, y, z) {
@@ -40,6 +47,7 @@ Satellite3D.prototype.rotate = function(x, y, z) {
     this.rotation.x += z;
 };
 
+// transform the position from the local coordinates to the world coordinates
 Satellite3D.prototype.getPosition = function() {
     return this.localToWorld(this.cube.position.clone());
 };

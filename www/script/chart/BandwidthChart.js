@@ -1,3 +1,8 @@
+/**
+ * BandwidthChart, interface displaying local, out, in and global bandwidth in a chart.
+ * @author Matrat Erwan
+ **/
+
 function BandwidthChart(id, initializes, dataLength) {
 
     this.id = id;
