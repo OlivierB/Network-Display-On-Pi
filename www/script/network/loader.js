@@ -1,1 +1,3 @@
-dispatcher = new DataDispatcher(App.NDOPAddress);
+if(typeof App != 'undefined'){
+	dispatcher = new DataDispatcher(App.NDOPAddress);
+}
