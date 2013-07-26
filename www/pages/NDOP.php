@@ -8,7 +8,7 @@ Class NDOP {
 	public static function init($path_ini_file) {
 		NDOP::$nb_widget = 0;
 		
-		NDOP::$app = parse_ini_file($path_ini_file);
+		NDOP::$app = @parse_ini_file($path_ini_file);
 
 		if( isset(NDOP::$app['database_address']) && 
 			isset(NDOP::$app['database_port']) && 
