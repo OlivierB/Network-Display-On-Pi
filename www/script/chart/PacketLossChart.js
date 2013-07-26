@@ -24,22 +24,22 @@ function PacketLossChart(id, initializes, dataLength) {
 	this.chart = new CanvasJS.Chart(this.id, {
 		title: {
 			text: "Packet Loss",
-			titleFontFamily: "ChampWoff",
+			titleFontFamily: "ChampWoff"
 		},
 		axisY2: {
 			title: "% Packet loss",
 			minimum: 0,
 			maximum: 100,
 			titleFontFamily: "ChampWoff",
-			titleFontWeight: "bold",
+			titleFontWeight: "bold"
 		},
 		axisY: {
 			title: "Packets received (unity)",
 			titleFontFamily: "ChampWoff",
-			titleFontWeight: "bold",
+			titleFontWeight: "bold"
 		},
 		legend: {
-			verticalAlign: "bottom",
+			verticalAlign: "bottom"
 		},
 		data: [{
 				type: "spline",

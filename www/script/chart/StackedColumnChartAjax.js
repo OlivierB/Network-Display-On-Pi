@@ -16,4 +16,4 @@ StackedColumnChartAjax.prototype.updateChart = StackedColumnChart.prototype.upda
 
 StackedColumnChartAjax.prototype.dataManager = function(obj) {
 	this.updateChart(obj);
-}
+};

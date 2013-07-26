@@ -6,10 +6,10 @@ function StackedColumnChart(id, title) {
 
 	this.chart = new CanvasJS.Chart(this.id, {
 		title: {
-			text: title,
+			text: title
 		},
 		axisY: {
-			title: "Number of packets",
+			title: "Packet percentage"
 		},
 		data: this.data
 	});
@@ -46,4 +46,4 @@ StackedColumnChart.prototype.updateChart = function(obj) {
 
 	this.chart.render();
 
-}
+};
