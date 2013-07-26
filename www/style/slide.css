@@ -83,3 +83,7 @@
 .slidesjs-stop:hover{
 	color:rgba(0,0,0,0.0);
 }
+
+#slides {
+  display:none;
+}

@@ -12,6 +12,7 @@ require 'ndop.conf.php';
     <script language="javascript" type="text/javascript" >
         <?= NDOP::load_JS_conf(); ?>
     </script>
+
     
 <?php if(NDOP::$app['debug']){ ?>
 
