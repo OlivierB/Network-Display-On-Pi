@@ -35,7 +35,12 @@
 	<script src="minify/3d.min.js"></script>
 
 <?php } ?>
-<script src="widgets/Network3D/Network3D.conf.js"></script>
+
+<script type="text/javascript">
+
+	Network3DMaskList = [<?= $params['mask_customize'] ?>];
+
+</script>
 
 <script type="text/javascript">
 $(function(){

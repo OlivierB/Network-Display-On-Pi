@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 26, 2013 at 11:01 AM
+-- Generation Time: Jul 26, 2013 at 12:51 PM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
 
@@ -40,18 +40,7 @@ CREATE TABLE IF NOT EXISTS `layout` (
 --
 
 INSERT INTO `layout` (`page`, `id_module`) VALUES
-(8, 358),
-(5, 359),
-(0, 360),
-(11, 361),
-(6, 362),
-(1, 363),
-(2, 364),
-(3, 365),
-(4, 366),
-(7, 367),
-(9, 368),
-(10, 369);
+(0, 358);
 
 -- --------------------------------------------------------
 
@@ -103,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `module_composition_widget` (
   KEY `id_widget` (`id_widget`),
   KEY `id_widget_parameter_set` (`id_widget_parameter_set`),
   KEY `id_module` (`id_module`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=371 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=372 ;
 
 --
 -- Dumping data for table `module_composition_widget`
@@ -126,7 +115,6 @@ INSERT INTO `module_composition_widget` (`id`, `id_module`, `id_widget`, `x`, `y
 (354, 364, 364, 0, 0, 12, 2, 299),
 (358, 368, 363, 0, 0, 12, 2, 298),
 (359, 369, 368, 2, 0, 8, 2, 303),
-(364, 358, 373, 0, 0, 12, 2, 396),
 (365, 359, 375, 0, 0, 8, 1, 310),
 (366, 359, 366, 8, 0, 4, 1, 313),
 (367, 359, 402, 0, 1, 6, 1, 351),
@@ -165,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `widget` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `folder_name` (`folder_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=521 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=713 ;
 
 --
 -- Dumping data for table `widget`
@@ -181,13 +169,13 @@ INSERT INTO `widget` (`id`, `name`, `description`, `folder_name`, `updated`) VAL
 (370, 'Server statistics', 'This widget shows memory, processor and swap use percentage.', 'ServerStat', 1),
 (371, 'Total Bandwidth text', 'This widget shows the total bandwidth for a given number of days in a text form.', 'BandwidthTextAjax', 1),
 (372, 'DNS request bubbles', 'Display the name of the domain requested by every DNS request going through the network as a bubble.', 'DnsBubble', 1),
-(373, 'Network 3D', 'This widget displays the incoming, outcoming and local packet going through the network. Each computer is an entity in the 3D scene and packets are displayed as rays between computer.', 'Network3D', 1),
 (375, 'Live bandwidth chart', 'This widget shows the current bandwidth data in a chart.', 'BandwidthChartWebsocket', 1),
 (377, 'Map online', 'Display source and target IPs from the packets going through the network. This display works with OpenstreetMap and LeafletJS but required to configure freegeoip on the configuration page.', 'MapOnline', 1),
 (402, 'Live IPV4 protocol chart', 'This widget shows the current number of packets going through the network for each IPV4 protocols (TCP, UDP, etc...) in a chart.', 'ProtocolIPV4Websocket', 1),
 (403, 'Ethernet protocol use chart', 'This widget shows rates of used protocols on the network.', 'ProtocolEthernetChartAjax', 1),
 (405, 'Live ethernet protocol chart', 'This widget shows the current number of packets going through the network for each ethernet protocols (IPV4, IPV6, etc...) in a chart.', 'ProtocolEthernetWebsocket', 1),
-(407, 'IPV4 subProtocol use chart', 'This widget shows the use of IPV4 subprotocols on the network. Datas are given for a number of days.', 'ProtocolIPV4Ajax', 1);
+(407, 'IPV4 subProtocol use chart', 'This widget shows the use of IPV4 subprotocols on the network. Datas are given for a number of days.', 'ProtocolIPV4Ajax', 1),
+(596, 'Network 3D', 'This widget displays the incoming, outcoming and local packet going through the network. Each computer is an entity in the 3D scene and packets are displayed as rays between computer.', 'Network3D', 1);
 
 -- --------------------------------------------------------
 
@@ -198,13 +186,13 @@ INSERT INTO `widget` (`id`, `name`, `description`, `folder_name`, `updated`) VAL
 CREATE TABLE IF NOT EXISTS `widget_parameter_design` (
   `id_widget` int(11) NOT NULL,
   `type` varchar(15) NOT NULL,
-  `description` varchar(150) NOT NULL,
+  `description` text NOT NULL,
   `name` varchar(50) NOT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_widget` (`id_widget`,`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=573 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=886 ;
 
 --
 -- Dumping data for table `widget_parameter_design`
@@ -222,21 +210,21 @@ INSERT INTO `widget_parameter_design` (`id_widget`, `type`, `description`, `name
 (371, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 369, 1),
 (371, 'int', 'Number of days you want the statistics count for. 30 days means the statistics will be compute with the last 30 days.', 'nb_day', 370, 1),
 (371, 'int', 'Size of the font.', 'font_size', 371, 1),
-(373, 'int', 'Quality of the 3D from 1 to infinite. The bigger, the fancier.', 'quality', 372, 1),
 (403, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 403, 1),
 (403, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 404, 1),
 (403, 'str', 'Title of the chart.', 'title', 405, 1),
-(403, 'str', 'You can group results by packet to get an easier to read chart. You can choose, HOUR, DAY, WEEK, MONTH. If you don''t want to group your data, choose N', 'group_by', 406, 1),
+(403, 'str', 'You can group results by packet to get an easier to read chart. You can choose&#44; HOUR&#44; DAY&#44; WEEK&#44; MONTH. If you don''t want to group your data&#44; choose NONE.', 'group_by', 406, 1),
 (407, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 408, 1),
 (407, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 409, 1),
 (407, 'str', 'Title of the chart.', 'title', 410, 1),
-(407, 'str', 'You can group results by packet to get an easier to read chart. You can choose, HOUR, DAY, WEEK, MONTH. If you don''t want to group your data, choose N', 'group_by', 411, 1),
+(407, 'str', 'You can group results by packet to get an easier to read chart. You can choose&#44; HOUR&#44; DAY&#44; WEEK&#44; MONTH. If you don''t want to group your data&#44; choose NONE.', 'group_by', 411, 1),
 (369, 'int', 'Size of the random dither in px.', 'dither', 459, 1),
-(369, 'float', 'Opacity of each point on the map, between 0 and 1.', 'opacity', 460, 1),
+(369, 'float', 'Opacity of each point on the map&#44; between 0 and 1.', 'opacity', 460, 1),
 (377, 'int', 'Size of the random dither in degree.', 'dither', 496, 1),
-(377, 'float', 'Opacity of each point on the map, between 0 and 1.', 'opacity', 497, 1),
+(377, 'float', 'Opacity of each point on the map&#44; between 0 and 1.', 'opacity', 497, 1),
 (372, 'int', 'Size of the font used in the bubble in px.', 'font_size', 535, 1),
-(372, 'bool', 'Indicate wether the text will be in a bubble or not. true or false.', 'draw_bubble', 561, 1);
+(372, 'bool', 'Indicate wether the text will be in a bubble or not. true or false.', 'draw_bubble', 561, 1),
+(596, 'int', 'Quality of the 3D from 1 to infinite. The bigger&#44; the fancier.', 'quality', 697, 1);
 
 -- --------------------------------------------------------
 
@@ -251,14 +239,13 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_set` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`id_widget`),
   KEY `id_widget` (`id_widget`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=477 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=669 ;
 
 --
 -- Dumping data for table `widget_parameter_set`
 --
 
 INSERT INTO `widget_parameter_set` (`id`, `name`, `id_widget`) VALUES
-(396, 'Beautiful', 373),
 (313, 'Big text', 366),
 (314, 'daily', 365),
 (322, 'daily', 371),
@@ -273,13 +260,13 @@ INSERT INTO `widget_parameter_set` (`id`, `name`, `id_widget`) VALUES
 (305, 'default', 370),
 (306, 'default', 371),
 (307, 'default', 372),
-(308, 'default', 373),
 (310, 'default', 375),
 (312, 'default', 377),
 (351, 'default', 402),
 (352, 'default', 403),
 (354, 'default', 405),
 (356, 'default', 407),
+(552, 'default', 596),
 (318, 'monthly', 365),
 (323, 'monthly', 371),
 (392, 'monthly', 403),
@@ -324,7 +311,6 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (306, 371, '15'),
 (307, 535, '30'),
 (307, 561, 'false'),
-(308, 372, '5'),
 (312, 496, '2'),
 (312, 497, '0.25'),
 (313, 366, '45'),
@@ -375,7 +361,7 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (395, 409, '30'),
 (395, 410, 'Monthly  IPV4 subprotocols use'),
 (395, 411, 'DAY'),
-(396, 372, '9');
+(552, 697, '5');
 
 --
 -- Constraints for dumped tables
