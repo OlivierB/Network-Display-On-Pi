@@ -19,10 +19,4 @@ FILES=$FILES" ../lib/leaflet/leaflet.js"
 uglifyjs $FILES --output ../minify/libs.min.js --mangle --compress 
 
 
-# minify 3D libs
-FILES=""
 
-FILES=$FILES" ../lib/three.min.js"
-FILES=$FILES" ../lib/OrbitControls.js"
-
-uglifyjs $FILES --output ../minify/libs.3d.min.js --mangle --compress 

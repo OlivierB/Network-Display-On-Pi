@@ -19,7 +19,22 @@
 
 		</div>
 	</div>
+<?php if(NDOP::$app['debug']){ ?>
 
+	<script src="lib/three.min.js"></script>
+    <script src="lib/OrbitControls.js"></script>
+
+	<script src="script/network3D/Ray.js"></script>
+    <script src="script/network3D/Scene3D.js"></script>
+    <script src="script/network3D/Satellite3D.js"></script>
+    <script src="script/network3D/InformationsDisplay.js"></script>
+
+
+<?php }else{ ?>
+	
+	<script src="minify/3d.min.js"></script>
+
+<?php } ?>
 <script src="widgets/Network3D/Network3D.conf.js"></script>
 
 <script type="text/javascript">

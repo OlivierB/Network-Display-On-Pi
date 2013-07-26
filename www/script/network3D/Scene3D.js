@@ -145,7 +145,6 @@ Scene3D.prototype.initMaterial = function() {
             overdraw: true
         });
     }
-    truc = this.scene;
 };
 
 Scene3D.prototype.initGeometry = function() {

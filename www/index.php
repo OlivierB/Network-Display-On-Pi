@@ -38,8 +38,7 @@ require 'ndop.conf.php';
     <script src='lib/jquery-number.js'></script>
     <script src='lib/bootstrap/js/bootstrap.min.js'></script>
     <script src="lib/leaflet/leaflet.js"></script>
-    <script src="lib/three.min.js"></script>
-    <script src="lib/OrbitControls.js"></script>
+    
 
 
     <!-- Personnal JS -->
@@ -55,9 +54,6 @@ require 'ndop.conf.php';
     <script src="script/text/TextFormatter.js"></script>
 
     
-
-
-
     <script src="script/chart/BandwidthChart.js"></script>
     <script src="script/chart/BandwidthChartAjax.js"></script>
     <script src="script/snort/BaseAlert.js"></script>
@@ -79,11 +75,6 @@ require 'ndop.conf.php';
     <script src="script/map/IpLocationMapOffline.js"></script>
     <script src="script/map/IpLocationMapOnline.js"></script>
 
-    <script src="script/network3D/Ray.js"></script>
-    <script src="script/network3D/Scene3D.js"></script>
-    <script src="script/network3D/Satellite3D.js"></script>
-    <script src="script/network3D/InformationsDisplay.js"></script>
-
     <script src="script/chart/PercentCounterChart.js"></script>
     <script src="script/chart/ServerStat.js"></script>
 
@@ -104,7 +95,6 @@ require 'ndop.conf.php';
     <link rel="stylesheet" href="minify/style.min.css">
 
     <!-- Minified JS -->
-    <script src="minify/libs.3d.min.js"></script>
     <script src="minify/libs.min.js"></script>
     <script src="minify/script.min.js"></script>
 
