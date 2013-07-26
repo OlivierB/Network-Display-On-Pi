@@ -27,6 +27,7 @@ class ARP(layer.Layer):
         self.protocol_type = socket.ntohs(struct.unpack('H', pktdata[2:4])[0])
         self.hardware_len = (ord(pktdata[4]))
         self.protocol_len = (ord(pktdata[5]))
+        # 1: request - 2: reply
         self.operation = socket.ntohs(struct.unpack('H', pktdata[6:8])[0])
 
         lh = self.hardware_len

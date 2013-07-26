@@ -190,7 +190,7 @@ class ConfigChecker():
             self.database["class"] = getattr(database_mod, self.get_elem("db_class"))
 
         except Exception as e:
-            raise ArgumentConfigError("Database %s : Cannot be loaded : %s" % (self.database["class"], e))
+            raise ArgumentConfigError("Database : Cannot be loaded : %s" % (e)) #self.database["class"],
 
         self.database["conf"] = dict()
 

@@ -13,25 +13,67 @@ from netmodule import NetModule
 from ndop.core.network import netdata
 from ndop.core.network import netutils
 
+from time import time
+from datetime import datetime
 import pcap
 
+MAC_MAX = 10000
 
 class NetModChild(NetModule):
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='attack', *args, **kwargs)
 
-        self.lmac = dict()
+        self.alert_mode = False
+
+        self.smac = set()
+        self.mac_evol = Evolution()
+
+
+        self.dmac = dict()
         self.alert = set()
 
-    def pkt_handler(self, pkt):
-        if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
+        self.dip_info = dict()
 
-            self.analyse(pkt)
+    def pkt_handler(self, pkt):
+        ether = pkt.Ether
+        
+        # MAC flooding
+        if (self.mac_flooding(ether)):
+            return
+
+        if ether.is_type(netdata.ETHERTYPE_IPv4):
+            ipv4 = ether.payload
+            # IP spoofing
+            self.ip_spoofing(ether)
+                
+            if ipv4.is_type(netdata.IPTYPE_UDP):
+                # Port scan
+                self.port_scaning(ether)
+                # UDP flood
+                self.udp_flooding(ether)
+
+                if ipv4.payload.is_type(netdata.PORT_DNS):
+                    # DNS spoofing
+                    self.dns_spoofing(ether)
+
+            elif ipv4.is_type(netdata.IPTYPE_TCP):
+                # Port scan
+                self.port_scaning(ether)
+                # SYN flood
+                self.syn_flooding(ether)
+                
+            elif ipv4.is_type(netdata.IPTYPE_ICMP):
+                # ICMP flood
+                self.icmp_spoofing(ether)
+
+        elif ether.is_type(netdata.ETHERTYPE_ARP):
+            # ARP spoofing
+            self.arp_spoofing(ether)
+        
 
     def update(self):
         val = dict()
-        val["nb_"] = len(self.lmac)
         val["alert"] = sorted(self.alert)
         return val
 
@@ -41,6 +83,46 @@ class NetModChild(NetModule):
     def database_save(self, db_class):
         self.lmac = dict()
         self.alert = set()
+
+    def get_date(self):
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+
+    def mac_flooding(self, pkt):
+        # if pkt.src not in self.smac:
+        #     self.smac.add(pkt.src)
+        #     self.mac_evol.inc()
+        # if self.mac_evol.get_evol() > 30:
+        #     self.alert.add("MAC FLOOD + %i mac" % self.mac_evol.get_evol())
+        #     return True
+        # else:
+        #     return False
+        pass
+
+
+    def port_scaning(self, pkt):
+
+        pass
+
+    def udp_flooding(self, pkt):
+        pass
+
+    def dns_spoofing(self, pkt):
+        pass
+
+    def icmp_spoofing(self, pkt):
+        pass
+
+    def arp_spoofing(self, pkt):
+        pass
+
+    def ip_spoofing(self, pkt):
+        pass
+
+    def syn_flooding(self, pkt):
+        pass
+
 
     def analyse(self, pkt):
         self.analyse_mac(pkt)
@@ -81,4 +163,29 @@ class NetModChild(NetModule):
         except KeyError:
             self.lmac[addr] = mac
         return True
+
+
+
+
+class Evolution():
+    def __init__(self, inter_sec=1):
+        self.inter_sec = inter_sec
+        self.number = 0
+        self.last_time = time()
+        self.last_evolution = 0
+
+    def inc(self, nbr=1):
+        self.number += nbr
+        self.update()
+
+    def update(self):
+        diff = time() - self.last_time
+        if diff > self.inter_sec:
+            self.last_time = time()
+            self.last_evolution = self.number / diff
+            self.number = 0
+
+    def get_evol(self):
+        return self.last_evolution
+
 
