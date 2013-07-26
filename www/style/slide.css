@@ -14,11 +14,10 @@
 	width: 13px;
 	height: 0;
 	padding-top: 13px;
-	background-image: url(../res/img/pagination.png);
+	background-image: url('../res/img/pagination.png');
 	background-position: 0 0;
 	float: left;
 	overflow: hidden;
-
 }
 
 .slidesjs-pagination {
@@ -31,25 +30,20 @@
 	margin: 0 1px;
 }
 
-.icon-chevron-left, .icon-chevron-right {
-	font-family: FontAwesome;
-	font-weight: normal;
-	font-style: normal;
-	text-decoration: inherit;
-	-webkit-font-smoothing: antialiased;
-	display: inline;
-	width: auto;
-	height: auto;
-	line-height: normal;
-	vertical-align: baseline;
-	background-image: none;
+.icon-chevron-left{
+	width: 41px;
+	height: 34px;
+
+	background-image: url('../res/img/left-arrow.png');
 	background-position: 0 0;
-	background-repeat: repeat;
-	margin-top: 0;
-	font-size: 30px;
-	padding-left: 10%;
-	padding-right: 10%;
-	color: white;
+}
+
+.icon-chevron-right {
+	width: 41px;
+	height: 34px;
+
+	background-image: url('../res/img/right-arrow.png');
+	background-position: 0 0;
 }
 .slidesjs-navigation:hover{
 	text-decoration: none;
@@ -61,38 +55,24 @@
 .slidesjs-navigation{
 	margin-left: 5px;
 	margin-right: 5px;
-	
-	/*z-index: 10;*/
-
 }
 
 .slidesjs-play {
-	font-family: FontAwesome;
-	background-image: url(../res/img/play.png);
+	background-image: url('../res/img/play.png');
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	
 	margin-top: 5px;
 	padding-top: 13px;
 	padding-right: 13px;
-	color:rgba(0,0,0,0.0);
-
+	color: rgba(0,0,0,0.0);
 }
 .slidesjs-play:hover  {
-	font-family: FontAwesome;
-	background-image: url(../res/img/play.png);
-	background-position: 0 0;
-	background-repeat: no-repeat;
-	
-	margin-top: 5px;
-	padding-top: 13px;
 	color:rgba(0,0,0,0.0);
-
 }
 
 .slidesjs-stop{
-	font-family: FontAwesome;
-	background-image: url(../res/img/pause.png);
+	background-image: url('../res/img/pause.png');
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	
@@ -101,11 +81,5 @@
 }
 
 .slidesjs-stop:hover{
-	font-family: FontAwesome;
-	background-image: url(res/img/pause.png);
-	background-position: 0 0;
-	background-repeat: no-repeat;
-	
-	padding-top: 13px;
 	color:rgba(0,0,0,0.0);
 }

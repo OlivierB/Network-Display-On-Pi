@@ -16,7 +16,6 @@ require 'ndop.conf.php';
 <?php if(NDOP::$app['debug']){ ?>
 
     <!-- library CSS -->
-    <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="lib/rendro-easy-pie/jquery.easy-pie-chart.css">
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
