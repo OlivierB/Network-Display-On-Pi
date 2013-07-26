@@ -138,7 +138,7 @@ python client --addr ADDRESS:PORT
 		* PDO activated
 	* Mysql
 
-* optionnal installation
+* optional installation
 	* Freegeoip : You can use the www.freegeoip.net free website but the number of request per day is limited, you might want to install your own server. It's free and quite easy. Go to https://github.com/fiorix/freegeoip.
 
 ## Installation
