@@ -3,12 +3,12 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 26, 2013 at 03:32 PM
+-- Generation Time: Jul 29, 2013 at 10:08 AM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `module_composition_widget` (
   KEY `id_widget` (`id_widget`),
   KEY `id_widget_parameter_set` (`id_widget_parameter_set`),
   KEY `id_module` (`id_module`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=401 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=405 ;
 
 --
 -- Dumping data for table `module_composition_widget`
@@ -122,17 +122,17 @@ INSERT INTO `module_composition_widget` (`id`, `id_module`, `id_widget`, `x`, `y
 (387, 372, 864, 8, 0, 4, 1, 838),
 (388, 372, 867, 0, 1, 6, 1, 832),
 (389, 372, 871, 6, 1, 6, 1, 835),
-(390, 374, 859, 0, 0, 8, 1, 831),
-(391, 374, 867, 0, 1, 6, 1, 834),
-(392, 374, 871, 6, 1, 6, 1, 837),
-(393, 374, 864, 8, 0, 4, 1, 820),
 (394, 375, 865, 0, 0, 12, 2, 821),
 (395, 376, 858, 0, 0, 12, 2, 814),
 (396, 377, 862, 0, 0, 12, 2, 818),
 (397, 378, 872, 0, 0, 12, 2, 828),
 (398, 379, 863, 3, 0, 6, 1, 819),
 (399, 380, 857, 0, 0, 12, 2, 813),
-(400, 381, 861, 2, 0, 8, 2, 817);
+(400, 381, 861, 2, 0, 8, 2, 817),
+(401, 374, 859, 0, 0, 8, 1, 831),
+(402, 374, 864, 8, 0, 4, 1, 840),
+(403, 374, 867, 0, 1, 6, 1, 834),
+(404, 374, 871, 6, 1, 6, 1, 837);
 
 -- --------------------------------------------------------
 
@@ -149,7 +149,6 @@ CREATE TABLE IF NOT EXISTS `server_information` (
   `password` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
 
 
 -- --------------------------------------------------------
