@@ -170,12 +170,19 @@ If you want to erase the NDOP GUI from your system you can erase the folder you 
 ### openbox configuration :
 * create file ~/.config/openbox/autostart
 * write :
+
 ```
 xset -dpms &
 xset s noblank &
 xset s off &
 sakura &
 ~/google.sh ADDR
+```
+
+To make openbox your default window manager, run :
+
+```
+update-alternatives --config x-session-manager
 ```
 
 ### google chrome script
