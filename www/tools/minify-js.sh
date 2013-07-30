@@ -3,9 +3,6 @@
 
 FILES=""
 
-# Configuration files
-FILES=$FILES" ../script/slide/slide-conf.js"
-
 # Network manager
 FILES=$FILES" ../script/network/AjaxManager.js"
 FILES=$FILES" ../script/network/WebSocketManager.js"

@@ -154,7 +154,7 @@ Class NDOP {
 		</h1>';
 	}
 
-	public static function load_JS_conf(){
+	public static function load_IP_conf(){
 		if(isset(NDOP::$app['db']) && NDOP::$app['db']){
 			$obj = array();
 
@@ -180,6 +180,87 @@ Class NDOP {
 			// $app['App'] = $obj;
 
 			return 'var App = '.json_encode($obj).';';
+		}
+		return '';
+	}
+
+	public static function load_slide_conf(){
+		if(isset(NDOP::$app['db']) && NDOP::$app['db']){
+
+			$sql = "SELECT * FROM  `slide_configuration` ;";
+			$results = NDOP::$app['db']->query($sql);
+			$conf = $results->fetch(PDO::FETCH_ASSOC);
+
+			if(isset($conf['interval'])){
+				$interval = $conf['interval'];
+			}else{
+				$interval = 15000;
+			}
+
+			if(isset($conf['auto_start'])){
+				if($conf['auto_start']){
+					$auto_start = 'true';
+				}else{
+					$auto_start = 'false';
+				}
+			}else{
+				$auto_start = 'false';
+			}
+
+			if(isset($conf['pause_on_hover'])){
+				if($conf['pause_on_hover']){
+					$pause_on_hover = 'true';
+				}else{
+					$pause_on_hover = 'false';
+				}
+			}else{
+				$pause_on_hover = 'false';
+			}
+
+			$js = '
+			$(function() {
+
+			    $("#slides").slidesjs({
+			        width: window.innerWidth,
+			        height: window.innerHeight - 20,
+			        start: 1,
+			        play: {
+			            active: true,
+			            // [string] Can be either "slide" or "fade".
+			            // effect: "fade"
+
+			            // [number] Time spent on each slide in milliseconds.
+			            interval: '.$interval.',
+
+			            // [boolean] Start playing the slideshow on load.
+			            auto: '.$auto_start.',
+
+			            // [boolean] show/hide stop and play buttons
+			            swap: false,
+
+			            // [boolean] pause a playing slideshow on hover
+			            pauseOnHover: '.$pause_on_hover.',
+
+			            // [number] restart delay on inactive slideshow
+			            restartDelay: 2500
+			        },
+			        navigation: false
+			    });
+
+			    // handle the navigation with left and right arrows
+			    $(window).keyup(function(e) {
+			        var key = e.which | e.keyCode;
+			        if (key === 37) { // 37 is left arrow
+			            $(".slidesjs-previous").click();
+			        } else if (key === 39) { // 39 is right arrow
+			            $(".slidesjs-next").click();
+			        } else if (key === 38) { // 39 is right arrow
+			            resize();
+			        }
+			    });
+			});';
+
+			return $js;
 		}
 		return '';
 	}
