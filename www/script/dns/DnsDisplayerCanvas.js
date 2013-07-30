@@ -50,6 +50,16 @@ function DnsDisplayerCanvas(id, font_size, draw_bubble) {
     // avoid to stack the bubble when the canvas is not drawn (window hidden)
     this.needRedraw = false;
 
+    // to make sure some old browser can still use it (chromium on Raspberry Pi for example)
+    window.requestAnimationFramePerso = (function() {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            function(callback) {
+                window.setTimeout(callback, 1000 / 60);
+        };
+    })();
+
     this.animate();
 
 }
@@ -66,7 +76,7 @@ DnsDisplayerCanvas.prototype.addItem = function() {
         this.busy = true;
 
         // avoid to draw when requestAnimationFrame() isn't called
-        if(!this.needRedraw){
+        if (!this.needRedraw) {
             this.addBubble(this.elems[0].dnsName);
         }
 
@@ -82,7 +92,7 @@ DnsDisplayerCanvas.prototype.addItem = function() {
 DnsDisplayerCanvas.prototype.addBubble = function(dnsName) {
     // var x = Math.random() * (this.canvas.width - this.bubbleSize/2);
     // var y = this.canvas.height ;
-    var indexImg = Math.floor(Math.random()*this.images.length);
+    var indexImg = Math.floor(Math.random() * this.images.length);
 
     var bubble = new BubbleDns(this.context, this.canvas.width, this.canvas.height, dnsName, 0, this.images[indexImg], this.font_size, this.draw_bubble);
 
@@ -90,8 +100,7 @@ DnsDisplayerCanvas.prototype.addBubble = function(dnsName) {
 };
 
 DnsDisplayerCanvas.prototype.animate = function() {
-    requestAnimationFrame(this.animate.bind(this));
-
+    window.requestAnimationFramePerso(this.animate.bind(this));
     this.render();
 };
 
@@ -107,7 +116,7 @@ DnsDisplayerCanvas.prototype.render = function() {
         if (!this.bubbles[i].update()) {
             delete this.bubbles[i];
             this.bubbles.splice(i, 1);
-        }else{
+        } else {
             this.bubbles[i].display();
         }
     }
