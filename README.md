@@ -23,6 +23,7 @@ Network Display On Pi (NDOP) is a network monitoring service which provides you 
 * web download and install :
 	* [pypcap 0.7.1](http://sourceforge.net/projects/pylibpcap/)
 	* [psutil 0.6.4](https://code.google.com/p/psutil/)
+	* [pyflowtools](https://code.google.com/p/pyflowtools/)
 
 * pip install :
 	* tornado
@@ -138,7 +139,7 @@ python client --addr ADDRESS:PORT
 		* PDO activated
 	* Mysql
 
-* optionnal installation
+* optional installation
 	* Freegeoip : You can use the www.freegeoip.net free website but the number of request per day is limited, you might want to install your own server. It's free and quite easy. Go to https://github.com/fiorix/freegeoip.
 
 ## Installation
@@ -159,35 +160,53 @@ Go to the URL corresponding to the location you chose in your browser. You shoul
 
 If you want to erase the NDOP GUI from your system you can erase the folder you created during the installation (/var/www/ndop/ in the example). You should also erase the database, its name is NDOP_GUI.
 
-## Configure a basic monitoring computer
+## Configure an optimized displaying computer
+
+### Note about computer
+NDOP has been designed to be dispayed with a raspberry PI, but any computer can access it thanks to a simple web browser.
+If you want to use a raspberry PI, the simple way to create an NDOP system is to follow the instructions below after installing Raspbian OS.
 
 ### Install :
 - openbox
-- google chrome
+- chromium or google chrome
 - unclutter (optional mouse hider)
 - sakura (optional good and light terminal ;)
 
 ### openbox configuration :
 * create file ~/.config/openbox/autostart
-* write :
+* write (replace ADDR by the url you use to access the NDOP website, for example : 192.168.1.123/Network-Display-On-Pi/www/ ):
+
 ```
 xset -dpms &
 xset s noblank &
 xset s off &
 sakura &
-~/google.sh ADDR
+~/browser.sh ADDR
 ```
 
-### google chrome script
+To make openbox your default window manager, run this command line and follow the instructions:
 
-Small script to launch google
+```
+update-alternatives --config x-session-manager
+```
+
+On Raspberry PI, you can set your configuration to start the GUI on boot by running the following command and following the instructions:
+```
+raspi-config
+```
+
+### browser script
+Create the file ~/browser.sh and paste this small script to launch chromium at start on the NDOP page. You can replace chromium by google-chrome if you want, but google-chrome can't be installed on raspberry PI.
 ```
 #!/bin/bash
 while [ $# -gt 0 ]; do
-	google-chrome --kiosk --incognito --no-context-menu --enable-logging --log-level=0 http://$1 2> /dev/null 1> /dev/null &
+	chromium --kiosk --incognito --no-context-menu --enable-logging --log-level=0 http://$1 2> /dev/null 1> /dev/null &
 	shift
 done
 ```
+
+### Finished
+Now you can restart your computer and see the NDOP page after the boot!!
 
 If there is a problem, it could be interesting to see google-chrome logs :
 ```
