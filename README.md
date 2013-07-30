@@ -23,6 +23,7 @@ Network Display On Pi (NDOP) is a network monitoring service which provides you 
 * web download and install :
 	* [pypcap 0.7.1](http://sourceforge.net/projects/pylibpcap/)
 	* [psutil 0.6.4](https://code.google.com/p/psutil/)
+	* [pyflowtools](https://code.google.com/p/pyflowtools/)
 
 * pip install :
 	* tornado
