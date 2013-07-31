@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 29, 2013 at 10:08 AM
+-- Generation Time: Jul 31, 2013 at 03:55 PM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
 
@@ -40,17 +40,14 @@ CREATE TABLE IF NOT EXISTS `layout` (
 --
 
 INSERT INTO `layout` (`page`, `id_module`) VALUES
-(6, 370),
 (0, 371),
-(1, 372),
-(2, 373),
-(3, 374),
-(10, 375),
-(9, 376),
-(7, 377),
-(8, 378),
-(4, 379),
-(5, 381);
+(3, 372),
+(4, 373),
+(5, 374),
+(2, 376),
+(1, 377),
+(6, 380),
+(7, 381);
 
 -- --------------------------------------------------------
 
@@ -154,6 +151,25 @@ CREATE TABLE IF NOT EXISTS `server_information` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `slide_configuration`
+--
+
+CREATE TABLE IF NOT EXISTS `slide_configuration` (
+  `interval` int(11) NOT NULL DEFAULT '15000',
+  `auto_start` tinyint(1) NOT NULL DEFAULT '1',
+  `pause_on_hover` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `slide_configuration`
+--
+
+INSERT INTO `slide_configuration` (`interval`, `auto_start`, `pause_on_hover`) VALUES
+(15000, 0, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `widget`
 --
 
@@ -165,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `widget` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `folder_name` (`folder_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=873 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=905 ;
 
 --
 -- Dumping data for table `widget`
@@ -183,7 +199,7 @@ INSERT INTO `widget` (`id`, `name`, `description`, `folder_name`, `updated`) VAL
 (865, 'DNS request bubbles', 'Display the name of the domain requested by every DNS request going through the network as a bubble.', 'DnsBubble', 1),
 (866, 'Live IPV4 protocol chart', 'This widget shows the current number of packets going through the network for each IPV4 protocols (TCP, UDP, etc...) in a chart.', 'ProtocolIPV4Websocket', 1),
 (867, 'Ethernet protocol use chart', 'This widget shows rates of used protocols on the network.', 'ProtocolEthernetChartAjax', 1),
-(868, 'Network 3D', 'This widget displays the incoming, outcoming and local packet going through the network. Each computer is an entity in the 3D scene and packets are displayed as rays between computer.', 'Network3D', 1),
+(868, 'Network 3D', 'This widget displays the incoming, outcoming and local packet going through the network. Each computer is an entity in the 3D scene and packets are displayed as rays between computer. Be careful, it does not work on Raspberry pi Chromium and it might even cause trouble to other widgets on this plateform.', 'Network3D', 1),
 (869, 'Live ethernet protocol chart', 'This widget shows the current number of packets going through the network for each ethernet protocols (IPV4, IPV6, etc...) in a chart.', 'ProtocolEthernetWebsocket', 1),
 (870, 'Live bandwidth chart', 'This widget shows the current bandwidth data in a chart.', 'BandwidthChartWebsocket', 1),
 (871, 'IPV4 subProtocol use chart', 'This widget shows the use of IPV4 subprotocols on the network. Datas are given for a number of days.', 'ProtocolIPV4Ajax', 1),
@@ -204,7 +220,7 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_design` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_widget` (`id_widget`,`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1156 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1222 ;
 
 --
 -- Dumping data for table `widget_parameter_design`
@@ -237,7 +253,13 @@ INSERT INTO `widget_parameter_design` (`id_widget`, `type`, `description`, `name
 (871, 'str', 'Title of the chart.', 'title', 1152, 1),
 (871, 'str', 'You can group results by packet to get an easier to read chart. You can choose&#44; HOUR&#44; DAY&#44; WEEK&#44; MONTH. If you don''t want to group your data&#44; choose NONE.', 'group_by', 1153, 1),
 (872, 'int', 'Size of the random dither in degree.', 'dither', 1154, 1),
-(872, 'float', 'Opacity of each point on the map&#44; between 0 and 1.', 'opacity', 1155, 1);
+(872, 'float', 'Opacity of each point on the map&#44; between 0 and 1.', 'opacity', 1155, 1),
+(857, 'str', 'Address of your snort database. For example 192.168.1.134.', 'address', 1157, 1),
+(857, 'int', 'Port of your snort database. The default port for a mysql database is 3306.', 'port', 1158, 1),
+(857, 'str', 'Name of your snort database.', 'name', 1159, 1),
+(857, 'str', 'Login of your snort database user.', 'login', 1160, 1),
+(857, 'str', 'Passoword of your snort database user.', 'password', 1161, 1),
+(857, 'str', 'The type of database the snort datas are stored in. Can be : ''mysql''&#44; ''postgres''&#44; ''mssql'' (MS SQL Server)&#44; ''oci8'' (Oracle)&#44; without the quotes.', 'type', 1195, 1);
 
 -- --------------------------------------------------------
 
@@ -252,7 +274,7 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_set` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`id_widget`),
   KEY `id_widget` (`id_widget`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=841 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=873 ;
 
 --
 -- Dumping data for table `widget_parameter_set`
@@ -309,6 +331,12 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_value` (
 
 INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (813, 1129, '30000'),
+(813, 1157, '192.168.1.144'),
+(813, 1158, '3306'),
+(813, 1159, 'snort'),
+(813, 1160, 'snort'),
+(813, 1161, 'snortpass'),
+(813, 1195, 'mysql'),
 (814, 1130, '15'),
 (814, 1131, '30'),
 (815, 1132, '10000'),
@@ -322,7 +350,7 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (820, 1140, '1'),
 (820, 1141, '45'),
 (821, 1142, '20'),
-(821, 1143, 'true'),
+(821, 1143, 'false'),
 (823, 1144, '10000'),
 (823, 1145, '1'),
 (823, 1146, ''),
