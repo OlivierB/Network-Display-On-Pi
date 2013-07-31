@@ -46,7 +46,7 @@ class WSHandler_main(websocket.WebSocketHandler):
         if prot is not None:
             return prot
         else:
-            self.close()
+            # self.close()
             return None
 
 
