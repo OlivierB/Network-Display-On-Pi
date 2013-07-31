@@ -141,6 +141,8 @@ python client --addr ADDRESS:PORT
 
 * optional installation
 	* Freegeoip : You can use the www.freegeoip.net free website but the number of request per day is limited, you might want to install your own server. It's free and quite easy. Go to https://github.com/fiorix/freegeoip.
+	* Snort : You can use the snort IDS to display alerts from the network. If you want to use the Snort widget, you have to [install it](http://openmaniak.com/snort_tutorial_snort.php#ancre-point2).
+
 
 ## Installation
 
