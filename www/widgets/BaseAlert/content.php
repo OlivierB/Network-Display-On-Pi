@@ -25,7 +25,7 @@
 
 <script type="text/javascript">
 $(function(){
-	var base = new BaseAlert('<?= $id ?>');
+	var base = new BaseAlert('<?= $id ?>', <?= $params['font_size'] ?>);
 	base.connect(App.webServerAddress, "./widgets/BaseAlert/base/perso/base_stat_alerts.php?caller=&sort_order=last_d", <?= $params['refresh_time'] ?>);
 });
 </script>

@@ -3,10 +3,14 @@
  * @author Matrat Erwan
  **/
 
-function BaseAlert(id) {
+function BaseAlert(id, font_size) {
     this.id = id;
+    this.font_size = font_size;
     this.alertContainer = $("#" + this.id + "-alert");
     this.container = $("#" + this.id);
+
+    this.container.css('font-size', font_size + 'px');
+    
 }
 
 BaseAlert.prototype.load = function() {
