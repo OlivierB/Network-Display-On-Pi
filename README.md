@@ -176,14 +176,36 @@ If you want to use a raspberry PI, the simple way to create an NDOP system is to
 
 ### openbox configuration :
 * create file ~/.config/openbox/autostart
-* write (replace ADDR by the url you use to access the NDOP website, for example : 192.168.1.123/Network-Display-On-Pi/www/ ):
+* write (Replace the DOMAIN value by the ip or domain name of the NDOP webserver host. Replace the end of ADDR by the path you use to access the NDOP website, for example : DOMAIN=192.168.1.144 and ADDR="http://${DOMAIN}/Network-Display-On-Pi/www/". ):
 
 ```
+# Address of your NDOP webserver
+DOMAIN=192.168.1.151
+ADDR="http://${DOMAIN}/Network-Display-On-Pi/www/"
+
+
+
+
+while true
+do
+	ping -c 1 $DOMAIN
+	if [ $? -eq 0 ];
+	then
+		echo 'Network available.'
+		break;
+	else
+		echo 'Address unreachable, waiting..'
+		sleep 5
+	fi
+done
+echo 'If you see this message, then Network was successfully loaded.'
+
 xset -dpms &
 xset s noblank &
 xset s off &
 sakura &
-~/browser.sh ADDR
+
+~/browser.sh $ADDR
 ```
 
 To make openbox your default window manager, run this command line and follow the instructions:
@@ -202,7 +224,7 @@ Create the file ~/browser.sh and paste this small script to launch chromium at s
 ```
 #!/bin/bash
 while [ $# -gt 0 ]; do
-	chromium --kiosk --incognito --no-context-menu --enable-logging --log-level=0 http://$1 2> /dev/null 1> /dev/null &
+	chromium --kiosk --incognito --no-context-menu --enable-logging --log-level=0 $1 2> /dev/null 1> /dev/null &
 	shift
 done
 ```
