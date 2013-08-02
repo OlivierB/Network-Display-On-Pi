@@ -54,6 +54,22 @@ class NetModChild(NetModule):
             else:
                 print "This packet is stupid"
 
+    def flow_handler(self, flow):
+        src = netutils.ip_reverse(flow.srcaddr_raw)
+        dst = netutils.ip_reverse(flow.dstaddr_raw)
+
+        bsrc = netutils.ip_is_reserved(src)
+        bdst = netutils.ip_is_reserved(dst)
+
+        if bsrc and bdst:
+            self.add_loccomm(src, dst, flow.dOctets)
+        elif not bsrc and bdst:
+            self.add_loccomm(-1, dst, flow.dOctets)
+        elif bsrc and not bdst:
+            self.add_loccomm(src, -1, flow.dOctets)
+        else:
+            print "This packet is stupid"
+
     def add_loccomm(self, src, dst, size):
         key = (src, dst)
         lk = self.dIP_loccomm.keys()
