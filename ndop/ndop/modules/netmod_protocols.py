@@ -15,6 +15,7 @@ import operator
 # Project file import
 from netmodule import NetModule
 from ndop.core.network import netdata
+from ndop.core.network import netutils
 
 
 class NetModChild(NetModule):
@@ -87,6 +88,47 @@ class NetModChild(NetModule):
                     else:
                         self.lPortProtocol[typ] = 1
                         self.lPortList.append(typ)
+
+    def flow_handler(self, flow):
+        protocol = flow.prot
+        try:
+            netdata.IPTYPE[protocol]
+            if protocol in self.lIPProtocol:
+                self.lIPProtocol[protocol] += 1
+            else:
+                self.lIPProtocol[protocol] = 1
+                self.lIPList.append(protocol)
+        except KeyError:
+            pass
+
+
+
+        if protocol == netdata.IPTYPE_TCP or protocol == netdata.IPTYPE_UDP:
+            src = netutils.ip_reverse(flow.srcaddr_raw)
+            dst = netutils.ip_reverse(flow.dstaddr_raw)
+
+            bsrc = netutils.ip_is_reserved(src)
+            bdst = netutils.ip_is_reserved(dst)
+
+            port = -1
+            if not bsrc:
+                port = flow.srcport
+            elif not bdst:
+                port = flow.dstport
+
+            # List of IP protocols
+            if port > 0:
+                try:
+                    netdata.PORTSLIST[port]
+                    if port in self.lPortProtocol:
+                        self.lPortProtocol[port] += 1
+                    else:
+                        self.lPortProtocol[port] = 1
+                        self.lPortList.append(port)
+                except KeyError:
+                    pass
+
+
 
     def database_init(self, db_class):
         req = \
