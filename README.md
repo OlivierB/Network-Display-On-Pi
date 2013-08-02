@@ -97,8 +97,9 @@ create a new python file in ```ndop/modules``` with skeleton module :
 
 ## Installation
 
-* python-argparse
-* [python-websocket](https://pypi.python.org/pypi/websocket-client/0.7.0)
+* pip install
+	* argparse
+	* [websocket](https://pypi.python.org/pypi/websocket-client/0.7.0)
 * [python-curses](http://docs.python.org/2/howto/curses.html)
 
 
