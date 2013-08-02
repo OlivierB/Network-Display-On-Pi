@@ -47,7 +47,6 @@ class NetModule(object):
             self.lastupdate = time()
             return self.update()
 
-
     def trigger_db_save(self, db_class):
         """
         Manage call to database_save method with savetime
@@ -99,6 +98,16 @@ class NetModule(object):
             self.savecode = ('m', 30)
 
     def pkt_handler(self, pkt):
+        """
+        Called by sniffer when a new packet arrive
+
+        pkt is formated with Packet class
+
+        override this method
+        """
+        pass
+
+    def flow_handler(self, flow):
         """
         Called by sniffer when a new packet arrive
 
