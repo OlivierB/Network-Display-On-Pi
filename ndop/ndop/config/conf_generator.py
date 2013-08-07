@@ -24,10 +24,16 @@ ex_code = \
     "websocket_port": 9005,
 
 ////////////////////////////
+    
+
+////////////////////////////
+    // packet capture with libpcap
+    // in python
+    // ndop embed capture
+
     // Ethernet interface for packets capture
     "sniffer_device": "eth0",
 
-////////////////////////////
     // Modules list :
     // List of sniffer (different process)
     // and for each sniffer, a list of module
@@ -38,7 +44,7 @@ ex_code = \
     // Do NOT create more sniffer than processor core
     //     performance will decline
 
-    "modules_list": [
+    "sniffer_modules_list": [
         // SNIFFER 1 : modules list
         [
             "netmod_top",
@@ -46,14 +52,31 @@ ex_code = \
             "netmod_loccomm",
             "netmod_protocols",
             "netmod_dns",
-            "netmod_pktstats",
-            "netmod_bandwidth"
+            "netmod_pktstats"
         ],
 
         // SNIFFER 2 : modules list
         [
             "netmod_http"
         ]
+    ],
+
+
+////////////////////////////
+    // Flow capture system
+    // You need a program to sniff packets
+    // and create netflows (softflowd, fprobe)
+
+    // netflow listen port
+    "flow_listen_port": 9995,
+
+    // bind address
+    "flow_bind_addr": "127.0.0.1",
+
+    // Modules list
+    // uniq list of modules for netflow capture
+    "flow_mods_list": [
+        "netmod_bandwidth"
     ],
 
 ////////////////////////////

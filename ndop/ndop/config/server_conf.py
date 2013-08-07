@@ -9,7 +9,7 @@ Server configuration
 ########################################
 # Program information
 __program__ = "NDOP"
-__version__ = "0.0.3"
+__version__ = "0.0.5"
 __description__ = "Network Sniffer with web display"
 
 
@@ -19,13 +19,15 @@ __description__ = "Network Sniffer with web display"
 # Websocket communication port
 websocket_port = 9005
 
+
+########################################
+# libpcap sniffer capture
+
 # listening device for sniffing
 sniffer_device = "eth0"
 
-
-########################################
 # Modules selection
-modules_list = [
+sniffer_modules_list = [
     # ["netmod_http"],
     [
         "netmod_top", 
@@ -34,11 +36,25 @@ modules_list = [
         "netmod_protocols",
         "netmod_dns",
         "netmod_pktstats",
-        "netmod_bandwidth",
         "netmod_http"
     ]
 ]
 # module_list = ["netmod_classip"]
+
+########################################
+# netflow capture
+
+# netflow listen port
+flow_listen_port = 9995
+
+# bind address
+flow_bind_addr = "127.0.0.1"
+
+# netflow module list
+flow_mods_list = [
+    "netmod_bandwidth"
+]
+
 
 
 ########################################

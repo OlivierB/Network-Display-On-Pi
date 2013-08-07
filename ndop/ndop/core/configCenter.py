@@ -58,12 +58,14 @@ class ConfigChecker():
                 self.try_config_override(args.file)
             else:
                 self.try_config_override(UNIX_CONF_FILE)
-            self.check_network(args)
+            self.check_websocket(args)
             logger.debug("%s : Check network : OK" % self.__class__.__name__)
             self.check_database(args, full=True)
             logger.debug("%s : Check SQL : OK" % self.__class__.__name__)
-            self.check_modules(args)
+            self.check_sniffer_modules(args)
             logger.debug("%s : Check modules : OK" % self.__class__.__name__)
+            self.check_flow_modules(args)
+            logger.debug("%s : Check flow modules : OK" % self.__class__.__name__)
             self.check_daemon_files(args)
             logger.debug("%s : Check Daemon files : OK" % self.__class__.__name__)
             self.check_pidfile(args)
@@ -92,9 +94,10 @@ class ConfigChecker():
             self.try_config_override(UNIX_CONF_FILE)
 
         # Check
-        self.check_network(args)
+        self.check_websocket(args)
         self.check_database(args)
-        self.check_modules(args)
+        self.check_sniffer_modules(args)
+        self.check_flow_modules(args)
 
         if self.daemon:
             self.check_daemon_files(args)
@@ -176,6 +179,7 @@ class ConfigChecker():
                         logger.debug("Override default config Error : \"%s\" is not in default config" % (elem))
         except:
             logger.debug("Override default config (%s) FAIL : %s" % (path, error))
+            self.override_conf = None
 
     def check_database(self, args, full=False):
         """
@@ -204,7 +208,7 @@ class ConfigChecker():
             for elem in ["host", "user", "passwd", "database", "port"]:
                 self.database["conf"][elem] = ""
 
-    def check_network(self, args):
+    def check_websocket(self, args):
         """
         Check network variables
         """
@@ -220,15 +224,6 @@ class ConfigChecker():
         if self.is_port_open(self.ws_port):
             raise ArgumentConfigError("Port %i already in use" % self.ws_port)
 
-        # Get sniffer device
-        if args.interface is None:
-            self.sniff_dev = str(self.get_elem("sniffer_device"))
-        else:
-            self.sniff_dev = args.interface
-        # Check sniff device
-        if not self.sniff_dev in self.all_netdevs():
-            raise ArgumentConfigError("No \"%s\" network device" % self.sniff_dev)
-            return False
 
     def check_daemon_files(self, args):
         self.daemon_stdout = self.get_elem("daemon_stdout")
@@ -252,15 +247,30 @@ class ConfigChecker():
         else:
             self.log_file = None
 
-    def check_modules(self, args):
+    def check_sniffer_modules(self, args):
         """
         Check and load modules class
 
         Create protocols list for websocket server
         """
-        ll_mod = self.get_elem("modules_list")
+
+        # Get sniffer device
+        if args.interface is None:
+            self.sniff_dev = str(self.get_elem("sniffer_device"))
+        else:
+            self.sniff_dev = args.interface
+        # Check sniff device
+        if not self.sniff_dev in self.all_netdevs():
+            raise ArgumentConfigError("No \"%s\" network device" % self.sniff_dev)
+            return False
+
+
+        ll_mod = self.get_elem("sniffer_modules_list")
         self.ll_modules = list()
-        self.l_protocols = list()
+        try:
+            self.l_protocols
+        except:
+            self.l_protocols = list()
 
         if len(ll_mod) > 0:
             for l_mod in ll_mod:
@@ -287,6 +297,53 @@ class ConfigChecker():
 
                 if len(l_modules) > 0:
                     self.ll_modules.append(l_modules)
+
+    def check_flow_modules(self, args):
+        """
+        Check and load modules class
+
+        Create protocols list for websocket server
+        """
+
+        # Get netflow port
+        self.flow_port = self.get_elem("flow_listen_port")
+        # Check listen port
+        if self.is_port_open(self.flow_port):
+            raise ArgumentConfigError("Port %i already in use" % self.flow_port)
+
+        # Get netflow bind addr
+        self.flow_addr = str(self.get_elem("flow_bind_addr"))
+        
+        # netflow modules
+        l_mod = self.get_elem("flow_mods_list")
+        self.l_flowmods = list()
+        try:
+            self.l_protocols
+        except:
+            self.l_protocols = list()
+
+        if len(l_mod) > 0:
+
+            l_modules = list()
+            for mod in l_mod:
+                try:
+                    # import module
+                    module = importlib.import_module("ndop.modules." + mod)
+
+                    # Check module main class
+                    getattr(module, "NetModChild")
+
+                    # Create an instance
+                    modclass = module.NetModChild(dev=args.interface)
+
+                    # Add protocol and module
+                    l_modules.append(modclass)
+                    self.l_protocols.append(modclass.protocol)
+                except Exception as e:
+                    raise ArgumentConfigError("Module %s : Cannot be loaded : %s" % (mod, e))
+
+            if len(l_modules) > 0:
+                self.l_flowmods = l_modules
 
     def is_root(self):
         if os.getuid() != 0:
