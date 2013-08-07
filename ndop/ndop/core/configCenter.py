@@ -118,6 +118,7 @@ class ConfigChecker():
         parser.add_argument("-d", "--debug", action='store_true', help="pass in debug mode")
         parser.add_argument("-u", "--unroot", action='store_true', help="authorize to launch ndop without root")
         parser.add_argument("-p", "--port", type=int, help="websocket server port")
+        parser.add_argument("-n", "--netflow", type=int, help="netflow bind port")
         parser.add_argument("-i", "--interface", help="sniffer device")
         parser.add_argument("-f", "--file", help="server configuration file")
         parser.add_argument("--daemon", action='store_true', help="daemon mode")
@@ -306,7 +307,10 @@ class ConfigChecker():
         """
 
         # Get netflow port
-        self.flow_port = self.get_elem("flow_listen_port")
+        if args.netflow is None:
+            self.flow_port = self.get_elem("flow_listen_port")
+        else:
+            self.flow_port = args.netflow
         # Check listen port
         if self.is_port_open(self.flow_port):
             raise ArgumentConfigError("Port %i already in use" % self.flow_port)

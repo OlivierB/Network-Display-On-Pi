@@ -50,6 +50,7 @@ class NetFlowSniffer(threading.Thread):
             return 0
 
         logger = logging.getLogger()
+        logger.info("NetFlow : Listining on %s:%i" % (self.config.flow_addr, self.config.flow_port))
 
         sock = socket.socket(
             socket.AF_INET,
