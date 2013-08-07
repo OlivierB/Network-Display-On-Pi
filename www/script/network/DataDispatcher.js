@@ -37,26 +37,39 @@ DataDispatcher.prototype.connectToProt = function(serverAddress, prot) {
 
     // When the connection is open, informs all the modules
     connection.onopen = function() {
-        console.log("Main connexion");
-        var i = 0,
-            length = this.websocketManagers[prot].length;
+        if(connection.protocol == prot){
+            console.log("Main connexion");
+            this.protocolNotSupported = false;
+            var i = 0,
+                length = this.websocketManagers[prot].length;
 
-        for (; i < length; i++) {
-            this.websocketManagers[prot][i].onopen();
+            for (; i < length; i++) {
+                this.websocketManagers[prot][i].onopen();
+            }
+            this.connections.push(connection);
+        }else{
+            // if the protocol is not supported, we close the connection with
+            // the "protocolNotSupported" flag
+            var i = 0,
+                length = this.websocketManagers[prot].length;
+
+            for (; i < length; i++) {
+                this.websocketManagers[prot][i].protocolNotSupported = true;
+                this.protocolNotSupported = true;
+            }
+            connection.close();
         }
-        this.connections.push(connection);
     }.bind(this);
 
     // Log errors
     connection.onerror = function(error) {
-        console.log('WebSocket Error ' + error);
         var i = 0,
             length = this.websocketManagers[prot].length;
 
         for (; i < length; i++) {
             this.websocketManagers[prot][i].onerror(error);
         }
-        this.protocolNotSupported = true;
+        
     }.bind(this);
 
     // dispatch messages from the server to the corresponding modules
@@ -78,7 +91,7 @@ DataDispatcher.prototype.connectToProt = function(serverAddress, prot) {
         }
 
         if (this.protocolNotSupported) {
-            console.log('protocolNotSupported');
+            console.log('Protocol Not Supported : ' + prot);
         } else {
             setTimeout(function() {
                 this.connectToProt(serverAddress, prot);
@@ -87,3 +100,4 @@ DataDispatcher.prototype.connectToProt = function(serverAddress, prot) {
     }.bind(this);
 
 };
+

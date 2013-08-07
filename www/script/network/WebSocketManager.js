@@ -21,8 +21,7 @@ WebSocketManager.prototype.onopen = function() {
 
 // Log errors
 WebSocketManager.prototype.onerror = function(error) {
-    console.log('WebSocket Error ' + error);
-    this.protocolNotSupported = true;
+	console.log("websocket error " + error);
 };
 
 // dispatch messages from the server

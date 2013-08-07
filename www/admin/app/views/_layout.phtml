@@ -30,7 +30,10 @@
               <a href="<?= $this->url('/') ?>">Home</a>
             </li>
             <li class="<?php echo $this['config_page'] ?>">
-              <a href="<?= $this->url('config') ?>">Configuration</a>
+              <a href="<?= $this->url('config') ?>">IP address Configuration</a>
+            </li>
+            <li class="<?php echo $this['slide_config_page'] ?>">
+              <a href="<?= $this->url('slide_config') ?>">Slides Configuration</a>
             </li>
             <?php if($this['database']){ ?>
             <li class="<?php echo $this['layout_page'] ?>">

@@ -10,7 +10,7 @@ require 'ndop.conf.php';
 
     <!-- Load js IPs address configuration from the database -->
     <script language="javascript" type="text/javascript" >
-        <?= NDOP::load_JS_conf(); ?>
+        <?= NDOP::load_IP_conf(); ?>
     </script>
 
     
@@ -43,8 +43,9 @@ require 'ndop.conf.php';
 
     <!-- Personnal JS -->
     <script src="script/resize/resize.js"></script>
+    <!-- 
     <script src='script/slide/slide-conf.js'></script>
-
+ -->
     <script src="script/network/AjaxManager.js"></script>
     <script src="script/network/WebSocketManager.js"></script>
 
@@ -100,14 +101,16 @@ require 'ndop.conf.php';
 
 <?php } ?>
 
+    <!-- Load js IPs address configuration from the database -->
+    <script language="javascript" type="text/javascript" >
+        <?= NDOP::load_slide_conf(); ?>
+    </script>
 
 </head>
 
 <body>
     <!-- All pages are included here, slideJS handle the animation -->
 
-    
-    
     <div id="slides" >
         <?php NDOP::display_modules(); ?>
     </div>

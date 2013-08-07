@@ -112,3 +112,7 @@ li{
 .frame a{
 	color: blue;
 }
+
+table{
+	width: 100%;
+}
