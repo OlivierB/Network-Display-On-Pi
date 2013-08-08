@@ -87,3 +87,11 @@ db_conf = {
     "port": 3306,
 }
 
+
+########################################
+# Additional module configuration
+# These new values override default 
+# module's values
+
+modules_config_override = {
+}

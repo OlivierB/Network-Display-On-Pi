@@ -36,8 +36,16 @@ class NetModule(object):
 
         self.dev = dev
 
+        # Variables List you can change
+        self.l_vars = ["protocol", "updatetime"]
+
     def __str__(self):
         return self.protocol
+
+    def set_config(self, config=dict()):
+        for elem, value in config.iteritems():
+            if elem in self.l_vars:
+                setattr(self, elem, value)
 
     def trigger_data_update(self):
         """

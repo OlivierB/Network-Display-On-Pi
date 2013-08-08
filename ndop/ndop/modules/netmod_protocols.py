@@ -21,7 +21,7 @@ from ndop.core.network import netutils
 class NetModChild(NetModule):
 
     def __init__(self, *args, **kwargs):
-        NetModule.__init__(self, updatetime=30, savetime=('m', 30), protocol='protocols', *args, **kwargs)
+        NetModule.__init__(self, updatetime=10, savetime=('m', 30), protocol='protocols', *args, **kwargs)
 
         # packet data
         self.lEtherProtocol = dict()  # list protocol ethernet
@@ -54,7 +54,7 @@ class NetModChild(NetModule):
 
         res["ports"] = list()
         for k in self.lPortList:
-            res["ports"].append((netdata.PORTSLIST[k]["protocol"], diffval["ports"][k]))
+            res["ports"].append((netdata.PORTSLIST[k]["protocol"], diffval["ports"][k], k))
 
         # send data
         return res
@@ -115,6 +115,16 @@ class NetModChild(NetModule):
                 port = flow.srcport
             elif not bdst:
                 port = flow.dstport
+            else:
+                try:
+                    netdata.PORTSLIST[flow.srcport]
+                    port = flow.srcport
+                except KeyError:
+                    try:
+                        netdata.PORTSLIST[flow.dstport]
+                        port = flow.dstport
+                    except KeyError:
+                        pass
 
             # List of IP protocols
             if port > 0:

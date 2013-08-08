@@ -105,7 +105,18 @@ ex_code = \
         "passwd": "ndop",
         "database": "NDOP",
         "port": 3306
+    },
+
+////////////////////////////
+    // Additional module configuration
+    // override default module values
+
+    "modules_config_override": {
+        "netmod_bandwidth": {
+            "updatetime": 30
     }
+}
+
 }
 """
 

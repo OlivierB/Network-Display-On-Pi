@@ -46,6 +46,10 @@ class ConfigChecker():
         self.daemon = args.daemon
         self.debug = args.debug
 
+        # init
+        self.l_protocols = list()
+        self.l_check_mods = dict()
+
         # logger
         logger = logging.getLogger()
 
@@ -63,9 +67,11 @@ class ConfigChecker():
             self.check_database(args, full=True)
             logger.debug("%s : Check SQL : OK" % self.__class__.__name__)
             self.check_sniffer_modules(args)
-            logger.debug("%s : Check modules : OK" % self.__class__.__name__)
+            logger.debug("%s : Check sniffer modules : OK" % self.__class__.__name__)
             self.check_flow_modules(args)
             logger.debug("%s : Check flow modules : OK" % self.__class__.__name__)
+            self.check_modconf_override(args)
+            logger.debug("%s : Check modules override config : OK" % self.__class__.__name__)
             self.check_daemon_files(args)
             logger.debug("%s : Check Daemon files : OK" % self.__class__.__name__)
             self.check_pidfile(args)
@@ -98,6 +104,7 @@ class ConfigChecker():
         self.check_database(args)
         self.check_sniffer_modules(args)
         self.check_flow_modules(args)
+        self.check_modconf_override(args)
 
         if self.daemon:
             self.check_daemon_files(args)
@@ -248,6 +255,7 @@ class ConfigChecker():
         else:
             self.log_file = None
 
+
     def check_sniffer_modules(self, args):
         """
         Check and load modules class
@@ -268,10 +276,6 @@ class ConfigChecker():
 
         ll_mod = self.get_elem("sniffer_modules_list")
         self.ll_modules = list()
-        try:
-            self.l_protocols
-        except:
-            self.l_protocols = list()
 
         if len(ll_mod) > 0:
             for l_mod in ll_mod:
@@ -292,7 +296,7 @@ class ConfigChecker():
 
                         # Add protocol and module
                         l_modules.append(modclass)
-                        self.l_protocols.append(modclass.protocol)
+
                     except Exception as e:
                         raise ArgumentConfigError("Module %s : Cannot be loaded : %s" % (mod, e))
 
@@ -321,10 +325,6 @@ class ConfigChecker():
         # netflow modules
         l_mod = self.get_elem("flow_mods_list")
         self.l_flowmods = list()
-        try:
-            self.l_protocols
-        except:
-            self.l_protocols = list()
 
         if len(l_mod) > 0:
 
@@ -342,12 +342,32 @@ class ConfigChecker():
 
                     # Add protocol and module
                     l_modules.append(modclass)
-                    self.l_protocols.append(modclass.protocol)
+                    
+                    self.add_check_module(mod, modclass)
                 except Exception as e:
                     raise ArgumentConfigError("Module %s : Cannot be loaded : %s" % (mod, e))
 
             if len(l_modules) > 0:
                 self.l_flowmods = l_modules
+
+    def check_modconf_override(self, args):
+        self.modconf_override = self.get_elem("modules_config_override")
+        logger = logging.getLogger()
+
+        for name, mod in self.l_check_mods.iteritems():
+            if name in self.modconf_override.keys():
+                mod.set_config(self.modconf_override[name])
+                logger.debug("Module %s : Override default config" % (name))
+
+            # Add protocol in protocol list
+            self.l_protocols.append(mod.protocol)
+
+    def add_check_module(self, name, mod):
+        if name in self.l_check_mods.keys():
+            raise ArgumentConfigError("Can not have the same module twice (%s)" % name)
+        else:
+            self.l_check_mods[name] = mod
+
 
     def is_root(self):
         if os.getuid() != 0:
