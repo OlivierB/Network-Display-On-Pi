@@ -61,8 +61,10 @@ class NetFlowSniffer(threading.Thread):
 
         lmod = self.lmod
         lfnt_flowhandle = list()
+        lfnt_trigger_save = list()
         for mod in lmod:
             lfnt_flowhandle.append(mod.flow_handler)
+            lfnt_trigger_save.append(mod.trigger_db_save)
 
         # List loaded module
         for mod in self.lmod:
@@ -73,6 +75,27 @@ class NetFlowSniffer(threading.Thread):
         ws_data = WsData()
         last_update_t = time()
         last_save_t = time()
+
+        self.database = self.config.database
+        db_on = self.config.database["on"]
+
+        # Mysql database
+        mydb = self.database["class"](
+            host=self.database["conf"]["host"],
+            user=self.database["conf"]["user"],
+            passwd=self.database["conf"]["passwd"],
+            database=self.database["conf"]["database"],
+            port=self.database["conf"]["port"])
+
+        if db_on:
+            # connection to database
+            mydb.connection()
+
+            if mydb.is_connect():
+                for mod in lmod:
+                    mod.database_init(mydb)
+                mydb.commit()
+
 
         while not self.term:
 
@@ -96,6 +119,14 @@ class NetFlowSniffer(threading.Thread):
                     data = mod.trigger_data_update()
                     if data is not None:
                         ws_data.send(mod.protocol, data)
+
+
+            # Modules save call
+            if db_on and mydb.connect is not None:
+                if time() - last_save_t > MIN_TIME_DB_UPDATE:
+                    last_save_t = time()
+                    map(lambda x: x(mydb), lfnt_trigger_save)
+                    mydb.commit()
 
 
     def stop(self):

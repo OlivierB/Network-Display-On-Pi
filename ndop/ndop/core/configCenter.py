@@ -358,7 +358,6 @@ class ConfigChecker():
             if name in self.modconf_override.keys():
                 mod.set_config(self.modconf_override[name])
                 logger.debug("Module %s : Override default config" % (name))
-
             # Add protocol in protocol list
             self.l_protocols.append(mod.protocol)
 

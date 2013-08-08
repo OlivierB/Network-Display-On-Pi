@@ -114,8 +114,8 @@ ex_code = \
     "modules_config_override": {
         "netmod_bandwidth": {
             "updatetime": 30
+        }
     }
-}
 
 }
 """
