@@ -49,9 +49,9 @@ There are two ways to install NDOP :
 * basic install with setup.py
 * complete install with the *installer* bash script **Only Linux users**
 	* Add a config file in ```/etc/ndop/```
-	* Add a service script (init.d)
+	* Add a service script (init.d) and enable service
 
-**Do not forgot to run commands in superuser mode**
+**Do not forget to run commands in superuser mode**
 
 For a basic install :
 ```python setup.py install```
@@ -68,7 +68,7 @@ cd ndop
 ./script/uninstall.sh
 ```
 
-*uninstall remove server config file and service script*
+*uninstall : remove server's config file and service script*
 
 ## Configuration
 
@@ -116,14 +116,13 @@ You can also use bash install script:
 
 ## Utilization
 
-If your server is on the local computer, you just need to run :
+If your server is on the same computer, you just need to run (default ndop-client bind address is 127.0.0.1:9000) :
 ```
 cd ndop_client
 python client
 ```
-because default bind address is 127.0.0.1:9000.
 
-otherwise, configure distant address correctly with ```--addr``` option
+otherwise, configure address correctly with ```--addr``` option
 ```
 python client --addr ADDRESS:PORT
 ```
