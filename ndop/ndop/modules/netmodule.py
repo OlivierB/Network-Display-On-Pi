@@ -47,6 +47,9 @@ class NetModule(object):
             if elem in self.l_vars:
                 setattr(self, elem, value)
 
+    def add_conf_override(self, elem):
+        self.l_vars.append(elem)
+
     def trigger_data_update(self):
         """
         Manage call to update method with updatetime

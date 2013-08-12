@@ -115,7 +115,7 @@ def select_port(src, dst):
 
 
 dIPType = {
-    0: {'callback': None, 'protocol': 'dCCP', 'description': 'IPv6 Hop-by-Hop Option'},
+    # 0: {'callback': None, 'protocol': 'dCCP', 'description': 'IPv6 Hop-by-Hop Option'},
     1: {'callback': None, 'protocol': 'ICMP', 'description': 'Internet Control Message'},
     2: {'callback': None, 'protocol': 'IGMP', 'description': 'Internet Group Management'},
     3: {'callback': None, 'protocol': 'GGP', 'description': 'Gateway-to-Gateway'},

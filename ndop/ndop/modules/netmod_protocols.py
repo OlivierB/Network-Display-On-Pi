@@ -94,13 +94,12 @@ class NetModChild(NetModule):
         try:
             netdata.IPTYPE[protocol]
             if protocol in self.lIPProtocol:
-                self.lIPProtocol[protocol] += 1
+                self.lIPProtocol[protocol] += flow.dPkts
             else:
-                self.lIPProtocol[protocol] = 1
+                self.lIPProtocol[protocol] = flow.dPkts
                 self.lIPList.append(protocol)
         except KeyError:
             pass
-
 
 
         if protocol == netdata.IPTYPE_TCP or protocol == netdata.IPTYPE_UDP:
@@ -131,9 +130,9 @@ class NetModChild(NetModule):
                 try:
                     netdata.PORTSLIST[port]
                     if port in self.lPortProtocol:
-                        self.lPortProtocol[port] += 1
+                        self.lPortProtocol[port] += flow.dPkts
                     else:
-                        self.lPortProtocol[port] = 1
+                        self.lPortProtocol[port] = flow.dPkts
                         self.lPortList.append(port)
                 except KeyError:
                     pass
