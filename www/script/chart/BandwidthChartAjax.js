@@ -4,10 +4,10 @@
  * @author Matrat Erwan
  **/
 
-function BandwidthChartAjax(id) {
+function BandwidthChartAjax(id, style_line) {
 
     // inheritance from BandwidthChart
-    BandwidthChart.call(this, id, false, -1);
+    BandwidthChart.call(this, id, false, -1, style_line);
 
     // inheritance from AjaxManager
     AjaxManager.call(this, id + '-alert');

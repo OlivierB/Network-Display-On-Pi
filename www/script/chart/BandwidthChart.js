@@ -3,12 +3,12 @@
  * @author Matrat Erwan
  **/
 
-function BandwidthChart(id, initializes, dataLength) {
+function BandwidthChart(id, initializes, dataLength, style_line) {
 
     this.id = id;
 
     this.dataLength = dataLength; // number of dataPoints visible at any point
-
+    this.style_line = style_line || "spline"; //style of the line
 
     this.local_network = []; // dataPoints
     this.incoming = []; // dataPoints
@@ -49,19 +49,19 @@ function BandwidthChart(id, initializes, dataLength) {
             showInLegend: false,
             dataPoints: this.global
         }, {
-            type: "spline",
+            type: this.style_line,
             name: "Local Network",
             dataPoints: this.local_network,
             showInLegend: true,
             markerSize: 0
         }, {
-            type: "spline",
+            type: this.style_line,
             name: "Incoming",
             showInLegend: true,
             dataPoints: this.incoming,
             markerSize: 0
         }, {
-            type: "spline",
+            type: this.style_line,
             name: "Outcoming",
             showInLegend: true,
             dataPoints: this.outcoming,

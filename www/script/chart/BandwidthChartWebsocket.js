@@ -5,12 +5,12 @@
  **/
 
 
-function BandwidthChartWebsocket(id){
+function BandwidthChartWebsocket(id, style_line){
     // inheritance from WebSocketManager
     WebSocketManager.call(this, id + '-alert');
-
+    
     // inheritance from BandwidthChart
-    BandwidthChart.call(this, id, true, 100);
+    BandwidthChart.call(this, id, true, 100, style_line);
 }
 
 
