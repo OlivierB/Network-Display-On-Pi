@@ -47,6 +47,9 @@ class NetModule(object):
             if elem in self.l_vars:
                 setattr(self, elem, value)
 
+        self.save_timecode(self.savecode)
+        self.save_timewait()
+
     def add_conf_override(self, elem):
         self.l_vars.append(elem)
 
@@ -88,12 +91,16 @@ class NetModule(object):
         Check savetime value and correct it if necessary
         """
         if type(savetime) is tuple and len(savetime) == 2:
+
             if savetime[0] == 'h':
                 # hours management
                 if savetime[1] < 1:
                     self.savecode = ('h', 1)
                 elif savetime[1] > 24:
                     self.savecode = ('h', 24)
+                elif 24 % savetime[1] != 0:
+                    val = int(24 / round(24 / (savetime[1] * 1.0)))
+                    self.savecode = ('h', val)
                 else:
                     self.savecode = ('h', savetime[1])
             else:
@@ -102,6 +109,9 @@ class NetModule(object):
                     self.savecode = ('m', 1)
                 elif savetime[1] > 60:
                     self.savecode = ('m', 60)
+                elif 60 % savetime[1] != 0:
+                    val = int(60 / round(60 / (savetime[1] * 1.0)))
+                    self.savecode = ('m', val)
                 else:
                     self.savecode = ('m', savetime[1])
         else:

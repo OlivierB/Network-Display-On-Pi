@@ -12,7 +12,6 @@ inherit from NetModule
 
 # Python lib import
 import time
-import psutil
 import datetime
 
 # Project file import
@@ -24,9 +23,6 @@ class NetModChild(NetModule):
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='packet_loss', *args, **kwargs)
-
-        if psutil.__version__ < '0.7.0':
-            print "Update psutil to 0.7.1"
 
         # packets stats
         self.sniff = GetSniffer()

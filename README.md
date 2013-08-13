@@ -184,8 +184,6 @@ DOMAIN=192.168.1.151
 ADDR="http://${DOMAIN}/Network-Display-On-Pi/www/"
 
 
-
-
 while true
 do
 	ping -c 1 $DOMAIN

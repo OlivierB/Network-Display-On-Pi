@@ -309,6 +309,8 @@ class ConfigChecker():
 
         Create protocols list for websocket server
         """
+        # Get netflow bind addr
+        self.flow_addr = str(self.get_elem("flow_bind_addr"))
 
         # Get netflow port
         if args.netflow is None:
@@ -316,12 +318,9 @@ class ConfigChecker():
         else:
             self.flow_port = args.netflow
         # Check listen port
-        if self.is_port_open(self.flow_port):
+        if self.is_port_open(self.flow_port, sock_param=(socket.AF_INET, socket.SOCK_DGRAM)):
             raise ArgumentConfigError("Port %i already in use" % self.flow_port)
 
-        # Get netflow bind addr
-        self.flow_addr = str(self.get_elem("flow_bind_addr"))
-        
         # netflow modules
         l_mod = self.get_elem("flow_mods_list")
         self.l_flowmods = list()
@@ -393,12 +392,18 @@ class ConfigChecker():
                 pass
             return False
 
-    def is_port_open(self, port):
+    def is_port_open(self, port, sock_param=(socket.AF_INET, socket.SOCK_STREAM)):
         """
         Check if asked websocket port is available
         """
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex(('', port))
+        sock = socket.socket(*sock_param)
+
+        try:
+            sock.bind(('', port))
+            result = 1
+        except socket.error:
+            result = 0
+
         sock.close()
         if result == 0:
             return True

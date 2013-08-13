@@ -5,6 +5,8 @@ Attack detection
 
 inherit from NetModule
 
+not implemented
+
 @author: Olivier BLIN
 """
 

@@ -5,6 +5,8 @@ Skeleton
 
 inherit from NetModule
 
+Try to catch password
+
 @author: Olivier BLIN
 """
 
