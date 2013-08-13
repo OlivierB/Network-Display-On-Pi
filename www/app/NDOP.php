@@ -217,6 +217,18 @@ Class NDOP {
 				$pause_on_hover = 'false';
 			}
 
+			if(isset($conf['update_id'])){
+				$update_id = $conf['update_id'];
+			}else{
+				$update_id = 0;
+			}
+			if(isset($conf['update_check_interval'])){
+				$update_check_interval = $conf['update_check_interval'];
+			}else{
+				$update_check_interval = 900000;
+			}
+
+
 			$js = '
 			$(function() {
 
@@ -259,6 +271,12 @@ Class NDOP {
 			        }
 			    });
 			});';
+
+			$js .= '
+				var refresh_manager = new RefreshManager('.$update_id.');
+				refresh_manager.connect(App.webServerAddress, "app/sql_request.php?request=update_id", '.$update_check_interval.');
+			';
+
 
 			return $js;
 		}
