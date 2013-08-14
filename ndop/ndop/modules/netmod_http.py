@@ -5,7 +5,7 @@ Skeleton
 
 inherit from NetModule
 
-Try to catch password
+Try to catch password in http post
 
 @author: Olivier BLIN
 """

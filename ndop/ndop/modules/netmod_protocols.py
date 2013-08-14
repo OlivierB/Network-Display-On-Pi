@@ -37,6 +37,17 @@ class NetModChild(NetModule):
         self.save_oldstats = val
         self.update_oldstats = val
 
+        # Limit SVG
+        self.limit_ether = 5
+        self.add_conf_override("limit_ether")
+
+        self.limit_ip = 6
+        self.add_conf_override("limit_ip")
+
+        self.limit_port = 10
+        self.add_conf_override("limit_port")
+        
+
     def update(self):
         new = self.get_state()
         diffval = self.diff_states(self.update_oldstats, new)
@@ -171,6 +182,7 @@ CREATE TABLE IF NOT EXISTS `protocols_port` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `protocol` varchar(60) NOT NULL,
   `number` int(11) NOT NULL,
+  `port` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 """
@@ -183,11 +195,11 @@ CREATE TABLE IF NOT EXISTS `protocols_port` (
 
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        self.create_sql(db_class, diffval["ether"], netdata.ETHERTYPE, "protocols_ether", date, limit=5)
+        self.create_sql(db_class, diffval["ether"], netdata.ETHERTYPE, "protocols_ether", date, limit=self.limit_ether)
 
-        self.create_sql(db_class, diffval["ip"], netdata.IPTYPE, "protocols_ip", date, limit=6)
+        self.create_sql(db_class, diffval["ip"], netdata.IPTYPE, "protocols_ip", date, limit=self.limit_ip)
 
-        self.create_sql(db_class, diffval["ports"], netdata.PORTSLIST, "protocols_port", date, limit=10)
+        self.create_sql_port(db_class, diffval["ports"], netdata.PORTSLIST, "protocols_port", date, limit=self.limit_port)
 
 
     def create_sql(self, db_class, data, l_prot_info, sql_table, sql_date, limit=5):
@@ -198,6 +210,18 @@ CREATE TABLE IF NOT EXISTS `protocols_port` (
                 req += "\"" + sql_date + "\"" + ","
                 req += "\"" + l_prot_info[k]["protocol"] + "\"" + ","
                 req += str(v)
+                req += ");"
+            db_class.execute(req)
+
+    def create_sql_port(self, db_class, data, l_prot_info, sql_table, sql_date, limit=5):
+        l_couple = sorted(data.items(), key=operator.itemgetter(1), reverse=True)[:limit]
+        for k, v in l_couple:
+            if v > 0:
+                req = "INSERT INTO " + sql_table + "(date, protocol, number, port) VALUES ("
+                req += "\"" + sql_date + "\"" + ","
+                req += "\"" + l_prot_info[k]["protocol"] + "\"" + ","
+                req += str(v) + ","
+                req += str(k)
                 req += ");"
             db_class.execute(req)
 

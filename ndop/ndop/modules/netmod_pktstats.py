@@ -3,9 +3,9 @@
 """
 Client system monitoring
 
-Use psutil
-
 inherit from NetModule
+
+Useless module with the netflow mode
 
 @author: Olivier BLIN
 """
