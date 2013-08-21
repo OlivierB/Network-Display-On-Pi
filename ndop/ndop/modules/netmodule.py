@@ -19,7 +19,7 @@ class NetModule(object):
     Module main class
     Define most usefull inheritance functions
     """
-    def __init__(self, updatetime=10, savetime=('m', 30), protocol=None, dev="lo"):
+    def __init__(self, updatetime=10, savetime=('m', 30), protocol=None, dev="lo", savebdd=True):
 
         # protocol (or module name)
         self.protocol = protocol
@@ -31,13 +31,14 @@ class NetModule(object):
         # Time management for save function
         self.save_timecode(savetime)
         self.save_timewait()
+        self.savebdd = savebdd
 
         self.logger = logging.getLogger()
 
         self.dev = dev
 
         # Variables List you can change
-        self.l_vars = ["protocol", "updatetime"]
+        self.l_vars = ["protocol", "updatetime", "savebdd", "savecode"]
 
     def __str__(self):
         return self.protocol
@@ -65,7 +66,7 @@ class NetModule(object):
         """
         Manage call to database_save method with savetime
         """
-        if time() - self.savetime > self.savewait:
+        if self.savebdd and time() - self.savetime > self.savewait:
             self.save_timewait()
             self.database_save(db_class)
 
@@ -90,7 +91,7 @@ class NetModule(object):
         """
         Check savetime value and correct it if necessary
         """
-        if type(savetime) is tuple and len(savetime) == 2:
+        if (type(savetime) is tuple or type(savetime) is list) and len(savetime) == 2:
 
             if savetime[0] == 'h':
                 # hours management

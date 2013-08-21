@@ -1,7 +1,7 @@
 Network-Display-On-Pi
 =====================
 
-Network Display On Pi (NDOP) is a network monitoring service which provides you a way to capture packets and send stats by websockets. Packets analysis is done through differents modules you can choose or create.
+Network Display On Pi (NDOP) is a network monitoring service which provides you a way to capture packets or flows and send stats by websockets. Packets and flows analysis is done through differents modules you can choose or create.
 
 # Repository structure
 
@@ -38,8 +38,8 @@ Network Display On Pi (NDOP) is a network monitoring service which provides you 
 Download the git repository or clone it:
 ```git clone https://github.com/OlivierB/Network-Display-On-Pi.git```
 
-Go in the NDOP server repository :
-```cd ndop```
+Go in the NDOP server directory :
+```cd Network-Display-On-Pi/ndop```
 
 
 *If you don't want to install NDOP in your system, you can try it with:*
@@ -47,17 +47,13 @@ Go in the NDOP server repository :
 
 There are two ways to install NDOP :
 * basic install with setup.py
+	* Command : ```python setup.py install```
 * complete install with the *installer* bash script **Only Linux users**
 	* Add a config file in ```/etc/ndop/```
 	* Add a service script (init.d) and enable service
+	* Command : ``` ./scripts/install_unix.sh ```
 
-**Do not forget to run commands in superuser mode**
-
-For a basic install :
-```python setup.py install```
-
-For a complete install :
-``` ./scripts/install_unix.sh ```
+**Do not forget to run these commands in superuser mode**
 
 
 ## Uninstall
@@ -68,12 +64,17 @@ cd ndop
 ./script/uninstall.sh
 ```
 
-*uninstall : remove server's config file and service script*
+*uninstall : remove server's config file and service script if they exist*
+
 
 ## Configuration
 
 Configuration file is ```/etc/ndop/server_conf.json```
 If the file doesn't exist, the only way you have to configure NDOP server is to change values in the config file of ndop package (```ndop/config/server_conf.py```). After make changes, you need to reinstall it or use the launch script (```./script/launch_ndop.sh```)
+
+
+
+
 
 
 ## Utilisation

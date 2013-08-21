@@ -23,6 +23,9 @@ from ndop.core.network import netdata
 
 
 class NetModChild(NetModule):
+    """
+    Network bandwidth in real time
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=10, savetime=('m', 30), protocol='bandwidth', *args, **kwargs)
@@ -135,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `bandwidth` (
         # bytes_sent, bytes_recv, packets_sent, packets_recv, errin, errout, dropin, dropout
         if self.dev in res_net.keys():
             val["net"] = res_net[self.dev]
-            print val["net"]
+            # print val["net"]
         else:
             val["net"] = psutil.network_io_counters(pernic=False)
 

@@ -22,6 +22,9 @@ import pcap
 MAC_MAX = 10000
 
 class NetModChild(NetModule):
+    """
+    Attack detection system - not implemented
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='attack', *args, **kwargs)

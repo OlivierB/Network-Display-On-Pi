@@ -82,6 +82,18 @@ class ConfigChecker():
             logger.debug("%s : OK" % self.__class__.__name__)
             self.cmd = "test"
             return
+        elif args.list:
+            self.conf_logger_normal(debug=False)
+            # Load default config file
+            self.load_config("ndop.config.server_conf")
+            # try to get host config file
+            if args.file:
+                self.try_config_override(args.file)
+            else:
+                self.try_config_override(UNIX_CONF_FILE)
+            self.list_module_conf()
+            self.cmd = "list"
+            return
         else:
             self.conf_logger_normal(debug=args.debug)
 
@@ -130,6 +142,7 @@ class ConfigChecker():
         parser.add_argument("-f", "--file", help="server configuration file")
         parser.add_argument("--daemon", action='store_true', help="daemon mode")
         parser.add_argument("--test", action='store_true', help="Check configuration without start ndop")
+        parser.add_argument("--list", action='store_true', help="List module and associate parameters")
         parser.add_argument('--version', action='version', version=('NDOP %s' % server_conf. __version__))
         return parser
 
@@ -466,6 +479,61 @@ class ConfigChecker():
 
             logger.removeHandler(self.stdout_handler)
 
+    def list_module_conf(self):
+        print "Module list and description :"
+        # logger = logging.getLogger()
+        MODULE_EXTENSIONS = ('.py', '.pyc', '.pyo')
+
+        override = self.get_elem("modules_config_override")
+
+        try:
+            dirList=os.listdir("ndop/modules")
+            mset = set([os.path.splitext(module)[0]
+                for module in dirList
+                if module.endswith(MODULE_EXTENSIONS) and  module.startswith("netmod_")])
+
+            for mod in sorted(mset):
+                print ">%s:" % mod
+                # import module
+                module = importlib.import_module("ndop.modules." + mod)
+
+                # Check module main class
+                getattr(module, "NetModChild")
+
+                # Create an instance
+                modclass = module.NetModChild()
+
+                print "\t%s" % modclass.__doc__
+
+                over = list()
+                if mod in override:
+                    over = override[mod]
+
+                for var in modclass.l_vars:
+                    if var in over:
+                        new = over[var]
+                        print "\t%s = %r (default: %r)" % (var, new , getattr(modclass, var))
+                    else:
+                        new = getattr(modclass, var)
+                        print "\t%s = %r" % (var, getattr(modclass, var))
+
+                print ""
+
+        except OSError:
+            print "\tNo module found"
+
+
+import imp
+
+
+def package_contents(package_name):
+    file, pathname, description = imp.find_module(package_name)
+    if file:
+        raise ImportError('Not a package: %r', package_name)
+
+    return set([os.path.splitext(module)[0]
+        for module in os.listdir(pathname)
+        if module.endswith(MODULE_EXTENSIONS)])
 
 class ConfigCenter(Exception):
 

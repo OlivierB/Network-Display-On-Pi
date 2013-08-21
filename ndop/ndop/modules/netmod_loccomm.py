@@ -22,6 +22,9 @@ LOCCOMM_MAX_IP = 1000
 
 
 class NetModChild(NetModule):
+    """
+    Local network communication - live
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, protocol='local_communication', *args, **kwargs)

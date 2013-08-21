@@ -23,6 +23,9 @@ from ndop.core.network import netutils
 MAX_IP_LIST_SEND = 20
 
 class NetModChild(NetModule):
+    """
+    List of outside IP addresses which are contacted
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, protocol='iplist', *args, **kwargs)

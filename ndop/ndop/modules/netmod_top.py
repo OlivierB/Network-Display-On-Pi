@@ -18,6 +18,9 @@ from netmodule import NetModule
 
 
 class NetModChild(NetModule):
+    """
+    System load
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, protocol='server_stat', *args, **kwargs)

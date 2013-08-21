@@ -20,6 +20,9 @@ from ndop.core.sniffer import GetSniffer
 
 
 class NetModChild(NetModule):
+    """
+    Packets statistics - only works with the sniffer system
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='packet_loss', *args, **kwargs)

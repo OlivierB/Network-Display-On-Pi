@@ -11,6 +11,7 @@ inherit from NetModule
 # Python lib import
 import datetime
 import operator
+from time import time
 
 # Project file import
 from netmodule import NetModule
@@ -19,6 +20,9 @@ from ndop.core.network import netutils
 
 
 class NetModChild(NetModule):
+    """
+    List protocols used on 3 network's layers
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=10, savetime=('m', 30), protocol='protocols', *args, **kwargs)
@@ -36,16 +40,21 @@ class NetModChild(NetModule):
         val = self.get_state()
         self.save_oldstats = val
         self.update_oldstats = val
+        
+        # clear time
+        self.cleartime = time()
+        self.cleartime_s = 600
+        self.add_conf_override("cleartime_s")
 
         # Limit SVG
-        self.limit_ether = 5
-        self.add_conf_override("limit_ether")
+        self.bdd_max_ethertype = 5
+        self.add_conf_override("bdd_max_ethertype")
 
-        self.limit_ip = 6
-        self.add_conf_override("limit_ip")
+        self.bdd_max_ipprotocol = 6
+        self.add_conf_override("bdd_max_ipprotocol")
 
-        self.limit_port = 10
-        self.add_conf_override("limit_port")
+        self.bdd_max_port = 10
+        self.add_conf_override("bdd_max_port")
         
 
     def update(self):
@@ -66,6 +75,16 @@ class NetModChild(NetModule):
         res["ports"] = list()
         for k in self.lPortList:
             res["ports"].append((netdata.PORTSLIST[k]["protocol"], diffval["ports"][k], k))
+
+        if self.cleartime + self.cleartime_s < time():
+            self.cleartime = time()
+
+            self.lEtherProtocol = dict()
+            self.lIPProtocol = dict()
+            self.lPortProtocol = dict()
+            self.lEtherList = list()
+            self.lIPList = list()
+            self.lPortList = list()
 
         # send data
         return res
@@ -125,16 +144,16 @@ class NetModChild(NetModule):
                 port = flow.srcport
             elif not bdst:
                 port = flow.dstport
-            else:
-                try:
-                    netdata.PORTSLIST[flow.srcport]
-                    port = flow.srcport
-                except KeyError:
-                    try:
-                        netdata.PORTSLIST[flow.dstport]
-                        port = flow.dstport
-                    except KeyError:
-                        pass
+            # else:
+            #     try:
+            #         netdata.PORTSLIST[flow.srcport]
+            #         port = flow.srcport
+            #     except KeyError:
+            #         try:
+            #             netdata.PORTSLIST[flow.dstport]
+            #             port = flow.dstport
+            #         except KeyError:
+            #             pass
 
             # List of IP protocols
             if port > 0:
@@ -195,11 +214,11 @@ CREATE TABLE IF NOT EXISTS `protocols_port` (
 
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        self.create_sql(db_class, diffval["ether"], netdata.ETHERTYPE, "protocols_ether", date, limit=self.limit_ether)
+        self.create_sql(db_class, diffval["ether"], netdata.ETHERTYPE, "protocols_ether", date, limit=self.bdd_max_ethertype)
 
-        self.create_sql(db_class, diffval["ip"], netdata.IPTYPE, "protocols_ip", date, limit=self.limit_ip)
+        self.create_sql(db_class, diffval["ip"], netdata.IPTYPE, "protocols_ip", date, limit=self.bdd_max_ipprotocol)
 
-        self.create_sql_port(db_class, diffval["ports"], netdata.PORTSLIST, "protocols_port", date, limit=self.limit_port)
+        self.create_sql_port(db_class, diffval["ports"], netdata.PORTSLIST, "protocols_port", date, limit=self.bdd_max_port)
 
 
     def create_sql(self, db_class, data, l_prot_info, sql_table, sql_date, limit=5):
