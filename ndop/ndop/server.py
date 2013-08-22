@@ -85,8 +85,8 @@ def ndop_run(config):
         
 
         # Webserver stop
-        ws_serv.stop()
         if ws_serv.is_alive():
+            ws_serv.stop()
             ws_serv.join()
         logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 

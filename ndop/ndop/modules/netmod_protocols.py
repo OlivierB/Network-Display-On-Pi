@@ -34,7 +34,6 @@ class NetModChild(NetModule):
 
         self.lEtherList = list()
         self.lIPList = list()
-        self.lPortList = list()
 
         # stats
         val = self.get_state()
@@ -42,9 +41,8 @@ class NetModChild(NetModule):
         self.update_oldstats = val
         
         # clear time
-        self.cleartime = time()
-        self.cleartime_s = 600
-        self.add_conf_override("cleartime_s")
+        self.max_live_port = 10
+        self.add_conf_override("max_live_port")
 
         # Limit SVG
         self.bdd_max_ethertype = 5
@@ -72,19 +70,12 @@ class NetModChild(NetModule):
         for k in self.lIPList:
             res["ip"].append((netdata.IPTYPE[k]["protocol"], diffval["ip"][k]))
 
+
+        l_couple = sorted(diffval["ports"].items(), key=operator.itemgetter(1), reverse=True)[:self.max_live_port]
         res["ports"] = list()
-        for k in self.lPortList:
-            res["ports"].append((netdata.PORTSLIST[k]["protocol"], diffval["ports"][k], k))
-
-        if self.cleartime + self.cleartime_s < time():
-            self.cleartime = time()
-
-            self.lEtherProtocol = dict()
-            self.lIPProtocol = dict()
-            self.lPortProtocol = dict()
-            self.lEtherList = list()
-            self.lIPList = list()
-            self.lPortList = list()
+        for k, v in l_couple:
+            if v > 0:
+                res["ports"].append((netdata.PORTSLIST[k]["protocol"], v, k))
 
         # send data
         return res
@@ -117,7 +108,6 @@ class NetModChild(NetModule):
                         self.lPortProtocol[typ] += 1
                     else:
                         self.lPortProtocol[typ] = 1
-                        self.lPortList.append(typ)
 
     def flow_handler(self, flow):
         protocol = flow.prot
@@ -163,7 +153,6 @@ class NetModChild(NetModule):
                         self.lPortProtocol[port] += flow.dPkts
                     else:
                         self.lPortProtocol[port] = flow.dPkts
-                        self.lPortList.append(port)
                 except KeyError:
                     pass
 

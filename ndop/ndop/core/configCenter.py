@@ -241,8 +241,12 @@ class ConfigChecker():
         # Check ws port
         if self.ws_port < 1024:
             raise ArgumentConfigError("Cannot use system port")
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = sock.connect_ex(('', self.ws_port))
+        sock.close()
         # Check listen port
-        if self.is_port_open(self.ws_port):
+        if result == 0:
             raise ArgumentConfigError("Port %i already in use" % self.ws_port)
 
 
