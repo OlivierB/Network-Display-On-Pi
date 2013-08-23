@@ -86,7 +86,7 @@ If the file doesn't exist, the only way you have to configure NDOP server is to 
 
 ## How it works ?
 
-~[main system](doc/images/system.png)
+![main system](doc/images/system.png)
 
 
 
