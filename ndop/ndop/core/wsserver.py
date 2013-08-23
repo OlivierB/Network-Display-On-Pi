@@ -15,7 +15,6 @@ Use python tornado webserver
 import logging
 import base64
 import json
-import socket
 
 from threading import Thread, Lock
 from tornado import web, websocket, httpserver, ioloop, netutil, process
@@ -109,14 +108,7 @@ class WsServer(Thread):
 
         # HTTP server
         self.http_server = httpserver.HTTPServer(application)
-        # self.http_server.listen(port)
-
-        self.sockets = netutil.bind_sockets(port)
-        for sock in self.sockets:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        self.http_server.add_sockets(self.sockets)
-
+        self.http_server.listen(port)
         self.clientList = WsData()
 
         self.log = logging.getLogger()
