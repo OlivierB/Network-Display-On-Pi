@@ -131,9 +131,9 @@ class NetModule(object):
 
     def flow_handler(self, flow):
         """
-        Called by sniffer when a new packet arrive
+        Called by sniffer when a new flow of packets arrive
 
-        pkt is formated with Packet class
+        pkt is formated with flow class
 
         override this method
         """

@@ -102,12 +102,15 @@ class NetModChild(NetModule):
 
             if pkt.Ether.payload.is_type(netdata.IPTYPE_TCP) or pkt.Ether.payload.is_type(netdata.IPTYPE_UDP):
                 # List of IP protocols
-                typ = pkt.Ether.payload.payload.type
-                if typ in netdata.PORTSLIST.keys():
-                    if typ in self.lPortProtocol:
-                        self.lPortProtocol[typ] += 1
-                    else:
-                        self.lPortProtocol[typ] = 1
+                port = pkt.Ether.payload.payload.type
+                try:
+                    netdata.PORTSLIST[port]
+                    try:
+                        self.lPortProtocol[port] += 1
+                    except KeyError:
+                        self.lPortProtocol[port] = 1
+                except KeyError:
+                    pass
 
     def flow_handler(self, flow):
         protocol = flow.prot
@@ -134,6 +137,7 @@ class NetModChild(NetModule):
                 port = flow.srcport
             elif not bdst:
                 port = flow.dstport
+            # Remove local ports (cannot determine good port)
             # else:
             #     try:
             #         netdata.PORTSLIST[flow.srcport]
@@ -149,9 +153,9 @@ class NetModChild(NetModule):
             if port > 0:
                 try:
                     netdata.PORTSLIST[port]
-                    if port in self.lPortProtocol:
+                    try:
                         self.lPortProtocol[port] += flow.dPkts
-                    else:
+                    except KeyError:
                         self.lPortProtocol[port] = flow.dPkts
                 except KeyError:
                     pass

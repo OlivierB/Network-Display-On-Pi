@@ -70,20 +70,24 @@ cd ndop
 ## Configuration
 
 Configuration file is ```/etc/ndop/server_conf.json```
-If the file doesn't exist, the only way you have to configure NDOP server is to change values in the config file of ndop package (```ndop/config/server_conf.py```). After make changes, you need to reinstall it or use the launch script (```./script/launch_ndop.sh```)
-
-
-
+If the file doesn't exist, the only way you have to configure NDOP server is to change values in the config file of ndop package (```ndop/config/server_conf.py```). After make changes, you need to install it again (or use the launch script ```./script/launch_ndop.sh```).
 
 
 
 ## Utilisation
-* help : ```ndop -h```
+* help : ```ndop -h``` (Give you all start options)
 
 * test config : ```ndop --test``` (tell you if server config works)
+* module list : ```ndop --list``` (show module's variables)
 * run in console : ```ndop```
 * daemon mode : ```ndop --daemon``` (or use service script ```service ndop start```)
 * pass in debug mode with '-d' option
+
+
+## How it works ?
+
+~[main system](doc/images/system.png)
+
 
 
 ## Add a new module

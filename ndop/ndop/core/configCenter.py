@@ -141,8 +141,8 @@ class ConfigChecker():
         parser.add_argument("-i", "--interface", help="sniffer device")
         parser.add_argument("-f", "--file", help="server configuration file")
         parser.add_argument("--daemon", action='store_true', help="daemon mode")
-        parser.add_argument("--test", action='store_true', help="Check configuration without start ndop")
-        parser.add_argument("--list", action='store_true', help="List module and associate parameters")
+        parser.add_argument("--test", action='store_true', help="check configuration without start ndop")
+        parser.add_argument("--list", action='store_true', help="list module and associate parameters")
         parser.add_argument('--version', action='version', version=('NDOP %s' % server_conf. __version__))
         return parser
 
