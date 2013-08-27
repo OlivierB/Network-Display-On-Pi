@@ -97,13 +97,13 @@ If the file doesn't exist, the only way you have to configure NDOP server is to 
 
 ### Network sniffing
 
-There is two differents way to sniff network packets and you can use both at the time:
+There are two differents way to sniff network packets and you can use both at the time:
 * pypcap : python implementation of libpcap library (used in tcpdump)
 * netflow system : cisco system to create and export network flows
 
 #### Pypcap
 
-This system is embed in NDOP server. You just need to configure listening network interface and ass some modules.
+This system is embed in NDOP server. You just need to configure listening network interface and add some modules.
 
 ```
 // Ethernet interface for packets capture

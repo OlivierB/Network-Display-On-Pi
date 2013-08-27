@@ -24,7 +24,7 @@ setup(
     long_description=open('README.txt').read(),
     keywords="sniffer websocket network",
     url='https://github.com/OlivierB/Network-Display-On-Pi.git',
-    license='',
+    license='GPLv3',
     entry_points={"console_scripts": ["ndop=ndop.server:main"]},
     classifiers=[
         "Development Status :: 3 - Alpha",
