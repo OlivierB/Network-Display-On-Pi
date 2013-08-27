@@ -1,7 +1,7 @@
 Network-Display-On-Pi
 =====================
 
-Network Display On Pi (NDOP) is a network monitoring service which provides you a way to capture packets or flows and send stats by websockets. Packets and flows analysis is done through differents modules you can choose or create.
+Network Display On Pi (NDOP) is a network monitoring service which provides you a way to capture packets or flows and send stats by websockets. Packets and flows analysis is done through different modules you can choose or create.
 
 # Repository structure
 
@@ -97,7 +97,7 @@ If the file doesn't exist, the only way you have to configure NDOP server is to 
 
 ### Network sniffing
 
-There are two differents ways to sniff network packets and you can use both at the time:
+There are two different ways to sniff network packets and you can use both at the time:
 * pypcap : python implementation of libpcap library (used in tcpdump)
 * netflow system : cisco system to create and export network flows
 
@@ -242,6 +242,7 @@ List of default available parameters :
 
 
 #### Add a new module
+
 create a new python file in ```ndop/modules``` with skeleton module :
 * ```cd ndop/modules/```
 * ```cp netmod_skeleton.py netmod_mymodule.py```
