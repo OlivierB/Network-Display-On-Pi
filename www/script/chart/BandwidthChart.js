@@ -43,7 +43,7 @@ function BandwidthChart(id, initializes, dataLength, style_line) {
             content: "<span style='\"'color: {color};'\"'><strong>{name}</strong></span> {y} kB/s"
         },
         data: [{
-            type: "splineArea",
+            type: "area",
             name: "Global",
             color: "rgba(100,128,210, 0.2)",
             showInLegend: false,
