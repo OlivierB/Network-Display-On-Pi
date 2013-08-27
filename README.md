@@ -97,7 +97,7 @@ If the file doesn't exist, the only way you have to configure NDOP server is to 
 
 ### Network sniffing
 
-There are two differents way to sniff network packets and you can use both at the time:
+There are two differents ways to sniff network packets and you can use both at the time:
 * pypcap : python implementation of libpcap library (used in tcpdump)
 * netflow system : cisco system to create and export network flows
 
@@ -130,11 +130,11 @@ This system is embed in NDOP server. You just need to configure listening networ
 
 **WARNING**
 * packets sniffing with libpcap is not optimized for heavy network load
-* you cannot listner more than one network interface
+* you cannot listen more than one network interface at the time
 
 #### Netflow system
 netflow system works in two parts :
-* exporter which is outside NDOP program. It captures packets and create flows which follow netflow protocol
+* exporter which is outside NDOP program. It captures packets and create flows which respects netflow protocol
 * collector embed in NDOP program. It listens on the given UDP port to catch sended flows.
 
 ##### collector configuration in NDOP
@@ -186,6 +186,59 @@ OTHER_ARGS="-fip -e5"
 
 
 ### Modules
+
+#### What is a module ?
+
+Create a Module system is the way we have chosen to allow easy NDOP evolution. We provide you a set of functions which are automaticaly called by the core algorithme. You need to implement these functions and change default module's parameters if necessary.
+
+All modules inherit from ```NetModule``` in order to match all functions. You have to override functions you need.
+
+
+#### Module description
+
+##### Functions
+
+A module have two entry points :
+
+* ```pkt_handler``` for simple packet capture with libpcap
+* ```flow_handler``` for packets flow capture
+
+**In a running NDOP server, you can use only one of these functions. ```pkt_handler``` and ```flow_handler``` functions are called respectively if module is in ```sniffer_modules_list``` or ```flow_mods_list``` list**
+
+
+There are two bdd functions :
+* ```database_init``` called every time NDOP server is started to create tables if needed
+* ```database_save``` calles every ```savecode``` to save data in BDD
+
+One function for websocket:
+* ```update``` called every ```updatetime```. **You have to return a dictionary**
+
+##### Special functions
+
+Init function have to be implement to define some variables
+
+```
+def __init__(self, *args, **kwargs):
+    NetModule.__init__(self, updatetime=5, savecode=('m', 30), protocol='skeleton', savebdd=True, *args, **kwargs)
+
+```
+
+If you want to give access to module's variables through cofiguration file, use ```add_conf_override``` with the variable name (string)
+
+
+
+##### Parameters
+
+List of default available parameters :
+* updatetime : time in second between each ```update``` call
+* savecode : time between each ```database_save``` call
+	* format : ("m", 10) or ["m", 10]
+		* first param is "m" or "h" for minutes and hours
+		* second param is 60 divisor or 24 divisor depending if it is minutes or hours
+	* default is ("m", 30) : save every 30 minutes (means 1H00, 1H30, 2H00, 2H30, ...)
+* protocol : string representing module name
+	* this name is used to recognize and connect with websocket
+* savebdd : enebled or disabled BDD save for this module
 
 
 #### Add a new module

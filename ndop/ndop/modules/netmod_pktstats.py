@@ -25,7 +25,7 @@ class NetModChild(NetModule):
     """
 
     def __init__(self, *args, **kwargs):
-        NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='packet_loss', *args, **kwargs)
+        NetModule.__init__(self, updatetime=1, savecode=('m', 30), protocol='packet_loss', *args, **kwargs)
 
         # packets stats
         self.sniff = GetSniffer()
