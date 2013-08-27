@@ -21,8 +21,11 @@ Network Display On Pi (NDOP) is a network monitoring service which provides you 
 	* libpcap-dev
 
 * web download and install :
-	* [pypcap 0.7.1](http://sourceforge.net/projects/pylibpcap/)
-	* [psutil 0.6.4](https://code.google.com/p/psutil/)
+	* [pypcap 0.6.4](http://sourceforge.net/projects/pylibpcap/)
+		* in superuser mode
+		* ```cd pylibpcap-*```
+		* ```python setup.py install```
+	* [psutil 1.0.1 (0.7.1 minimum)](https://code.google.com/p/psutil/)
 	* [pyflowtools](https://code.google.com/p/pyflowtools/)
 
 * pip install :
@@ -70,27 +73,122 @@ cd ndop
 ## Configuration
 
 Configuration file is ```/etc/ndop/server_conf.json```
+
+**This config file is written with [JSON](http://en.wikipedia.org/wiki/JSON) syntax**
+*Do not forget any coma ! This syntax is very strict.*
+
 If the file doesn't exist, the only way you have to configure NDOP server is to change values in the config file of ndop package (```ndop/config/server_conf.py```). After make changes, you need to install it again (or use the launch script ```./script/launch_ndop.sh```).
 
 
 
 ## Utilisation
-* help : ```ndop -h``` (Give you all start options)
+* help : ```ndop -h``` (Give you all startup options)
 
 * test config : ```ndop --test``` (tell you if server config works)
-* module list : ```ndop --list``` (show module's variables)
+* module list : ```ndop --list``` (show modules list and associated variables)
 * run in console : ```ndop```
 * daemon mode : ```ndop --daemon``` (or use service script ```service ndop start```)
-* pass in debug mode with '-d' option
+* active debug mode with '-d' option
 
 
 ## How it works ?
 
 ![main system](doc/images/system.png)
 
+### Network sniffing
+
+There is two differents way to sniff network packets and you can use both at the time:
+* pypcap : python implementation of libpcap library (used in tcpdump)
+* netflow system : cisco system to create and export network flows
+
+#### Pypcap
+
+This system is embed in NDOP server. You just need to configure listening network interface and ass some modules.
+
+```
+// Ethernet interface for packets capture
+"sniffer_device": "eth0",
+
+// Modules list :
+"sniffer_modules_list": [
+    // SNIFFER 1 : modules list
+    [
+        "netmod_top",
+        "netmod_iplist",
+        "netmod_loccomm",
+        "netmod_protocols",
+        "netmod_dns",
+        "netmod_pktstats"
+    ],
+
+    // SNIFFER 2 : modules list
+    [
+        "netmod_http"
+    ]
+]
+```
+
+**WARNING**
+* packets sniffing with libpcap is not optimized for heavy network load
+* you cannot listner more than one network interface
+
+#### Netflow system
+netflow system works in two parts :
+* exporter which is outside NDOP program. It captures packets and create flows which follow netflow protocol
+* collector embed in NDOP program. It listens on the given UDP port to catch sended flows.
+
+##### collector configuration in NDOP
+
+```
+// netflow listen port
+"flow_listen_port": 9995,
+
+// bind address
+"flow_bind_addr": "127.0.0.1",
+
+// Modules list
+// uniq list of modules for netflow capture
+"flow_mods_list": [
+    "netmod_top",
+    "netmod_iplist",
+    "netmod_loccomm",
+    "netmod_protocols",
+    "netmod_dns",
+    "netmod_pktstats",
+    "netmod_bandwidth"
+]
+```
+
+You can bind all interfaces with : ```"flow_bind_addr": ""```
+
+##### Export configuration
+
+You need to use programs :
+* fprobe
+* softflowd
+
+You can install these programs with ```aptitide``` or ```apt-get```
+
+fprobe config sample (```/etc/default/fprobe```)
+
+```
+#fprobe default configuration file
+
+INTERFACE="eth1"
+FLOW_COLLECTOR="127.0.0.1:9995"
+
+#fprobe can't distinguish IP packet from other (e.g. ARP)
+OTHER_ARGS="-fip -e5"
+```
+* -e parameter is the maximun packets flow length in second
+* With -e5 parameter, capture seems to be like live capture
+* If you have heavy network load, use -e30 or more.
 
 
-## Add a new module
+### Modules
+
+
+#### Add a new module
 create a new python file in ```ndop/modules``` with skeleton module :
 * ```cd ndop/modules/```
 * ```cp netmod_skeleton.py netmod_mymodule.py```
