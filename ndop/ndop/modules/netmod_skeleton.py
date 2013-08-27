@@ -14,6 +14,9 @@ from netmodule import NetModule
 
 
 class NetModChild(NetModule):
+    """
+    Example class - Do not use it except for create a new one !
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='skeleton', *args, **kwargs)
@@ -23,6 +26,14 @@ class NetModChild(NetModule):
         Called by sniffer when a new packet arrive
 
         pkt is formated with Packet class
+        """
+        pass
+
+    def flow_handler(self, flow):
+        """
+        Called by sniffer when a new flow of packets arrive
+
+        pkt is formated with flow class
         """
         pass
 
@@ -50,3 +61,4 @@ class NetModChild(NetModule):
 
         """
         pass
+

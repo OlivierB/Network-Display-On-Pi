@@ -19,7 +19,7 @@ class NetModule(object):
     Module main class
     Define most usefull inheritance functions
     """
-    def __init__(self, updatetime=10, savetime=('m', 30), protocol=None, dev="lo"):
+    def __init__(self, updatetime=10, savetime=('m', 30), protocol=None, dev="lo", savebdd=True):
 
         # protocol (or module name)
         self.protocol = protocol
@@ -31,13 +31,28 @@ class NetModule(object):
         # Time management for save function
         self.save_timecode(savetime)
         self.save_timewait()
+        self.savebdd = savebdd
 
         self.logger = logging.getLogger()
 
         self.dev = dev
 
+        # Variables List you can change
+        self.l_vars = ["protocol", "updatetime", "savebdd", "savecode"]
+
     def __str__(self):
         return self.protocol
+
+    def set_config(self, config=dict()):
+        for elem, value in config.iteritems():
+            if elem in self.l_vars:
+                setattr(self, elem, value)
+
+        self.save_timecode(self.savecode)
+        self.save_timewait()
+
+    def add_conf_override(self, elem):
+        self.l_vars.append(elem)
 
     def trigger_data_update(self):
         """
@@ -47,12 +62,11 @@ class NetModule(object):
             self.lastupdate = time()
             return self.update()
 
-
     def trigger_db_save(self, db_class):
         """
         Manage call to database_save method with savetime
         """
-        if time() - self.savetime > self.savewait:
+        if self.savebdd and time() - self.savetime > self.savewait:
             self.save_timewait()
             self.database_save(db_class)
 
@@ -77,13 +91,17 @@ class NetModule(object):
         """
         Check savetime value and correct it if necessary
         """
-        if type(savetime) is tuple and len(savetime) == 2:
+        if (type(savetime) is tuple or type(savetime) is list) and len(savetime) == 2:
+
             if savetime[0] == 'h':
                 # hours management
                 if savetime[1] < 1:
                     self.savecode = ('h', 1)
                 elif savetime[1] > 24:
                     self.savecode = ('h', 24)
+                elif 24 % savetime[1] != 0:
+                    val = int(24 / round(24 / (savetime[1] * 1.0)))
+                    self.savecode = ('h', val)
                 else:
                     self.savecode = ('h', savetime[1])
             else:
@@ -92,6 +110,9 @@ class NetModule(object):
                     self.savecode = ('m', 1)
                 elif savetime[1] > 60:
                     self.savecode = ('m', 60)
+                elif 60 % savetime[1] != 0:
+                    val = int(60 / round(60 / (savetime[1] * 1.0)))
+                    self.savecode = ('m', val)
                 else:
                     self.savecode = ('m', savetime[1])
         else:
@@ -103,6 +124,16 @@ class NetModule(object):
         Called by sniffer when a new packet arrive
 
         pkt is formated with Packet class
+
+        override this method
+        """
+        pass
+
+    def flow_handler(self, flow):
+        """
+        Called by sniffer when a new flow of packets arrive
+
+        pkt is formated with flow class
 
         override this method
         """

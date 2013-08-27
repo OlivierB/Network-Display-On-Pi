@@ -5,6 +5,8 @@ Skeleton
 
 inherit from NetModule
 
+Try to catch password in http post
+
 @author: Olivier BLIN
 """
 
@@ -16,6 +18,9 @@ from netmodule import NetModule
 
 
 class NetModChild(NetModule):
+    """
+    Get non encrypted password in HTTP packet
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='http', *args, **kwargs)

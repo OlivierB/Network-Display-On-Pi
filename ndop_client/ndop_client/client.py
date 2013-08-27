@@ -8,6 +8,7 @@ import websocket
 import json
 import argparse
 import logging
+import socket
 import logging.handlers
 from threading import Thread
 from time import sleep, time
@@ -405,8 +406,11 @@ class CursesWindow():
         try:
             self.l_proto = get_list(args.addr)
             self.l_proto = sorted(self.l_proto)
-        except:
-            print "Cannot get protocols list"
+            if len(self.l_proto) <= 0:
+                print "No protocol"
+                return 0
+        except socket.error as e:
+            print "Cannot get protocols list (%s)" % e
             return 0
 
 

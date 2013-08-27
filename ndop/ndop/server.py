@@ -22,6 +22,7 @@ from core.sniffer import SnifferManager
 from core.wsserver import WsServer, WsData
 from core.daemon import Daemon
 from core.configCenter import ConfigChecker, ConfigCenter
+from core.netflow import NetFlowSniffer
 
 
 RUN = True
@@ -55,6 +56,9 @@ def ndop_run(config):
     # init packet capture system
     sniff = SnifferManager(config)
 
+    # init flow system
+    netflow = NetFlowSniffer(config)
+
     try:
         signal.signal(signal.SIGINT, handler_int)
 
@@ -62,6 +66,7 @@ def ndop_run(config):
         ws_serv.start()
         time.sleep(0.5)
         sniff.start()
+        netflow.start()
 
         # Loop
         while RUN:
@@ -75,9 +80,13 @@ def ndop_run(config):
         if sniff.is_running:
             sniff.join()
 
+        # Flow sniffer stop
+        netflow.stop()
+        
+
         # Webserver stop
-        ws_serv.stop()
         if ws_serv.is_alive():
+            ws_serv.stop()
             ws_serv.join()
         logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 

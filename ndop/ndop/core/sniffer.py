@@ -23,7 +23,7 @@ from ndop.core.network.packet import Packet
 # Accept all packet or not
 PCAP_PROMISCUOUS_MODE = 1
 # Waiting time for new packet
-PCAP_SNIFFER_TIMEOUT = 300
+PCAP_SNIFFER_TIMEOUT = 200
 # Packet max length for capture (memory allocation)
 PCAP_PACKET_MAX_LEN = 1514
 # Time to check modules update

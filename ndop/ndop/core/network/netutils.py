@@ -69,7 +69,7 @@ def get_next_layer(underlayer, p_type, l_protocol, pktdata):
 
 
 
-def ip_is_reserved(ip):
+def ip_is_reserved(ip, reverse=False):
 
     dIPReserved = [
         (pcap.aton('0.0.0.0'), 8),        # Current network (only valid as source address)  RFC 5735
@@ -90,6 +90,9 @@ def ip_is_reserved(ip):
         (pcap.aton('255.255.255.255'), 32)  # Broadcast
     ]
 
+    if reverse:
+        ip = ip_reverse(ip)
+
     reserved = False
     for (net, m) in dIPReserved:
         mask = 0xffffffff >> (32 - m)
@@ -97,6 +100,15 @@ def ip_is_reserved(ip):
             reserved = True
             break
     return reserved
+
+def ip_reverse(ip):
+    a = (ip >> 24) & 0x000000ff
+    b = (ip >> 8) & 0x0000ff00
+    c = (ip << 8) & 0x00ff0000
+    d = (ip << 24) & 0xff000000
+
+    return a|b|c|d
+
 
 def ip_is_reserved_net(ip):
 

@@ -46,6 +46,10 @@ class ConfigChecker():
         self.daemon = args.daemon
         self.debug = args.debug
 
+        # init
+        self.l_protocols = list()
+        self.l_check_mods = dict()
+
         # logger
         logger = logging.getLogger()
 
@@ -58,12 +62,16 @@ class ConfigChecker():
                 self.try_config_override(args.file)
             else:
                 self.try_config_override(UNIX_CONF_FILE)
-            self.check_network(args)
+            self.check_websocket(args)
             logger.debug("%s : Check network : OK" % self.__class__.__name__)
             self.check_database(args, full=True)
             logger.debug("%s : Check SQL : OK" % self.__class__.__name__)
-            self.check_modules(args)
-            logger.debug("%s : Check modules : OK" % self.__class__.__name__)
+            self.check_sniffer_modules(args)
+            logger.debug("%s : Check sniffer modules : OK" % self.__class__.__name__)
+            self.check_flow_modules(args)
+            logger.debug("%s : Check flow modules : OK" % self.__class__.__name__)
+            self.check_modconf_override(args)
+            logger.debug("%s : Check modules override config : OK" % self.__class__.__name__)
             self.check_daemon_files(args)
             logger.debug("%s : Check Daemon files : OK" % self.__class__.__name__)
             self.check_pidfile(args)
@@ -73,6 +81,18 @@ class ConfigChecker():
 
             logger.debug("%s : OK" % self.__class__.__name__)
             self.cmd = "test"
+            return
+        elif args.list:
+            self.conf_logger_normal(debug=False)
+            # Load default config file
+            self.load_config("ndop.config.server_conf")
+            # try to get host config file
+            if args.file:
+                self.try_config_override(args.file)
+            else:
+                self.try_config_override(UNIX_CONF_FILE)
+            self.list_module_conf()
+            self.cmd = "list"
             return
         else:
             self.conf_logger_normal(debug=args.debug)
@@ -92,9 +112,11 @@ class ConfigChecker():
             self.try_config_override(UNIX_CONF_FILE)
 
         # Check
-        self.check_network(args)
+        self.check_websocket(args)
         self.check_database(args)
-        self.check_modules(args)
+        self.check_sniffer_modules(args)
+        self.check_flow_modules(args)
+        self.check_modconf_override(args)
 
         if self.daemon:
             self.check_daemon_files(args)
@@ -115,10 +137,12 @@ class ConfigChecker():
         parser.add_argument("-d", "--debug", action='store_true', help="pass in debug mode")
         parser.add_argument("-u", "--unroot", action='store_true', help="authorize to launch ndop without root")
         parser.add_argument("-p", "--port", type=int, help="websocket server port")
+        parser.add_argument("-n", "--netflow", type=int, help="netflow bind port")
         parser.add_argument("-i", "--interface", help="sniffer device")
         parser.add_argument("-f", "--file", help="server configuration file")
         parser.add_argument("--daemon", action='store_true', help="daemon mode")
-        parser.add_argument("--test", action='store_true', help="Check configuration without start ndop")
+        parser.add_argument("--test", action='store_true', help="check configuration without start ndop")
+        parser.add_argument("--list", action='store_true', help="list module and associate parameters")
         parser.add_argument('--version', action='version', version=('NDOP %s' % server_conf. __version__))
         return parser
 
@@ -176,6 +200,7 @@ class ConfigChecker():
                         logger.debug("Override default config Error : \"%s\" is not in default config" % (elem))
         except:
             logger.debug("Override default config (%s) FAIL : %s" % (path, error))
+            self.override_conf = None
 
     def check_database(self, args, full=False):
         """
@@ -204,7 +229,7 @@ class ConfigChecker():
             for elem in ["host", "user", "passwd", "database", "port"]:
                 self.database["conf"][elem] = ""
 
-    def check_network(self, args):
+    def check_websocket(self, args):
         """
         Check network variables
         """
@@ -216,19 +241,14 @@ class ConfigChecker():
         # Check ws port
         if self.ws_port < 1024:
             raise ArgumentConfigError("Cannot use system port")
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = sock.connect_ex(('', self.ws_port))
+        sock.close()
         # Check listen port
-        if self.is_port_open(self.ws_port):
+        if result == 0:
             raise ArgumentConfigError("Port %i already in use" % self.ws_port)
 
-        # Get sniffer device
-        if args.interface is None:
-            self.sniff_dev = str(self.get_elem("sniffer_device"))
-        else:
-            self.sniff_dev = args.interface
-        # Check sniff device
-        if not self.sniff_dev in self.all_netdevs():
-            raise ArgumentConfigError("No \"%s\" network device" % self.sniff_dev)
-            return False
 
     def check_daemon_files(self, args):
         self.daemon_stdout = self.get_elem("daemon_stdout")
@@ -252,15 +272,27 @@ class ConfigChecker():
         else:
             self.log_file = None
 
-    def check_modules(self, args):
+
+    def check_sniffer_modules(self, args):
         """
         Check and load modules class
 
         Create protocols list for websocket server
         """
-        ll_mod = self.get_elem("modules_list")
+
+        # Get sniffer device
+        if args.interface is None:
+            self.sniff_dev = str(self.get_elem("sniffer_device"))
+        else:
+            self.sniff_dev = args.interface
+        # Check sniff device
+        if not self.sniff_dev in self.all_netdevs():
+            raise ArgumentConfigError("No \"%s\" network device" % self.sniff_dev)
+            return False
+
+
+        ll_mod = self.get_elem("sniffer_modules_list")
         self.ll_modules = list()
-        self.l_protocols = list()
 
         if len(ll_mod) > 0:
             for l_mod in ll_mod:
@@ -281,12 +313,76 @@ class ConfigChecker():
 
                         # Add protocol and module
                         l_modules.append(modclass)
-                        self.l_protocols.append(modclass.protocol)
+
                     except Exception as e:
                         raise ArgumentConfigError("Module %s : Cannot be loaded : %s" % (mod, e))
 
                 if len(l_modules) > 0:
                     self.ll_modules.append(l_modules)
+
+    def check_flow_modules(self, args):
+        """
+        Check and load modules class
+
+        Create protocols list for websocket server
+        """
+        # Get netflow bind addr
+        self.flow_addr = str(self.get_elem("flow_bind_addr"))
+
+        # Get netflow port
+        if args.netflow is None:
+            self.flow_port = self.get_elem("flow_listen_port")
+        else:
+            self.flow_port = args.netflow
+        # Check listen port
+        if self.is_port_open(self.flow_port, sock_param=(socket.AF_INET, socket.SOCK_DGRAM)):
+            raise ArgumentConfigError("Port %i already in use" % self.flow_port)
+
+        # netflow modules
+        l_mod = self.get_elem("flow_mods_list")
+        self.l_flowmods = list()
+
+        if len(l_mod) > 0:
+
+            l_modules = list()
+            for mod in l_mod:
+                try:
+                    # import module
+                    module = importlib.import_module("ndop.modules." + mod)
+
+                    # Check module main class
+                    getattr(module, "NetModChild")
+
+                    # Create an instance
+                    modclass = module.NetModChild(dev=args.interface)
+
+                    # Add protocol and module
+                    l_modules.append(modclass)
+                    
+                    self.add_check_module(mod, modclass)
+                except Exception as e:
+                    raise ArgumentConfigError("Module %s : Cannot be loaded : %s" % (mod, e))
+
+            if len(l_modules) > 0:
+                self.l_flowmods = l_modules
+
+    def check_modconf_override(self, args):
+        self.modconf_override = self.get_elem("modules_config_override")
+        logger = logging.getLogger()
+
+        for name, mod in self.l_check_mods.iteritems():
+            if name in self.modconf_override.keys():
+                mod.set_config(self.modconf_override[name])
+                logger.debug("Module %s : Override default config" % (name))
+            # Add protocol in protocol list
+            self.l_protocols.append(mod.protocol)
+
+    def add_check_module(self, name, mod):
+        if name in self.l_check_mods.keys():
+            raise ArgumentConfigError("Can not have the same module twice (%s)" % name)
+        else:
+            self.l_check_mods[name] = mod
+
 
     def is_root(self):
         if os.getuid() != 0:
@@ -313,12 +409,18 @@ class ConfigChecker():
                 pass
             return False
 
-    def is_port_open(self, port):
+    def is_port_open(self, port, sock_param=(socket.AF_INET, socket.SOCK_STREAM)):
         """
         Check if asked websocket port is available
         """
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex(('', port))
+        sock = socket.socket(*sock_param)
+
+        try:
+            sock.bind(('', port))
+            result = 1
+        except socket.error:
+            result = 0
+
         sock.close()
         if result == 0:
             return True
@@ -381,6 +483,61 @@ class ConfigChecker():
 
             logger.removeHandler(self.stdout_handler)
 
+    def list_module_conf(self):
+        print "Module list and description :"
+        # logger = logging.getLogger()
+        MODULE_EXTENSIONS = ('.py', '.pyc', '.pyo')
+
+        override = self.get_elem("modules_config_override")
+
+        try:
+            dirList=os.listdir("ndop/modules")
+            mset = set([os.path.splitext(module)[0]
+                for module in dirList
+                if module.endswith(MODULE_EXTENSIONS) and  module.startswith("netmod_")])
+
+            for mod in sorted(mset):
+                print ">%s:" % mod
+                # import module
+                module = importlib.import_module("ndop.modules." + mod)
+
+                # Check module main class
+                getattr(module, "NetModChild")
+
+                # Create an instance
+                modclass = module.NetModChild()
+
+                print "\t%s" % modclass.__doc__
+
+                over = list()
+                if mod in override:
+                    over = override[mod]
+
+                for var in modclass.l_vars:
+                    if var in over:
+                        new = over[var]
+                        print "\t%s = %r (default: %r)" % (var, new , getattr(modclass, var))
+                    else:
+                        new = getattr(modclass, var)
+                        print "\t%s = %r" % (var, getattr(modclass, var))
+
+                print ""
+
+        except OSError:
+            print "\tNo module found"
+
+
+import imp
+
+
+def package_contents(package_name):
+    file, pathname, description = imp.find_module(package_name)
+    if file:
+        raise ImportError('Not a package: %r', package_name)
+
+    return set([os.path.splitext(module)[0]
+        for module in os.listdir(pathname)
+        if module.endswith(MODULE_EXTENSIONS)])
 
 class ConfigCenter(Exception):
 

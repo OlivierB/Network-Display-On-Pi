@@ -15,6 +15,9 @@ from ndop.core.network import netdata
 
 
 class NetModChild(NetModule):
+    """
+    Retrieve domain name inside DNS packet
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=5, savetime=('m', 30), protocol='dns', *args, **kwargs)

@@ -14,6 +14,7 @@ inherit from NetModule
 import time
 import psutil
 import datetime
+import pcap
 
 # Project file import
 from netmodule import NetModule
@@ -22,9 +23,12 @@ from ndop.core.network import netdata
 
 
 class NetModChild(NetModule):
+    """
+    Network bandwidth in real time
+    """
 
     def __init__(self, *args, **kwargs):
-        NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='bandwidth', *args, **kwargs)
+        NetModule.__init__(self, updatetime=10, savetime=('m', 30), protocol='bandwidth', *args, **kwargs)
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"
@@ -65,6 +69,25 @@ class NetModChild(NetModule):
                 self.data["net_load_in"] += pkt.pktlen
             elif bsrc and not bdst:
                 self.data["net_load_out"] += pkt.pktlen
+        pass
+
+    def flow_handler(self, flow):
+        # print "FLOW HANDLER", flow.srcaddr
+        src = pcap.aton(flow.srcaddr)
+        dst = pcap.aton(flow.dstaddr)
+        bsrc = netutils.ip_is_reserved(src)
+        bdst = netutils.ip_is_reserved(dst)
+
+        db = flow.dOctets
+
+        if bsrc and bdst:
+            self.data["net_load_loc"] += db
+        elif not bsrc and bdst:
+            self.data["net_load_in"] += db
+        elif bsrc and not bdst:
+            self.data["net_load_out"] += db
+        else:
+            print "Raaa"
 
     def database_init(self, db_class):
         req = \
@@ -115,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `bandwidth` (
         # bytes_sent, bytes_recv, packets_sent, packets_recv, errin, errout, dropin, dropout
         if self.dev in res_net.keys():
             val["net"] = res_net[self.dev]
-            print val["net"]
+            # print val["net"]
         else:
             val["net"] = psutil.network_io_counters(pernic=False)
 

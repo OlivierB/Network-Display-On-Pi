@@ -11,16 +11,21 @@ inherit from NetModule
 # Python lib import
 import datetime
 import operator
+from time import time
 
 # Project file import
 from netmodule import NetModule
 from ndop.core.network import netdata
+from ndop.core.network import netutils
 
 
 class NetModChild(NetModule):
+    """
+    List protocols used on 3 network's layers
+    """
 
     def __init__(self, *args, **kwargs):
-        NetModule.__init__(self, updatetime=30, savetime=('m', 30), protocol='protocols', *args, **kwargs)
+        NetModule.__init__(self, updatetime=10, savetime=('m', 30), protocol='protocols', *args, **kwargs)
 
         # packet data
         self.lEtherProtocol = dict()  # list protocol ethernet
@@ -29,12 +34,26 @@ class NetModChild(NetModule):
 
         self.lEtherList = list()
         self.lIPList = list()
-        self.lPortList = list()
 
         # stats
         val = self.get_state()
         self.save_oldstats = val
         self.update_oldstats = val
+        
+        # clear time
+        self.max_live_port = 10
+        self.add_conf_override("max_live_port")
+
+        # Limit SVG
+        self.bdd_max_ethertype = 5
+        self.add_conf_override("bdd_max_ethertype")
+
+        self.bdd_max_ipprotocol = 6
+        self.add_conf_override("bdd_max_ipprotocol")
+
+        self.bdd_max_port = 10
+        self.add_conf_override("bdd_max_port")
+        
 
     def update(self):
         new = self.get_state()
@@ -51,9 +70,12 @@ class NetModChild(NetModule):
         for k in self.lIPList:
             res["ip"].append((netdata.IPTYPE[k]["protocol"], diffval["ip"][k]))
 
+
+        l_couple = sorted(diffval["ports"].items(), key=operator.itemgetter(1), reverse=True)[:self.max_live_port]
         res["ports"] = list()
-        for k in self.lPortList:
-            res["ports"].append((netdata.PORTSLIST[k]["protocol"], diffval["ports"][k]))
+        for k, v in l_couple:
+            if v > 0:
+                res["ports"].append((netdata.PORTSLIST[k]["protocol"], v, k))
 
         # send data
         return res
@@ -80,13 +102,65 @@ class NetModChild(NetModule):
 
             if pkt.Ether.payload.is_type(netdata.IPTYPE_TCP) or pkt.Ether.payload.is_type(netdata.IPTYPE_UDP):
                 # List of IP protocols
-                typ = pkt.Ether.payload.payload.type
-                if typ in netdata.PORTSLIST.keys():
-                    if typ in self.lPortProtocol:
-                        self.lPortProtocol[typ] += 1
-                    else:
-                        self.lPortProtocol[typ] = 1
-                        self.lPortList.append(typ)
+                port = pkt.Ether.payload.payload.type
+                try:
+                    netdata.PORTSLIST[port]
+                    try:
+                        self.lPortProtocol[port] += 1
+                    except KeyError:
+                        self.lPortProtocol[port] = 1
+                except KeyError:
+                    pass
+
+    def flow_handler(self, flow):
+        protocol = flow.prot
+        try:
+            netdata.IPTYPE[protocol]
+            if protocol in self.lIPProtocol:
+                self.lIPProtocol[protocol] += flow.dPkts
+            else:
+                self.lIPProtocol[protocol] = flow.dPkts
+                self.lIPList.append(protocol)
+        except KeyError:
+            pass
+
+
+        if protocol == netdata.IPTYPE_TCP or protocol == netdata.IPTYPE_UDP:
+            src = netutils.ip_reverse(flow.srcaddr_raw)
+            dst = netutils.ip_reverse(flow.dstaddr_raw)
+
+            bsrc = netutils.ip_is_reserved(src)
+            bdst = netutils.ip_is_reserved(dst)
+
+            port = -1
+            if not bsrc:
+                port = flow.srcport
+            elif not bdst:
+                port = flow.dstport
+            # Remove local ports (cannot determine good port)
+            # else:
+            #     try:
+            #         netdata.PORTSLIST[flow.srcport]
+            #         port = flow.srcport
+            #     except KeyError:
+            #         try:
+            #             netdata.PORTSLIST[flow.dstport]
+            #             port = flow.dstport
+            #         except KeyError:
+            #             pass
+
+            # List of IP protocols
+            if port > 0:
+                try:
+                    netdata.PORTSLIST[port]
+                    try:
+                        self.lPortProtocol[port] += flow.dPkts
+                    except KeyError:
+                        self.lPortProtocol[port] = flow.dPkts
+                except KeyError:
+                    pass
+
+
 
     def database_init(self, db_class):
         req = \
@@ -120,6 +194,7 @@ CREATE TABLE IF NOT EXISTS `protocols_port` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `protocol` varchar(60) NOT NULL,
   `number` int(11) NOT NULL,
+  `port` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 """
@@ -132,11 +207,11 @@ CREATE TABLE IF NOT EXISTS `protocols_port` (
 
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        self.create_sql(db_class, diffval["ether"], netdata.ETHERTYPE, "protocols_ether", date, limit=5)
+        self.create_sql(db_class, diffval["ether"], netdata.ETHERTYPE, "protocols_ether", date, limit=self.bdd_max_ethertype)
 
-        self.create_sql(db_class, diffval["ip"], netdata.IPTYPE, "protocols_ip", date, limit=6)
+        self.create_sql(db_class, diffval["ip"], netdata.IPTYPE, "protocols_ip", date, limit=self.bdd_max_ipprotocol)
 
-        self.create_sql(db_class, diffval["ports"], netdata.PORTSLIST, "protocols_port", date, limit=10)
+        self.create_sql_port(db_class, diffval["ports"], netdata.PORTSLIST, "protocols_port", date, limit=self.bdd_max_port)
 
 
     def create_sql(self, db_class, data, l_prot_info, sql_table, sql_date, limit=5):
@@ -147,6 +222,18 @@ CREATE TABLE IF NOT EXISTS `protocols_port` (
                 req += "\"" + sql_date + "\"" + ","
                 req += "\"" + l_prot_info[k]["protocol"] + "\"" + ","
                 req += str(v)
+                req += ");"
+            db_class.execute(req)
+
+    def create_sql_port(self, db_class, data, l_prot_info, sql_table, sql_date, limit=5):
+        l_couple = sorted(data.items(), key=operator.itemgetter(1), reverse=True)[:limit]
+        for k, v in l_couple:
+            if v > 0:
+                req = "INSERT INTO " + sql_table + "(date, protocol, number, port) VALUES ("
+                req += "\"" + sql_date + "\"" + ","
+                req += "\"" + l_prot_info[k]["protocol"] + "\"" + ","
+                req += str(v) + ","
+                req += str(k)
                 req += ");"
             db_class.execute(req)
 

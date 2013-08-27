@@ -17,7 +17,8 @@ import base64
 import json
 
 from threading import Thread, Lock
-from tornado import web, websocket, httpserver, ioloop
+from tornado import web, websocket, httpserver, ioloop, netutil, process
+from time import sleep
 
 
 class WSHandler_main(websocket.WebSocketHandler):
@@ -71,7 +72,7 @@ class WSHandler_admin(websocket.WebSocketHandler):
         pass
 
     def on_close(self):
-        pass
+        self.close()
 
     def select_subprotocol(self, subprotocols):
         pass
@@ -82,17 +83,11 @@ class WSHandler_online(web.RequestHandler):
     """
     handler for server page ("/online") -> HTTP
     """
-    def open(self):
-        pass
-
     def get(self):
         self.write("ndop")
+        # self.set_status(200)
+        self.finish()
 
-    def on_message(self, message):
-        pass
-
-    def on_close(self):
-        pass
 
 # associate handler function and page
 application = web.Application([
@@ -120,6 +115,7 @@ class WsServer(Thread):
         self.port = port
 
     def run(self):
+
         self.log.info("WsServer : Server started on port %i" % self.port)
         try:
             ioloop.IOLoop.instance().start()
@@ -129,10 +125,15 @@ class WsServer(Thread):
         except Exception as e:
             self.log.debug("WsServer :", exc_info=True)
             self.log.error("WsServer :", e)
+        finally:
+
+            ioloop.IOLoop.instance().close(all_fds=True)
 
     def stop(self):
         self.clientList.closeCom()
         ioloop.IOLoop.instance().stop()
+
+
 
 
 class WsData(object):

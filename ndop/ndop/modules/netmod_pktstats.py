@@ -3,16 +3,15 @@
 """
 Client system monitoring
 
-Use psutil
-
 inherit from NetModule
+
+Useless module with the netflow mode
 
 @author: Olivier BLIN
 """
 
 # Python lib import
 import time
-import psutil
 import datetime
 
 # Project file import
@@ -21,12 +20,12 @@ from ndop.core.sniffer import GetSniffer
 
 
 class NetModChild(NetModule):
+    """
+    Packets statistics - only works with the sniffer system
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='packet_loss', *args, **kwargs)
-
-        if psutil.__version__ < '0.7.0':
-            print "Update psutil to 0.7.1"
 
         # packets stats
         self.sniff = GetSniffer()

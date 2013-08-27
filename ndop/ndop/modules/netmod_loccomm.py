@@ -22,6 +22,9 @@ LOCCOMM_MAX_IP = 1000
 
 
 class NetModChild(NetModule):
+    """
+    Local network communication - live
+    """
 
     def __init__(self, *args, **kwargs):
         NetModule.__init__(self, updatetime=1, protocol='local_communication', *args, **kwargs)
@@ -53,6 +56,22 @@ class NetModChild(NetModule):
                 self.add_loccomm(src, -1, pkt.pktlen)
             else:
                 print "This packet is stupid"
+
+    def flow_handler(self, flow):
+        src = netutils.ip_reverse(flow.srcaddr_raw)
+        dst = netutils.ip_reverse(flow.dstaddr_raw)
+
+        bsrc = netutils.ip_is_reserved(src)
+        bdst = netutils.ip_is_reserved(dst)
+
+        if bsrc and bdst:
+            self.add_loccomm(src, dst, flow.dOctets)
+        elif not bsrc and bdst:
+            self.add_loccomm(-1, dst, flow.dOctets)
+        elif bsrc and not bdst:
+            self.add_loccomm(src, -1, flow.dOctets)
+        else:
+            print "This packet is stupid"
 
     def add_loccomm(self, src, dst, size):
         key = (src, dst)
