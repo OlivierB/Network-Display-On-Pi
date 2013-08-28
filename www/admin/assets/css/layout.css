@@ -14,3 +14,41 @@ color: #b2c60d;
 .menu{
 	padding-left: 50px; 
 }
+
+.tuto-part h2{
+	font-size: 400%;
+	text-align: center;
+}
+
+.tuto-part h3{
+	/*margin-top: 40px;*/
+	text-decoration: none;
+	list-style-type: none;
+
+}
+
+.tuto-item{
+	background-color: #FFF2D8;
+	padding: 15px;
+	border-radius: 10px;
+	margin-bottom: 30px;
+}
+
+.tuto-item li{
+	margin-top: 20px;
+}
+
+.tuto-item .diagram{
+	text-align: center;
+}
+
+label{
+	padding: 15px;
+
+	border-radius: 15px;
+	background-color: #EBEBEB;
+}
+
+.checkbox input[type="checkbox"]{
+	margin-left: 0;
+}
