@@ -28,7 +28,7 @@ class NetModChild(NetModule):
     """
 
     def __init__(self, *args, **kwargs):
-        NetModule.__init__(self, updatetime=10, savetime=('m', 30), protocol='bandwidth', *args, **kwargs)
+        NetModule.__init__(self, updatetime=10, savecode=('m', 30), protocol='bandwidth', *args, **kwargs)
 
         if psutil.__version__ < '0.7.0':
             print "Update psutil to 0.7.1"

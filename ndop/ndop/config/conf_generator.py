@@ -38,7 +38,7 @@ ex_code = \
     // List of sniffer (different process)
     // and for each sniffer, a list of module
 
-    // Do NOT use the same module two times
+    // Do NOT use the same module twice
     //     they cannot be differenciate
 
     // Do NOT create more sniffer than processor core

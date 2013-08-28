@@ -27,7 +27,7 @@ class NetModChild(NetModule):
     """
 
     def __init__(self, *args, **kwargs):
-        NetModule.__init__(self, updatetime=1, savetime=('m', 30), protocol='attack', *args, **kwargs)
+        NetModule.__init__(self, updatetime=1, protocol='attack', *args, **kwargs)
 
         self.alert_mode = False
 

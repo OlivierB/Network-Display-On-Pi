@@ -25,7 +25,7 @@ class NetModChild(NetModule):
     """
 
     def __init__(self, *args, **kwargs):
-        NetModule.__init__(self, updatetime=10, savetime=('m', 30), protocol='protocols', *args, **kwargs)
+        NetModule.__init__(self, updatetime=10, savecode=('m', 30), protocol='protocols', *args, **kwargs)
 
         # packet data
         self.lEtherProtocol = dict()  # list protocol ethernet

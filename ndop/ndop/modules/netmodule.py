@@ -19,7 +19,7 @@ class NetModule(object):
     Module main class
     Define most usefull inheritance functions
     """
-    def __init__(self, updatetime=10, savetime=('m', 30), protocol=None, dev="lo", savebdd=True):
+    def __init__(self, updatetime=10, savecode=('m', 30), protocol=None, savebdd=True, dev="lo"):
 
         # protocol (or module name)
         self.protocol = protocol
@@ -29,7 +29,7 @@ class NetModule(object):
         self.lastupdate = time()
 
         # Time management for save function
-        self.save_timecode(savetime)
+        self.save_timecode(savecode)
         self.save_timewait()
         self.savebdd = savebdd
 

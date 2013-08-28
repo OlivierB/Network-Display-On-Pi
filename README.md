@@ -1,7 +1,7 @@
 Network-Display-On-Pi
 =====================
 
-Network Display On Pi (NDOP) is a network monitoring service which provides you a way to capture packets or flows and send stats by websockets. Packets and flows analysis is done through differents modules you can choose or create.
+Network Display On Pi (NDOP) is a network monitoring service which provides you a way to capture packets or flows and send stats by websockets. Packets and flows analysis is done through different modules you can choose or create.
 
 # Repository structure
 
@@ -21,8 +21,11 @@ Network Display On Pi (NDOP) is a network monitoring service which provides you 
 	* libpcap-dev
 
 * web download and install :
-	* [pypcap 0.7.1](http://sourceforge.net/projects/pylibpcap/)
-	* [psutil 0.6.4](https://code.google.com/p/psutil/)
+	* [pypcap 0.6.4](http://sourceforge.net/projects/pylibpcap/)
+		* in superuser mode
+		* ```cd pylibpcap-*```
+		* ```python setup.py install```
+	* [psutil 1.0.1 (0.7.1 minimum)](https://code.google.com/p/psutil/)
 	* [pyflowtools](https://code.google.com/p/pyflowtools/)
 
 * pip install :
@@ -70,27 +73,176 @@ cd ndop
 ## Configuration
 
 Configuration file is ```/etc/ndop/server_conf.json```
+
+**This config file is written with [JSON](http://en.wikipedia.org/wiki/JSON) syntax**
+*Do not forget any coma ! This syntax is very strict.*
+
 If the file doesn't exist, the only way you have to configure NDOP server is to change values in the config file of ndop package (```ndop/config/server_conf.py```). After make changes, you need to install it again (or use the launch script ```./script/launch_ndop.sh```).
 
 
 
 ## Utilisation
-* help : ```ndop -h``` (Give you all start options)
+* help : ```ndop -h``` (Give you all startup options)
 
 * test config : ```ndop --test``` (tell you if server config works)
-* module list : ```ndop --list``` (show module's variables)
+* module list : ```ndop --list``` (show modules list and associated variables)
 * run in console : ```ndop```
 * daemon mode : ```ndop --daemon``` (or use service script ```service ndop start```)
-* pass in debug mode with '-d' option
+* active debug mode with '-d' option
 
 
 ## How it works ?
 
 ![main system](doc/images/system.png)
 
+### Network sniffing
+
+There are two different ways to sniff network packets and you can use both at the time:
+* pypcap : python implementation of libpcap library (used in tcpdump)
+* netflow system : cisco system to create and export network flows
+
+#### Pypcap
+
+This system is embed in NDOP server. You just need to configure listening network interface and add some modules.
+
+```
+// Ethernet interface for packets capture
+"sniffer_device": "eth0",
+
+// Modules list :
+"sniffer_modules_list": [
+    // SNIFFER 1 : modules list
+    [
+        "netmod_top",
+        "netmod_iplist",
+        "netmod_loccomm",
+        "netmod_protocols",
+        "netmod_dns",
+        "netmod_pktstats"
+    ],
+
+    // SNIFFER 2 : modules list
+    [
+        "netmod_http"
+    ]
+]
+```
+
+**WARNING**
+* packets sniffing with libpcap is not optimized for heavy network load
+* you cannot listen more than one network interface at the time
+
+#### Netflow system
+netflow system works in two parts :
+* exporter which is outside NDOP program. It captures packets and create flows which respects netflow protocol
+* collector embed in NDOP program. It listens on the given UDP port to catch sended flows.
+
+##### collector configuration in NDOP
+
+```
+// netflow listen port
+"flow_listen_port": 9995,
+
+// bind address
+"flow_bind_addr": "127.0.0.1",
+
+// Modules list
+// uniq list of modules for netflow capture
+"flow_mods_list": [
+    "netmod_top",
+    "netmod_iplist",
+    "netmod_loccomm",
+    "netmod_protocols",
+    "netmod_dns",
+    "netmod_pktstats",
+    "netmod_bandwidth"
+]
+```
+
+You can bind all interfaces with : ```"flow_bind_addr": ""```
+
+##### Export configuration
+
+You need to use programs :
+* fprobe
+* softflowd
+
+You can install these programs with ```aptitide``` or ```apt-get```
+
+fprobe config sample (```/etc/default/fprobe```)
+
+```
+#fprobe default configuration file
+
+INTERFACE="eth1"
+FLOW_COLLECTOR="127.0.0.1:9995"
+
+#fprobe can't distinguish IP packet from other (e.g. ARP)
+OTHER_ARGS="-fip -e5"
+```
+* -e parameter is the maximun packets flow length in second
+* With -e5 parameter, capture seems to be like live capture
+* If you have heavy network load, use -e30 or more.
 
 
-## Add a new module
+### Modules
+
+#### What is a module ?
+
+Create a Module system is the way we have chosen to allow easy NDOP evolution. We provide you a set of functions which are automaticaly called by the core algorithme. You need to implement these functions and change default module's parameters if necessary.
+
+All modules inherit from ```NetModule``` in order to match all functions. You have to override functions you need.
+
+
+#### Module description
+
+##### Functions
+
+A module have two entry points :
+
+* ```pkt_handler``` for simple packet capture with libpcap
+* ```flow_handler``` for packets flow capture
+
+**In a running NDOP server, you can use only one of these functions. ```pkt_handler``` and ```flow_handler``` functions are called respectively if module is in ```sniffer_modules_list``` or ```flow_mods_list``` list**
+
+
+There are two bdd functions :
+* ```database_init``` called every time NDOP server is started to create tables if needed
+* ```database_save``` calles every ```savecode``` to save data in BDD
+
+One function for websocket:
+* ```update``` called every ```updatetime```. **You have to return a dictionary**
+
+##### Special functions
+
+Init function have to be implement to define some variables
+
+```
+def __init__(self, *args, **kwargs):
+    NetModule.__init__(self, updatetime=5, savecode=('m', 30), protocol='skeleton', savebdd=True, *args, **kwargs)
+
+```
+
+If you want to give access to module's variables through cofiguration file, use ```add_conf_override``` with the variable name (string)
+
+
+
+##### Parameters
+
+List of default available parameters :
+* updatetime : time in second between each ```update``` call
+* savecode : time between each ```database_save``` call
+	* format : ("m", 10) or ["m", 10]
+		* first param is "m" or "h" for minutes and hours
+		* second param is 60 divisor or 24 divisor depending if it is minutes or hours
+	* default is ("m", 30) : save every 30 minutes (means 1H00, 1H30, 2H00, 2H30, ...)
+* protocol : string representing module name
+	* this name is used to recognize and connect with websocket
+* savebdd : enebled or disabled BDD save for this module
+
+
+#### Add a new module
+
 create a new python file in ```ndop/modules``` with skeleton module :
 * ```cd ndop/modules/```
 * ```cp netmod_skeleton.py netmod_mymodule.py```
