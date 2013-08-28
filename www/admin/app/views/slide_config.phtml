@@ -1,15 +1,22 @@
-<form action="<?= $this->url('sql/save_slide_config') ?>" method="POST">
+<form action="<?= $this->url('sql/save_config_slide') ?>" method="POST">
   <fieldset>
     <legend>Configure your slides behaviour</legend>
-    <label>Interval</label>
-    <input type="number" name="interval" value="<?= $interval?>">
-    <span class="help-block">Interval for each slide when the slideshow is on auto-playing.</span>
+    <label>
+      <input type="number" name="interval" value="<?= $interval?>">
+       Interval : Time in ms for each slide when the slideshow is playing.
+    </label>
     <label class="checkbox">
       <input type="checkbox" name="auto_start" <?= $auto_start?>> Auto start : The slide show will start as soon as the page is loaded.
     </label>
     <label class="checkbox">
       <input type="checkbox" name="pause_on_hover" <?= $pause_on_hover?>> Pause on hover : The slideshow will pause if a cursor is over the page.
     </label>
+    <label>
+      <input type="number" name="update_check_interval" value="<?= $update_check_interval?>">
+       Interval between two checks for refresh : The slideshow check if the "Ask for refresh" button has been clicked with an interval defined by this parameter (in ms).</span>
+      </label>
     <button type="submit" class="btn">Submit</button>
   </fieldset>
 </form>
+
+<a class="btn btn-inverse" href="<?= $this->url('sql/update_id_slide') ?>">Ask for refresh</a>

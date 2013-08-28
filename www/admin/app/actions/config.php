@@ -12,7 +12,8 @@ $database_address='';
 if( isset(NDOP::$app['database_address']) && 
 	isset(NDOP::$app['database_port']) &&
 	isset(NDOP::$app['database_login']) && 
-	isset(NDOP::$app['database_password']) )
+	isset(NDOP::$app['database_password']) && 
+	isset(NDOP::$app['database_name']) )
 {
 	// at this point we know the databases informations exists
 	$database_info = true;
@@ -20,6 +21,8 @@ if( isset(NDOP::$app['database_address']) &&
 	$database_port = NDOP::$app['database_port'];
 	$database_login = NDOP::$app['database_login'];
 	$database_password = NDOP::$app['database_password'];
+	$database_name = NDOP::$app['database_name'];
+
 
 
 	// we need to check if the connection went well
@@ -33,12 +36,12 @@ if( isset(NDOP::$app['database_address']) &&
 
 		try{
 			// if we can't reach the database, we try to create it
-	        $db_tmp = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".$database_port.";", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
+	        $db_tmp = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".$database_port.";dbname=".$database_name, NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
 	        
 	        $request = file_get_contents("../BDD/NDOP_GUI.sql");
 			$db_tmp->exec($request);
 
-			$dbh = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".$database_port.";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
+			$dbh = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".$database_port.";dbname=".$database_name, NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
 
 			Atomik::set('database', $dbh);
 			$database_connection = true;
@@ -58,6 +61,7 @@ if( isset(NDOP::$app['database_address']) &&
 	$database_address = '';
 	$database_login = '';
 	$database_password = '';
+	$database_name = '';
 }
 
 // *******************************************************
@@ -77,6 +81,7 @@ if($database_connection){
 		$ndop_database_port = $data_server_infos['port'];
 		$ndop_database_login = $data_server_infos['login'];
 		$ndop_database_password = $data_server_infos['password'];
+		$ndop_database_name = $data_server_infos['database_name'];
 		$ndop_database_info = true;
 
 		try{
@@ -88,23 +93,20 @@ if($database_connection){
 	    {
 	    	$ndop_database_state = 'alert-block';
 	    }
-
-		
-		
-
-
 	}else{
 		$ndop_database_state = 'alert-error';
 		$ndop_database_address = '';
 		$ndop_database_port = '';
 		$ndop_database_login = '';
 		$ndop_database_password = '';
+		$ndop_database_name = '';
 	}
 	
 }else{
 	$ndop_database_state = 'alert-error';
 	$ndop_database_address = '';
 	$ndop_database_port = '';
+	$ndop_database_name = '';
 	$ndop_database_login = '';
 	$ndop_database_password = '';
 }
@@ -157,7 +159,7 @@ if($database_connection){
 	$data_server_port = '';
 }
 
-// check the freegeoip server connection
+/*// check the freegeoip server connection
 
 // will be true if some connection infomations exist in the database.
 $freegeoip_server_info = false;
@@ -196,3 +198,4 @@ if($database_connection){
 	$freegeoip_server_address = '';
 	$freegeoip_server_port = '';
 }
+*/

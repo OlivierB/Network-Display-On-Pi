@@ -43,9 +43,7 @@ require 'ndop.conf.php';
 
     <!-- Personnal JS -->
     <script src="script/resize/resize.js"></script>
-    <!-- 
-    <script src='script/slide/slide-conf.js'></script>
- -->
+
     <script src="script/network/AjaxManager.js"></script>
     <script src="script/network/WebSocketManager.js"></script>
 
@@ -86,6 +84,10 @@ require 'ndop.conf.php';
 
     <script src="script/chart/BarChart.js"></script>
     <script src="script/chart/BarChartWebsocket.js"></script>
+
+    <script src="script/protocols/TopProtocolsWebsocket.js"></script>
+
+    <script src="script/refresh/RefreshManager.js"></script>
 
 
     

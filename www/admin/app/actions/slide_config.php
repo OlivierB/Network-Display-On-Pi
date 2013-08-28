@@ -31,3 +31,9 @@ if(isset($conf['pause_on_hover'])){
 }else{
 	$pause_on_hover = '';
 }
+
+if(isset($conf['update_check_interval'])){
+	$update_check_interval = $conf['update_check_interval'];
+}else{
+	$update_check_interval = 900000;
+}

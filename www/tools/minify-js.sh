@@ -38,11 +38,6 @@ FILES=$FILES" ../script/map/IpLocationMap.js"
 FILES=$FILES" ../script/map/IpLocationMapOffline.js"
 FILES=$FILES" ../script/map/IpLocationMapOnline.js"
 
-# FILES=$FILES" ../script/network3D/Ray.js"
-# FILES=$FILES" ../script/network3D/Scene3D.js"
-# FILES=$FILES" ../script/network3D/Satellite3D.js"
-# FILES=$FILES" ../script/network3D/InformationsDisplay.js"
-
 FILES=$FILES" ../script/chart/PercentCounterChart.js"
 FILES=$FILES" ../script/chart/ServerStat.js"
 
@@ -53,6 +48,8 @@ FILES=$FILES" ../script/text/BandwidthTextWebsocket.js"
 
 FILES=$FILES" ../script/chart/BarChart.js"
 FILES=$FILES" ../script/chart/BarChartWebsocket.js"
+
+FILES=$FILES" ../script/refresh/RefreshManager.js"
 
 
 # minify JS

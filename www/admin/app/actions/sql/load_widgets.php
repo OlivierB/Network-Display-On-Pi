@@ -48,7 +48,7 @@ while($entry = @readdir($dir)) {
 }
 $prep_delete_old_folder->execute();
 
-$dir = opendir('../widgets') or die('Erreur');
+$dir = opendir('../widgets') or die('Cannot find the directory :'.'../widgets');
 while($entry = @readdir($dir)) {
 	if($entry != '.' && $entry != '..'){
 
@@ -85,37 +85,46 @@ while($entry = @readdir($dir)) {
 					'name' 		=> 'default'
 				));
 				$id_set = $prep_select_id_set->fetch(PDO::FETCH_ASSOC)['id'];
-				
 
-				$ini_data_params = @parse_ini_file('../widgets/'.$entry.'/params.ini',true);
+				$ini_data_params = parse_ini_file('../widgets/'.$entry.'/params.ini',true) ;
+
+
 				if($ini_data_params){
 					foreach ($ini_data_params as $variable_name => $var) {
+						if(isset($var['type']) && isset($var['description']) && isset($var['default'])){
 						
-						// insert the design of each parameters for the current widget
-						$prep_insert_param_widget->execute(array(
-							'id_widget' 	=> $id_widget,
-							'name' 			=> $variable_name,
-							'type' 			=> $var['type'],
-							'description'	=> $var['description']
-						));
+							// insert the design of each parameters for the current widget
+							$prep_insert_param_widget->execute(array(
+								'id_widget' 	=> $id_widget,
+								'name' 			=> $variable_name,
+								'type' 			=> $var['type'],
+								'description'	=> $var['description']
+							));
 
-						// get the id of the current parameter
-						$prep_select_id_param->execute(array(
-							'name' 		=> $variable_name,
-							'id_widget'	=> $id_widget,
-						));
-						$id_param = $prep_select_id_param->fetch(PDO::FETCH_ASSOC)['id'];
-						
-						echo $id_param.'<br>';
-						// insert the default value
-						$prep_insert_default_param->execute(array(
-							'id_set' 		=> $id_set,
-							'id_param' 		=> $id_param,
-							'value' 		=> $var['default']
-						));
+							// get the id of the current parameter
+							$prep_select_id_param->execute(array(
+								'name' 		=> $variable_name,
+								'id_widget'	=> $id_widget,
+							));
+							$id_param = $prep_select_id_param->fetch(PDO::FETCH_ASSOC)['id'];
+							
+							// insert the default value
+							$prep_insert_default_param->execute(array(
+								'id_set' 		=> $id_set,
+								'id_param' 		=> $id_param,
+								'value' 		=> $var['default']
+							));
+						}else{
+							$error = 'Error of syntax or missing attribut in : '.'../widgets/'.$entry.'/params.ini';
+							break;
+						}
 					}
 				}
+
 			}	
+		}else{
+			$error = 'Error of syntax or missing attribut in : '.'../widgets/'.$entry.'/widget.ini';
+			break;
 		}
 
 			
@@ -123,6 +132,10 @@ while($entry = @readdir($dir)) {
 }
 closedir($dir);
 
+if($error){
+	echo $error;
+}else{
+	$this->redirect('widgets');
+}
 
 
-$this->redirect('widgets');
