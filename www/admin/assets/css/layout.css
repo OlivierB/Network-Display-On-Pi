@@ -42,12 +42,12 @@ color: #b2c60d;
 	text-align: center;
 }
 
-label{
+/*label{
 	padding: 15px;
 
 	border-radius: 15px;
 	background-color: #EBEBEB;
-}
+}*/
 
 .checkbox input[type="checkbox"]{
 	margin-left: 0;
