@@ -19,6 +19,9 @@ Network Display On Pi (NDOP) is a network monitoring service which provides you 
 * aptitude or apt-get install :
 	* python-mysqldb
 	* libpcap-dev
+	* flow-tools-dev
+	* python2.7-dev
+	* python-pip
 
 * web download and install :
 	* [pypcap 0.6.4](http://sourceforge.net/projects/pylibpcap/)
@@ -51,10 +54,14 @@ Go in the NDOP server directory :
 There are two ways to install NDOP :
 * basic install with setup.py
 	* Command : ```python setup.py install```
-* complete install with the *installer* bash script **Only Linux users**
-	* Add a config file in ```/etc/ndop/```
-	* Add a service script (init.d) and enable service
+		* Add NDOP server in your system
+	
+* complete install with the *installer* bash script (**Only Linux users**)
 	* Command : ``` ./scripts/install_unix.sh ```
+		* Add NDOP server in your system
+		* Add a config file in ```/etc/ndop/```
+		* Add a service script (init.d) and enable service
+	
 
 **Do not forget to run these commands in superuser mode**
 
@@ -72,16 +79,16 @@ cd ndop
 
 ## Configuration
 
-Configuration file is ```/etc/ndop/server_conf.json```
+Configuration file is ```/etc/ndop/server_conf.json``` (**Only with complete install**)
 
 **This config file is written with [JSON](http://en.wikipedia.org/wiki/JSON) syntax**
 *Do not forget any coma ! This syntax is very strict.*
 
-If the file doesn't exist, the only way you have to configure NDOP server is to change values in the config file of ndop package (```ndop/config/server_conf.py```). After make changes, you need to install it again (or use the launch script ```./script/launch_ndop.sh```).
+If the file doesn't exist, the only way you have to configure NDOP server is to change values in the config file of ndop package (```ndop/config/server_conf.py```). After changes have been made, you need to install it again (or use the launch script ```./script/launch_ndop.sh```).
 
 
 
-## Utilisation
+## Use
 * help : ```ndop -h``` (Give you all startup options)
 
 * test config : ```ndop --test``` (tell you if server config works)
@@ -254,10 +261,13 @@ create a new python file in ```ndop/modules``` with skeleton module :
 
 ## Installation
 
+* aptitude install
+	* libevent-dev
+
 * pip install
 	* argparse
 	* [websocket](https://pypi.python.org/pypi/websocket-client/0.7.0)
-* [python-curses](http://docs.python.org/2/howto/curses.html)
+* doc : [python-curses](http://docs.python.org/2/howto/curses.html)
 
 
 Installation Commands:

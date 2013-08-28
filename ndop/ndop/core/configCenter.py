@@ -8,6 +8,7 @@ import argparse
 import socket
 import importlib
 import logging
+import imp
 import logging.handlers
 from pcap import findalldevs
 
@@ -297,7 +298,7 @@ class ConfigChecker():
         if len(ll_mod) > 0:
             for l_mod in ll_mod:
                 if not type(l_mod) is list:
-                    raise ArgumentError("Bad modules declaration")
+                    raise ArgumentError("List of lists of sniffer modules is required")
 
                 l_modules = list()
                 for mod in l_mod:
@@ -313,6 +314,8 @@ class ConfigChecker():
 
                         # Add protocol and module
                         l_modules.append(modclass)
+
+                        self.add_check_module(mod, modclass)
 
                     except Exception as e:
                         raise ArgumentConfigError("Module %s : Cannot be loaded : %s" % (mod, e))
@@ -491,35 +494,40 @@ class ConfigChecker():
         override = self.get_elem("modules_config_override")
 
         try:
-            dirList=os.listdir("ndop/modules")
-            mset = set([os.path.splitext(module)[0]
-                for module in dirList
-                if module.endswith(MODULE_EXTENSIONS) and  module.startswith("netmod_")])
+            # dirList=os.listdir("ndop/modules")
+            # mset = set([os.path.splitext(module)[0]
+            #     for module in dirList
+            #     if module.endswith(MODULE_EXTENSIONS) and  module.startswith("netmod_")])
+
+            mset = package_contents("ndop/modules")
 
             for mod in sorted(mset):
                 print ">%s:" % mod
                 # import module
                 module = importlib.import_module("ndop.modules." + mod)
 
-                # Check module main class
-                getattr(module, "NetModChild")
+                try:
+                    # Check module main class
+                    getattr(module, "NetModChild")
 
-                # Create an instance
-                modclass = module.NetModChild()
+                    # Create an instance
+                    modclass = module.NetModChild()
 
-                print "\t%s" % modclass.__doc__
+                    print "\t%s" % modclass.__doc__
 
-                over = list()
-                if mod in override:
-                    over = override[mod]
+                    over = list()
+                    if mod in override:
+                        over = override[mod]
 
-                for var in modclass.l_vars:
-                    if var in over:
-                        new = over[var]
-                        print "\t%s = %r (default: %r)" % (var, new , getattr(modclass, var))
-                    else:
-                        new = getattr(modclass, var)
-                        print "\t%s = %r" % (var, getattr(modclass, var))
+                    for var in modclass.l_vars:
+                        if var in over:
+                            new = over[var]
+                            print "\t%s = %r (default: %r)" % (var, new , getattr(modclass, var))
+                        else:
+                            new = getattr(modclass, var)
+                            print "\t%s = %r" % (var, getattr(modclass, var))
+                except AttributeError as e:
+                    print "\tError :", e
 
                 print ""
 
@@ -527,17 +535,27 @@ class ConfigChecker():
             print "\tNo module found"
 
 
-import imp
-
-
 def package_contents(package_name):
-    file, pathname, description = imp.find_module(package_name)
-    if file:
-        raise ImportError('Not a package: %r', package_name)
+    MODULE_PREFIX = "netmod_"
+    MODULE_EXTENSIONS = ('.py', '.pyc', '.pyo')
 
-    return set([os.path.splitext(module)[0]
-        for module in os.listdir(pathname)
-        if module.endswith(MODULE_EXTENSIONS)])
+    try:
+        dirList=os.listdir("ndop/modules")
+        return set([os.path.splitext(module)[0]
+            for module in dirList
+            if module.endswith(MODULE_EXTENSIONS) and  module.startswith(MODULE_PREFIX)])
+
+    except OSError:
+        try:
+            file, pathname, description = imp.find_module(package_name)
+            if file:
+                raise ImportError('Not a package: %r', package_name)
+
+            return set([os.path.splitext(module)[0]
+                for module in os.listdir(pathname)
+                if module.endswith(MODULE_EXTENSIONS) and  module.startswith(MODULE_PREFIX)])
+        except ImportError:
+            return None
 
 class ConfigCenter(Exception):
 
