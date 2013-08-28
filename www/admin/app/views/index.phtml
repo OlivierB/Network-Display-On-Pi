@@ -1,12 +1,96 @@
 <div class="hero-unit">
-  <h1>Welcome to <strong>NDOP</strong></h1>
-  <p>
+    <h1>Welcome to <strong>NDOP</strong></h1>
+    <p>
     Congratulations! You have successfully installed NDOP.
-    Now you have to configure your application. Go to the 
+    Now you have to configure your application. Go to the
     <a href="<?= $this->url('config') ?>">Configuration page</a>!
     
-  </p>
-  <p><a target=_blank class="btn btn-large" href="http://github.com/OlivierB/Network-Display-On-Pi">Read the documentation on Github &raquo;</a></p>
+    </p>
+    <p>
+    <a target=_blank class="btn btn-large" href="http://github.com/OlivierB/Network-Display-On-Pi">Read the documentation on Github &raquo;</a>
+    </p>
+    <p>
+    <a target=_blank class="btn btn-large" href="<?= $this->url('/..') ?>">Go to the slides &raquo;</a>
+    </p>
 </div>
-
-
+<div class="tuto-part">
+    <h2>Tutorial</h2>
+    
+        <div class="tuto-item">
+            <h3>Configure your system</h3>
+            <p>
+                First have a look at the diagram below. It explains how the NDOP webclient you are configuring right now works. You are browsing on this website thanks to the PHP application hosted on a webserver (1). Everything you are going to set up and customize on this website will be store in a database (2). Before setting up the client slideshow you probably set up and launch the NDOP sever program which monitors your network. This program is composerd by the program itself (4) and its database (3) where it stores some data. 
+                <p>On the diagram every program is represented on a different computer but of course you can choose to host all these components on a single computer. The first part of the configuration on this website is to give the information needed to connect to 3 of these components (obviously the webserver (1) is already known since you are browsing on this website).
+            </p>
+            <p class="diagram">
+                <img src="<?= $this->asset('assets/images/global_diagram.png')?>" alt="explanatory diagram">
+            </p>
+            <p>There are three items to <a href="<?= $this->url('config') ?>">configure</a>.</p>
+            <ul>
+                <li>
+                    <h4>The database used to configure your slides (2) <a href="<?= $this->url('config') ?>#ndop_gui_database">&rarr;</a></h4>
+                    <p>
+                        This program need a mysql database. You have to give the required information to connect to your mysql database. You have to to create a database by yourself, once you give the correct information all the needeed content will be created automatically. Therefore, the provided user need to be able to create table, insert, update and select in it.
+                    </p>
+                </li>
+                <li>
+                    <h4>The database used by the NDOP monitoring program to stock data (3) <a href="<?= $this->url('config') ?>#ndop_data_server_database">&rarr;</a></h4>
+                    <p>
+                        When you configure the NDOP monitoring program you give some information to connect to the mysql database. Give the same here.
+                    </p>
+                </li>
+                <li>
+                    <h4>The address to connect to the NDOP program itself (4) <a href="<?= $this->url('config') ?>#ndop_data_server">&rarr;</a></h4>
+                    <p>
+                        The NDOP monitoring program is hosted on a machine. You have to provide the IP of this host and the port the program is listening to.
+                    </p>  
+                </li>
+            </ul>
+            <p>
+                Once every fields turn green. You can create your slides!
+            </p>
+        </div>
+        <div class="tuto-item">
+            <h3>How to create your slides</h3>
+            <p>
+                First you need to understand how the slide system works. A scene is composed by several modules and each module is composed by one or many widgets. At any moment there is one module displayed on the screen. After some time, the on screen module will change to another module.
+            </p>
+            <p class="diagram">
+                <img src="<?= $this->asset('assets/images/scheme.png')?>" alt="explanatory diagram">
+            </p>
+            <p>
+                In order to create your own slideshow you need to go through four pages.
+                <ul>
+                    <li>
+                        <h4><a href="<?= $this->url('widgets') ?>">Widget</a></h4>
+                        <p>
+                            This page regroup every widget you can use. If this is the first time you come this page or you have no widget avalaible, you might need to click on the "refresh" button. Once it is done, you can see a list of available widgets. You can configure them by clicking on "Configure". You can change the default settings of this widget or create a new set of parameters. These sets of parameters will be available on the <a href="<?= $this->url('modules') ?>">Module</a> page.
+                        </p>
+                    </li>
+                    <li>
+                        <h4><a href="<?= $this->url('modules') ?>">Modules</a></h4>
+                        <p>
+                            On this page you will be able to edit or create a module. Once you are in the editor you can add a new plugin to the module by dragging a widget from the list on the left and dropping it on the gray zone in the middle. To make the widget appear you have to define a position and a size in the edit panel on the right. You can choose the set of parameters you want to use for this widget. This is where the parameter sets you created earlier appear. Once it is done you can clik on the "submit" button. The widget should appear on the gray zone in the middle. You can change this widget location by clicking on it and using the edit panel. If you want to add another widget, repeat the same operation and chose a location which don't overlap the previous widgets. When you are done with your module, you must set a name and a description then you can just click on the "save this configuration" button. 
+                            Your module will then appear in the modules list.
+                        </p>
+                    </li>
+                    <li>
+                        <h4><a href="<?= $this->url('layout') ?>">Layout</a></h4>
+                        <p>
+                            You can finally chose which module you want to appear in your slideshow. Add a blank tumbmail by clicking on the "Add" thumbnail. Then drag and drop a module from the left panel to the empty thumbnail. Repeat this operation to add more modules. Once you are done click on the "save your configuration" button.
+                            You should now be able to see your <a href="<?= $this->url('/..') ?>">slideshow</a>.
+                        </p>
+                    </li>
+                </ul>
+            </p>
+        </div>
+        <div class="tuto-item">
+            <h3>Configure your slides</h3>
+            <p>
+                You can configure the behaviour of your slideshow by customizing some settings on the <a href="<?= $this->url('slide_config') ?>">Slide configuration page</a>.
+                <p>
+                    In order to be able to refresh the slideshow on remote location without intervention on every devices, there is a auto refresh system on the slideshow. From time to time the slideshow will check if a refresh is needed. You can configure the interval between two checks. To ask for a global refresh you have to click on the "Ask for refresh button".
+                </p>
+            </p>
+        </div>
+</div>
