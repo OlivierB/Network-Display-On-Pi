@@ -3,9 +3,11 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 19, 2013 at 01:15 PM
+-- Generation Time: Aug 28, 2013 at 03:46 PM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
+
+
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -16,8 +18,6 @@
 --
 -- Database: `NDOP_GUI`
 --
-CREATE DATABASE `NDOP_GUI` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `NDOP_GUI`;
 
 -- --------------------------------------------------------
 
@@ -32,6 +32,17 @@ CREATE TABLE IF NOT EXISTS `layout` (
   KEY `id_module` (`id_module`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `layout`
+--
+
+INSERT INTO `layout` (`page`, `id_module`) VALUES
+(0, 371),
+(1, 372),
+(2, 373),
+(4, 377),
+(5, 378),
+(3, 381);
 
 -- --------------------------------------------------------
 
@@ -130,8 +141,10 @@ CREATE TABLE IF NOT EXISTS `server_information` (
   `port` int(11) NOT NULL,
   `login` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
+  `database_name` varchar(150) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+
 
 
 -- --------------------------------------------------------
@@ -153,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `slide_configuration` (
 --
 
 INSERT INTO `slide_configuration` (`interval`, `auto_start`, `pause_on_hover`, `update_id`, `update_check_interval`) VALUES
-(15000, 0, 0, 12, 1000);
+(15000, 0, 0, 13, 1000);
 
 -- --------------------------------------------------------
 
@@ -169,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `widget` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `folder_name` (`folder_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1428 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1462 ;
 
 --
 -- Dumping data for table `widget`
@@ -209,7 +222,7 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_design` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_widget` (`id_widget`,`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2353 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2429 ;
 
 --
 -- Dumping data for table `widget_parameter_design`
@@ -219,7 +232,7 @@ INSERT INTO `widget_parameter_design` (`id_widget`, `type`, `description`, `name
 (857, 'int', 'Number of milliseconds between two refreshes', 'refresh_time', 1129, 1),
 (858, 'int', 'Number of items in the list at any time.', 'nb_item', 1130, 1),
 (858, 'int', 'Size of the font use in the table.', 'font_size', 1131, 1),
-(859, 'int', 'Number of milliseconds between two refreshes d.', 'refresh_time', 1132, 1),
+(859, 'int', 'Number of milliseconds between two refreshes.', 'refresh_time', 1132, 1),
 (859, 'int', 'Number of days you want in the chart. 30 days means the chart will display the last 30 days.', 'nb_day', 1133, 1),
 (860, 'int', 'Size of the font.', 'font_size', 1134, 1),
 (861, 'int', 'Number of milliseconds between 2 refreshes.', 'refresh_time', 1135, 1),
@@ -251,7 +264,9 @@ INSERT INTO `widget_parameter_design` (`id_widget`, `type`, `description`, `name
 (857, 'str', 'The type of database the snort datas are stored in. Can be : ''mysql''&#44; ''postgres''&#44; ''mssql'' (MS SQL Server)&#44; ''oci8'' (Oracle)&#44; without the quotes.', 'type', 1195, 1),
 (857, 'int', 'Size of the font in the table.', 'font_size', 1223, 1),
 (859, 'string', 'Style of the line in the chart. Can be ''line''&#44; ''spline''&#44; ''area''&#44; ''stackedColumn''&#44; ''stackedArea''&#44; ''stackedColumn100''&#44; ''stackedArea100'' (The last two options will display value as percentage!).', 'style_line', 1622, 1),
-(870, 'string', 'Style of the line in the chart. Can be ''line''&#44; ''spline''&#44; ''area''&#44; ''stackedColumn''&#44; ''stackedArea''&#44; ''stackedColumn100''&#44; ''stackedArea100'' (The last two options will display value as percentage!).', 'style_line', 1674, 1);
+(870, 'string', 'Style of the line in the chart. Can be ''line''&#44; ''spline''&#44; ''area''&#44; ''stackedColumn''&#44; ''stackedArea''&#44; ''stackedColumn100''&#44; ''stackedArea100'' (The last two options will display value as percentage!).', 'style_line', 1674, 1),
+(862, 'string', 'IP or hostname of your freegoip server. You can use the online website (freegeoip.net) but you will be limited to 10&#44;000 queries per hour. The best solution is to create your own server by using the github (https://github.com/fiorix/freegeoip).', 'freegeoip_address', 2370, 1),
+(872, 'string', 'IP or hostname of your freegoip server. You can use the online website (freegeoip.net) but you will be limited to 10&#44;000 queries per hour. The best solution is to create your own server by using the github (https://github.com/fiorix/freegeoip).', 'freegeoip_address', 2390, 1);
 
 -- --------------------------------------------------------
 
@@ -266,7 +281,7 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_set` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`id_widget`),
   KEY `id_widget` (`id_widget`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1399 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1433 ;
 
 --
 -- Dumping data for table `widget_parameter_set`
@@ -279,7 +294,7 @@ INSERT INTO `widget_parameter_set` (`id`, `name`, `id_widget`) VALUES
 (835, 'daily', 871),
 (813, 'default', 857),
 (814, 'default', 858),
-(815, 'default', 859),
+(1418, 'default', 859),
 (816, 'default', 860),
 (817, 'default', 861),
 (818, 'default', 862),
@@ -333,13 +348,11 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (813, 1223, '25'),
 (814, 1130, '15'),
 (814, 1131, '30'),
-(815, 1132, '10000'),
-(815, 1133, '1'),
-(815, 1622, 'line'),
 (816, 1134, '45'),
 (817, 1135, '65000'),
 (818, 1136, '10'),
 (818, 1137, '0.25'),
+(818, 2370, '192.168.1.144:8080'),
 (819, 1138, '100'),
 (820, 1139, '600000'),
 (820, 1140, '1'),
@@ -359,6 +372,7 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (827, 1153, 'NONE'),
 (828, 1154, '2'),
 (828, 1155, '0.25'),
+(828, 2390, 'freegeoip.net'),
 (832, 1144, '600000'),
 (832, 1145, '1'),
 (832, 1146, 'Daily protocol use '),
@@ -400,7 +414,10 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (1080, 1622, 'line'),
 (1081, 1132, '4500000'),
 (1081, 1133, '30'),
-(1081, 1622, 'line');
+(1081, 1622, 'line'),
+(1418, 1132, '10000'),
+(1418, 1133, '1'),
+(1418, 1622, 'line');
 
 --
 -- Constraints for dumped tables
