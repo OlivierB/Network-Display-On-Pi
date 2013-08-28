@@ -36,11 +36,13 @@
 					<button type="submit" class="btn">Submit</button>
 				</fieldset>
 			</form>
+			<?php if($set['name'] !== 'default'): ?>
 			<form action="<?= $this->url('sql/delete_parameter_set') ?>" method="POST" class="delete_form">
 				<input type="hidden" value="<?= $set['id'] ?>" name="id_set">
 				<input type="hidden" value="<?= $this['request.widget'] ?>" name="id_widget">
 				<button type="submit" class="btn">Delete</button>
 			</form>
+			<?php endif; ?>
 		</div>
 
 		<?php	
