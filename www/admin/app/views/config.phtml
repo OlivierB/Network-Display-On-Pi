@@ -1,26 +1,23 @@
-
 <div class="hero-unit">
-  <h1><strong>Configuration</strong></h1>
-  <p>Fill in the form with your configuration. </p>
+	<h1><strong>Configuration</strong></h1>
+	<p>Fill in the form with your configuration. </p>
 </div>
 <div>
 	<h2>Database configuration</h2>
-	<div class='alert <?= $database_state ?>' >
-		<?php if($database_connection){ ?>
+	<div id="ndop_gui_database" class='alert <?= $database_state ?>' >
+		<?php if($database_connection): ?>
 		Your database is correctly configured, you can continue.
-		<?php }elseif($database_info){ ?>
+		<?php elseif($database_info): ?>
 		Some Information you provided to access the database are not correct, please retry. Check the IP of the machine which hosts your database program and check that the user you provided has enough priviliges to create a database, and select, insert, update in it.
-		<?php }else{ ?>
+		<?php else: ?>
 		Please fill in the form.
-		<?php } ?>
-
-
+		<?php endif; ?>
 		<div class="accordion" id="accordion1">
 			<div class="accordion-group">
 				<form action="<?= $this->url('sql/config_database') ?>" method="POST">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#collapseOne">
-							Database form
+						Database form
 						</a>
 					</div>
 					<div id="collapseOne" class="accordion-body collapse <?php if(!$database_connection){echo 'in';} ?>">
@@ -28,46 +25,41 @@
 							<label>Adress</label>
 							<input name="database_address" type="text" placeholder="IP of your database server" value='<?= $database_address ?>'>
 							<span class="help-block">Ex: 192.168.1.15 or www.myhostname.com</span>
-
 							<label>Port</label>
 							<input name="database_port" type="number" placeholder="Port of your database" value='<?= $database_port ?>'>
 							<span class="help-block">Ex: 3306 by default</span>
-
+							<label>Datbase name</label>
+							<input name="database_name" type="text" placeholder="Name of your database" value='<?= $database_name ?>'>
+							<span class="help-block">Ex: NDOP_GUI by default</span>
 							<label>Login</label>
 							<input name="database_login" type="text" placeholder="Login of your database server" value='<?= $database_login ?>'>
 							<span class="help-block">Ex: mydatabaselogin</span>
-
 							<label>Password</label>
 							<input name="database_password" type="password" placeholder="Password of your database server" value='<?= $database_password ?>'>
 							<span class="help-block">Ex: mydatabasepassword</span>
-
 							<button type="submit" class="btn">Submit</button>
 						</div>
 					</div>
 				</form>
 			</div>
 		</div>
-
-
 	</div>
-<?php if($database_connection){ ?>
+	<?php if($database_connection): ?>
 	<h2>NDOP database configuration</h2>
-	<div class='alert <?= $ndop_database_state ?>' >
-		<?php if($ndop_database_connection){ ?>
+	<div id="ndop_data_server_database" class='alert <?= $ndop_database_state ?>' >
+		<?php if($ndop_database_connection): ?>
 		The NDOP database is correctly configured, you can continue.
-		<?php }elseif($ndop_database_info){ ?>
+		<?php elseif($ndop_database_info): ?>
 		Some Information you provided to access the database are not correct, please retry. Check the IP of the machine which hosts the database program and check that the user you provided has enough priviliges to use SELECT in it.
-		<?php }else{ ?>
+		<?php else: ?>
 		Please fill in the form.
-		<?php } ?>
-
-
+		<?php endif; ?>
 		<div class="accordion" id="accordion4">
 			<div class="accordion-group">
 				<form action="<?= $this->url('sql/config_NDOP_database') ?>" method="POST">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#collapseFour">
-							NDOP database form
+						NDOP database form
 						</a>
 					</div>
 					<div id="collapseFour" class="accordion-body collapse <?php if(!$ndop_database_connection){echo 'in';} ?>">
@@ -75,19 +67,18 @@
 							<label>Adress</label>
 							<input name="ndop_database_address" type="text" placeholder="IP of your NDOP database" value='<?= $ndop_database_address ?>'>
 							<span class="help-block">Ex: 192.168.1.15 or www.myhostname.com</span>
-
 							<label>Port</label>
 							<input name="ndop_database_port" type="number" placeholder="Port of your NDOP database" value='<?= $ndop_database_port ?>'>
 							<span class="help-block">Ex: 3306 by default</span>
-
+							<label>Database name</label>
+							<input name="ndop_database_name" type="text" placeholder="Name of your NDOP database" value='<?= $ndop_database_name ?>'>
+							<span class="help-block">Ex: NDOP by default</span>
 							<label>Login</label>
 							<input name="ndop_database_login" type="text" placeholder="Login of your NDOP database" value='<?= $ndop_database_login ?>'>
 							<span class="help-block">Ex: myndopdatabaselogin</span>
-
 							<label>Password</label>
 							<input name="ndop_database_password" type="password" placeholder="Password of your NDOP database" value='<?= $ndop_database_password ?>'>
 							<span class="help-block">Ex: myndopdatabasepassword</span>
-
 							<button type="submit" class="btn">Submit</button>
 						</div>
 					</div>
@@ -95,28 +86,22 @@
 			</div>
 		</div>
 	</div>
-
-
-
 	<h2>Servers configuration</h2>
-
-	<div class='alert <?= $data_server_state ?>' >
+	<div id="ndop_data_server" class='alert <?= $data_server_state ?>' >
 		<h3>NDOP data server</h3>
-		<?php if($data_server_connection){ 
+		<?php if($data_server_connection){
 			echo "Your data server is online, you can continue.";
-		}elseif($data_server_info){ 
+		}elseif($data_server_info){
 			echo "Cannot connect to the data server, please retry.";
-		}else{ 
+		}else{
 			echo "Please fill in the form.";
 		} ?>
-
-
 		<div class="accordion" id="accordion2">
 			<div class="accordion-group">
 				<form action="<?= $this->url('sql/config_data_server') ?>" method="POST">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-							Data server form
+						Data server form
 						</a>
 					</div>
 					<div id="collapseTwo" class="accordion-body collapse <?php if(!$data_server_connection){echo 'in';} ?>">
@@ -124,7 +109,6 @@
 							<label>Adress</label>
 							<input name="data_server_address" type="text" placeholder="IP of your NDOP data  server" value='<?= $data_server_address ?>'>
 							<span class="help-block">Ex: 192.168.1.15 or www.myhostname.com</span>
-
 							<label>Port</label>
 							<input name="data_server_port" type="number" placeholder="Port of your NDOP data  server" value='<?= $data_server_port ?>'>
 							<span class="help-block">Ex: 9005 by default</span>
@@ -136,24 +120,21 @@
 			</div>
 		</div>
 	</div>
-
-	<div class='alert <?= $freegeoip_server_state ?>' >
+	<!-- <div class='alert <?= $freegeoip_server_state ?>' >
 		<h3>Freegoip server</h3>
 		<?php if($freegeoip_server_connection){ ?>
-			The freegeoip server is online, you can continue.
+		The freegeoip server is online, you can continue.
 		<?php }elseif($freegeoip_server_info){ ?>
-			Cannot connect to the freegeoip server, please retry.
+		Cannot connect to the freegeoip server, please retry.
 		<?php }else{ ?>
-			Please fill in the form.
+		Please fill in the form.
 		<?php } ?>
-
-
 		<div class="accordion" id="accordion3">
 			<div class="accordion-group">
 				<form action="<?= $this->url('sql/config_freegeoip_server') ?>" method="POST">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree">
-							Freegoip server form
+						Freegoip server form
 						</a>
 					</div>
 					<div id="collapseThree" class="accordion-body collapse <?php if(!$freegeoip_server_connection){echo 'in';} ?>">
@@ -161,7 +142,6 @@
 							<label>Adress</label>
 							<input name="freegeoip_server_address" type="text" placeholder="IP of your freegeoip  server" value='<?= $freegeoip_server_address ?>'>
 							<span class="help-block">Ex: 192.168.1.15 or www.freegeoip.net</span>
-
 							<label>Port</label>
 							<input name="freegeoip_server_port" type="number" placeholder="Port of your freegeoip server" value='<?= $freegeoip_server_port ?>'>
 							<span class="help-block">Ex: 8080 by default</span>
@@ -172,7 +152,6 @@
 				</form>
 			</div>
 		</div>
-	</div>
-<?php } ?>
-
+	</div> -->
+	<?php endif; ?>
 </div>
