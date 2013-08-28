@@ -31,24 +31,28 @@ Class NDOP {
 	public static function display_modules(){
 		$module_exist = false;
 
-		if(isset(NDOP::$app['db']) && NDOP::$app['db']){
+		// if(isset(NDOP::$app['db']) && NDOP::$app['db']){
 			
-			$sql = "SELECT `module`.`name`, `module`.`id` FROM `layout` JOIN `module` ON `layout`.`id_module` = `module`.`id` GROUP BY `layout`.`page`";
-			$results = NDOP::$app['db']->query($sql);
-			$pages = $results->fetchAll(PDO::FETCH_ASSOC);
+		// 	$sql = "SELECT `module`.`name`, `module`.`id` FROM `layout` JOIN `module` ON `layout`.`id_module` = `module`.`id` GROUP BY `layout`.`page`";
+		// 	$results = NDOP::$app['db']->query($sql);
+		// 	$pages = $results->fetchAll(PDO::FETCH_ASSOC);
 
-			foreach ($pages as $key => $value) {
-				$module_exist = true;
-				echo "<div>";
-				NDOP::display_module($value['name'], $value['id']);
-				echo "</div>";
-			}
+		// 	foreach ($pages as $key => $value) {
+		// 		$module_exist = true;
+		// 		echo "<div>";
+		// 		NDOP::display_module($value['name'], $value['id']);
+		// 		echo "</div>";
+		// 	}
 
-		}
+		// }
 		if(!$module_exist){
-			echo "<div>";
+			echo "<div class='slide-div'>";
+			echo 	"<div class='row-fluid'>";
+			
 			include "static/introduction.php";
+			echo 	"</div>";
 			echo "</div>";
+
 		}
 	}
 
@@ -279,8 +283,19 @@ Class NDOP {
 
 
 			return $js;
+		}else{
+			return '
+			$(function(){
+      			$("#slides").slidesjs({
+        			width: window.innerWidth,
+        			height: window.innerHeight - 20,
+        			play: {
+        				play: false
+        			},
+        			navigation: false
+      			});
+    		});';
 		}
-		return '';
 	}
 }
 
