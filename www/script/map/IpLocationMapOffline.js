@@ -4,14 +4,14 @@
  * @author Matrat Erwan
  **/
 
-function IpLocationMapOffline(id, dither, opacity) {
+function IpLocationMapOffline(id, dither, opacity, freeGeoIpAdress) {
 
     this.id = id;
     this.dither = dither;
     this.opacity = opacity;
 
     // inheritance from IpLocationMap
-    IpLocationMap.call(this, id);
+    IpLocationMap.call(this, id, freeGeoIpAdress);
 
     // add the canvas to the DOM
     this.canvas = document.createElement('canvas');

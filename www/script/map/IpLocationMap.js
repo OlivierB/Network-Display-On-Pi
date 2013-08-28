@@ -4,13 +4,15 @@
  * @author Matrat Erwan
  **/
 
-function IpLocationMap(id) {
+function IpLocationMap(id, freeGeoIpAdress) {
 
     // inheritance from WebSocketManager
     WebSocketManager.call(this, id + '-alert');
 
     //Ips displayed on the map
     this.ips = [];
+
+    this.freeGeoIpAdress = freeGeoIpAdress;
 
 }
 
@@ -22,7 +24,7 @@ IpLocationMap.prototype = Object.create(WebSocketManager.prototype);
 IpLocationMap.prototype.addPointFromIP = function(ip, color) {
     $.ajax({
         type: "GET",
-        url: "http://" + App.freeGeoIpAdress + "/json/" + ip,
+        url: "http://" + this.freeGeoIpAdress + "/json/" + ip,
         async: true,
         success: function(data) {
             this.addPoint(data.latitude, data.longitude, color);

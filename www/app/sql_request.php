@@ -11,11 +11,13 @@ try {
 	if(isset($ndop_db_information['ip']) 
 		&& isset($ndop_db_information['port'])
 		&& isset($ndop_db_information['login'])
-		&& isset($ndop_db_information['password']))
+		&& isset($ndop_db_information['password'])
+		&& isset($ndop_db_information['database_name'])
+	)
 	{
 
 		// we use these data to connect
-		$dns = 'mysql:host='.$ndop_db_information['ip'].';port='.$ndop_db_information['port'].';dbname=NDOP';
+		$dns = 'mysql:host='.$ndop_db_information['ip'].';port='.$ndop_db_information['port'].';dbname='.$ndop_db_information['database_name'];
 		$user = $ndop_db_information['login'];
 		$password = $ndop_db_information['password'];
 		$connection = new PDO( $dns, $user, $password, array(PDO::ATTR_TIMEOUT => "1") );

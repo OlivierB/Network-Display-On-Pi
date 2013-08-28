@@ -4,12 +4,12 @@
  * @author Matrat Erwan
  **/
 
-function IpLocationMapOnline(id, dither, opacity){
+function IpLocationMapOnline(id, dither, opacity, freeGeoIpAdress){
 
     this.dither = dither;
     this.opacity = opacity;
 
-    IpLocationMap.call(this, id);
+    IpLocationMap.call(this, id, freeGeoIpAdress);
 
     this.map = L.map(id).setView([45.597889, -11.304932], 2);
 

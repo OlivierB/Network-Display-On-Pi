@@ -12,11 +12,12 @@ Class NDOP {
 
 		if( isset(NDOP::$app['database_address']) && 
 			isset(NDOP::$app['database_port']) && 
-			isset(NDOP::$app['database_login']) && 
-			isset(NDOP::$app['database_password']) )
+			isset(NDOP::$app['database_login']) &&
+			isset(NDOP::$app['database_password']) && 
+			isset(NDOP::$app['database_name']) )
 		{
 			try {
-				NDOP::$app['db'] = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".NDOP::$app['database_port'].";dbname=NDOP_GUI", NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
+				NDOP::$app['db'] = new PDO("mysql:host=".NDOP::$app['database_address'].";port=".NDOP::$app['database_port'].";dbname=".NDOP::$app['database_name'], NDOP::$app['database_login'], NDOP::$app['database_password'],array(PDO::ATTR_TIMEOUT => "1"));
 				NDOP::$app['db']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			}
@@ -25,7 +26,6 @@ Class NDOP {
                 // echo $e->getMessage();
 			}
 		}
-
 	}
 
 	public static function display_modules(){
@@ -166,13 +166,13 @@ Class NDOP {
 				$obj['NDOPAddress'] = 'ws://'.$address['ip'].':'.$address['port'];
 			}
 
-			$sql = "SELECT * FROM  `server_information` WHERE name='freegeoip_server' ;";
-			$results = NDOP::$app['db']->query($sql);
-			$address = $results->fetch(PDO::FETCH_ASSOC);
+			// $sql = "SELECT * FROM  `server_information` WHERE name='freegeoip_server' ;";
+			// $results = NDOP::$app['db']->query($sql);
+			// $address = $results->fetch(PDO::FETCH_ASSOC);
 
-			if(isset($address['ip']) && isset($address['port'])){
-				$obj['freeGeoIpAdress'] = $address['ip'].':'.$address['port'];
-			}
+			// if(isset($address['ip']) && isset($address['port'])){
+			// 	$obj['freeGeoIpAdress'] = $address['ip'].':'.$address['port'];
+			// }
 
 			$obj['webServerAddress'] = $_SERVER['SERVER_ADDR'];
 
