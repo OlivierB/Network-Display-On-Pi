@@ -85,8 +85,6 @@ require 'ndop.conf.php';
     <script src="script/chart/BarChart.js"></script>
     <script src="script/chart/BarChartWebsocket.js"></script>
 
-    <script src="script/protocols/TopProtocolsWebsocket.js"></script>
-
     <script src="script/refresh/RefreshManager.js"></script>
 
 

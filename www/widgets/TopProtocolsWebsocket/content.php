@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 $(function(){
-	var chart = new TopProtocolsWebsocket("<?= $id ?>");
-	chart.connect(dispatcher, 'protocols');
+	var protocolChart = new BarChartWebsocket('<?= $id ?>', 'ports',  "Ports use");
+	protocolChart.connect(dispatcher, 'protocols');
 });
 </script>
