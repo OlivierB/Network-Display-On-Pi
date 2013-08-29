@@ -44,12 +44,12 @@ class NetFlowSniffer(threading.Thread):
 
 
     def run(self):
+        logger = logging.getLogger()
         # no module, no start
         if len(self.lmod) == 0:
             logger.debug("No Flow module")
             return 0
-
-        logger = logging.getLogger()
+        
         logger.info("NetFlow : Listining on %s:%i" % (self.config.flow_addr, self.config.flow_port))
 
         sock = socket.socket(

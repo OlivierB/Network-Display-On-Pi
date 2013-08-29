@@ -17,6 +17,7 @@ from ndop.core.network import netdata
 class NetModChild(NetModule):
     """
     Retrieve domain name inside DNS packet
+    Only works with the sniffer system
     """
 
     def __init__(self, *args, **kwargs):

@@ -1,0 +1,104 @@
+// Configuration file for NDOP
+// This file is writen in JSON syntax
+// http://fr.wikipedia.org/wiki/JavaScript_Object_Notation
+
+
+{
+////////////////////////////
+    // websocket port (tornado) - client connection
+    "websocket_port": 9005,
+
+
+////////////////////////////
+    // Packet capture with libpcap
+    // ndop embed capture
+
+    // Ethernet interface for packets capture
+    "sniffer_device": "eth0",
+
+    // Modules list :
+    // List of sniffer (different processes)
+    // and for each sniffer, a list of modules
+
+    // Do NOT use the same module twice
+    //     they cannot be differenciate
+
+    // Do NOT create more sniffer than processor core
+    //     performance will decline
+
+    "sniffer_modules_list": [
+        // SNIFFER 1 : list of modules
+        [
+            "netmod_dns",
+            "netmod_pktstats"
+        ]
+    ],
+
+
+////////////////////////////
+    // Flow capture system
+    // You need a program to sniff packets
+    // and create netflows (exporters like softflowd or fprobe)
+
+    // netflow listen port
+    "flow_listen_port": 9995,
+
+    // bind address (use "" if )
+    "flow_bind_addr": "127.0.0.1",
+
+    // Modules list
+    // uniq list of modules for netflow capture
+    "flow_mods_list": [
+        "netmod_bandwidth",
+        "netmod_top",
+        "netmod_iplist",
+        "netmod_loccomm",
+        "netmod_protocols"
+    ],
+
+////////////////////////////
+    // Daemon files
+
+    "daemon_pid_file": "/var/run/ndop.pid",
+    "daemon_log_file": "/var/log/ndoplog",
+
+    // Output files standard and error
+    "daemon_stdout": "/dev/null",
+    "daemon_stderr": "/dev/null",
+
+////////////////////////////
+    // Database Config
+
+    // Enable or disable database saving
+    "db_on": false,
+
+    // DB Type
+    "db_class": "MySQL_database",
+
+    // DB Config
+    "db_conf": {
+        "host": "127.0.0.1",
+        "user": "ndop",
+        "passwd": "ndop",
+        "database": "NDOP",
+        "port": 3306
+    },
+
+////////////////////////////
+    // Additional module configuration
+    // these configs override default module's values
+
+    "modules_config_override": {
+        "netmod_bandwidth": {
+            "updatetime": 30
+        },
+        "netmod_protocols": {
+            "updatetime": 60,
+            "max_live_port": 10,
+            "display_port_number" : true
+        },
+        "netmod_loccomm": {
+            "updatetime": 5
+        }
+    }
+}

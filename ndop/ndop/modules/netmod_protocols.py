@@ -22,6 +22,7 @@ from ndop.core.network import netutils
 class NetModChild(NetModule):
     """
     List protocols used on 3 network's layers
+    Ethernet statistics (EtherType [IPv4, IPv6, ARP, ...]) only works with the NDOP embed sniffer system
     """
 
     def __init__(self, *args, **kwargs):
@@ -43,6 +44,8 @@ class NetModChild(NetModule):
         # clear time
         self.max_live_port = 10
         self.add_conf_override("max_live_port")
+        self.display_port_number = True
+        self.add_conf_override("display_port_number")
 
         # Limit SVG
         self.bdd_max_ethertype = 5
@@ -75,7 +78,11 @@ class NetModChild(NetModule):
         res["ports"] = list()
         for k, v in l_couple:
             if v > 0:
-                res["ports"].append((netdata.PORTSLIST[k]["protocol"], v, k))
+                if self.display_port_number:
+                    label = netdata.PORTSLIST[k]["protocol"] + " - " + str(k)
+                else:
+                    label = netdata.PORTSLIST[k]["protocol"]
+                res["ports"].append((label, v))
 
         # send data
         return res

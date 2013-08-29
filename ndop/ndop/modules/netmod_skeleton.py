@@ -22,8 +22,8 @@ class NetModChild(NetModule):
         NetModule.__init__(self, updatetime=5, savecode=('m', 30), protocol='skeleton', savebdd=True, *args, **kwargs)
         
         # module variable embed in configuration file
-        self.myConfigVarible = 10
-        self.add_conf_override("myConfigVarible")
+        self.myConfigVariable = 10
+        self.add_conf_override("myConfigVariable")
 
     def pkt_handler(self, pkt):
         """

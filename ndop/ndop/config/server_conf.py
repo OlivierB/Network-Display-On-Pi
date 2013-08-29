@@ -28,16 +28,7 @@ sniffer_device = "eth0"
 
 # Modules selection
 sniffer_modules_list = [
-    # ["netmod_http"],
-    [
-        "netmod_top", 
-        "netmod_iplist", 
-        "netmod_loccomm",
-        "netmod_protocols",
-        "netmod_dns",
-        "netmod_pktstats",
-        "netmod_http"
-    ]
+
 ]
 # module_list = ["netmod_classip"]
 
@@ -52,7 +43,7 @@ flow_bind_addr = "127.0.0.1"
 
 # netflow module list
 flow_mods_list = [
-    "netmod_bandwidth"
+    
 ]
 
 

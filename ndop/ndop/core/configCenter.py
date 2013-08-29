@@ -501,8 +501,22 @@ class ConfigChecker():
 
             mset = package_contents("ndop/modules")
 
+            activated_mod_flow = self.get_elem("flow_mods_list")
+            ll_mod = self.get_elem("sniffer_modules_list")
+            activated_mod_sniff = list()
+            if len(ll_mod) > 0:
+                for l_mod in ll_mod:
+                    if type(l_mod) is list:
+                        for mod in l_mod:
+                            activated_mod_sniff.append(mod)
+
             for mod in sorted(mset):
-                print ">%s:" % mod
+                if mod in activated_mod_flow:
+                    print ">%s (enabled - netflow) :" % mod
+                elif mod in activated_mod_sniff:
+                    print ">%s (enabled - libpcap) :" % mod
+                else:
+                    print ">%s (disabled) :" % mod
                 # import module
                 module = importlib.import_module("ndop.modules." + mod)
 
@@ -522,10 +536,10 @@ class ConfigChecker():
                     for var in modclass.l_vars:
                         if var in over:
                             new = over[var]
-                            print "\t%s = %r (default: %r)" % (var, new , getattr(modclass, var))
+                            print "\t%s = %s (default: %r)" % (var.ljust(20, "."), ("%r" % new).ljust(6) , getattr(modclass, var))
                         else:
                             new = getattr(modclass, var)
-                            print "\t%s = %r" % (var, getattr(modclass, var))
+                            print "\t%s = %r" % (var.ljust(20, "."), getattr(modclass, var))
                 except AttributeError as e:
                     print "\tError :", e
 

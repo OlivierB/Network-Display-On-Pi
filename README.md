@@ -86,6 +86,37 @@ Configuration file is ```/etc/ndop/server_conf.json``` (**Only with complete ins
 
 If the file doesn't exist, the only way you have to configure NDOP server is to change values in the config file of ndop package (```ndop/config/server_conf.py```). After changes have been made, you need to install it again (or use the launch script ```./script/launch_ndop.sh```).
 
+You can find some samples in ```ndop/doc/sample```
+
+Usefull commands to try different configurations :
+* ```ndop -f ndop/doc/sample/sample-full.json```
+* ```ndop -f ndop/doc/sample/sample-full.json --test```
+* ```ndop -f ndop/doc/sample/sample-full.json --list```
+
+**Some modules doesn't work with netflow or libpcap. You can see a message in the module description (```--list``` option)**
+
+
+All modules have a default configuration. It is possible to override this configuration in the config file :
+
+```
+////////////////////////////
+    // Additional module configuration
+    // these configs override default module's values
+
+    "modules_config_override": {
+        "netmod_bandwidth": {
+            "updatetime": 30
+        },
+        "netmod_protocols": {
+            "updatetime": 60,
+            "max_live_port": 10,
+            "display_port_number" : true
+        },
+        "netmod_loccomm": {
+            "updatetime": 5
+        }
+    }
+```
 
 
 ## Use
@@ -100,11 +131,11 @@ If the file doesn't exist, the only way you have to configure NDOP server is to 
 
 ## How it works ?
 
-![main system](doc/images/system.png)
+![main system](ndop/doc/images/system.png)
 
 ### Network sniffing
 
-There are two different ways to sniff network packets and you can use both at the time:
+There are two different ways to sniff network packets and you can use both at the same time:
 * pypcap : python implementation of libpcap library (used in tcpdump)
 * netflow system : cisco system to create and export network flows
 
@@ -139,6 +170,11 @@ This system is embed in NDOP server. You just need to configure listening networ
 * packets sniffing with libpcap is not optimized for heavy network load
 * you cannot listen more than one network interface at the time
 
+But :
+* you have a better network live
+* you can analyse packet content
+* it is possible to work with IPv6 packet
+
 #### Netflow system
 netflow system works in two parts :
 * exporter which is outside NDOP program. It captures packets and create flows which respects netflow protocol
@@ -170,7 +206,7 @@ You can bind all interfaces with : ```"flow_bind_addr": ""```
 
 ##### Export configuration
 
-You need to use programs :
+You need to use programs like :
 * fprobe
 * softflowd
 
@@ -190,6 +226,8 @@ OTHER_ARGS="-fip -e5"
 * -e parameter is the maximun packets flow length in second
 * With -e5 parameter, capture seems to be like live capture
 * If you have heavy network load, use -e30 or more.
+
+```-fip``` is a packets filter. It means that exporter program will only capture IP packets. 
 
 
 ### Modules

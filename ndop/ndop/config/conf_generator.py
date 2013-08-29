@@ -11,7 +11,7 @@ FILE_OUT = "./server_conf.json"
 
 header = \
 """\
-// Configuration file for ndop
+// Configuration file for NDOP
 // This file is writen in JSON syntax
 // http://fr.wikipedia.org/wiki/JavaScript_Object_Notation
 """
@@ -20,23 +20,20 @@ ex_code = \
 """
 {
 ////////////////////////////
-    // tornado websocket port
+    // websocket port (tornado) - client connection
     "websocket_port": 9005,
 
-////////////////////////////
-    
 
 ////////////////////////////
-    // packet capture with libpcap
-    // in python
+    // Packet capture with libpcap
     // ndop embed capture
 
     // Ethernet interface for packets capture
     "sniffer_device": "eth0",
 
     // Modules list :
-    // List of sniffer (different process)
-    // and for each sniffer, a list of module
+    // List of sniffer (different processes)
+    // and for each sniffer, a list of modules
 
     // Do NOT use the same module twice
     //     they cannot be differenciate
@@ -45,7 +42,7 @@ ex_code = \
     //     performance will decline
 
     "sniffer_modules_list": [
-        // SNIFFER 1 : modules list
+        // SNIFFER 1 : list of modules
         [
             "netmod_top",
             "netmod_iplist",
@@ -55,7 +52,7 @@ ex_code = \
             "netmod_pktstats"
         ],
 
-        // SNIFFER 2 : modules list
+        // SNIFFER 2 : list of modules
         [
             "netmod_http"
         ]
@@ -65,12 +62,12 @@ ex_code = \
 ////////////////////////////
     // Flow capture system
     // You need a program to sniff packets
-    // and create netflows (softflowd, fprobe)
+    // and create netflows (exporters like softflowd or fprobe)
 
     // netflow listen port
     "flow_listen_port": 9995,
 
-    // bind address
+    // bind address (use "" if )
     "flow_bind_addr": "127.0.0.1",
 
     // Modules list
@@ -109,14 +106,13 @@ ex_code = \
 
 ////////////////////////////
     // Additional module configuration
-    // override default module values
+    // these configs override default module's values
 
     "modules_config_override": {
         "netmod_bandwidth": {
             "updatetime": 30
         }
     }
-
 }
 """
 
