@@ -136,9 +136,9 @@ function getBandwidth($connection, $date_begin, $date_end, $group){
 
 	$order = "ORDER BY `date`";
 
-	// request average flow for each entry in teh table between the two date
-	$sql = 'SELECT `global`/`dtime_s` as global, `local`/`dtime_s` as local,`incoming`/`dtime_s` as incoming,`outcoming`/`dtime_s` as outcoming, date  FROM bandwidth  '.$where_statement.' '.$group.' '.$order;
-
+	// request sum for each entry in teh table between the two date
+	$sql = 'SELECT SUM(`global`) as global, SUM(`local`) as local, SUM(`incoming`) as incoming, SUM(`outcoming`) as outcoming, date  FROM bandwidth  '.$where_statement.' '.$group.' '.$order;
+	// echo $sql;
 	$req = $connection->prepare($sql);
 	$req->execute();
 

@@ -10,7 +10,7 @@ function BandwidthChartWebsocket(id, style_line){
     WebSocketManager.call(this, id + '-alert');
     
     // inheritance from BandwidthChart
-    BandwidthChart.call(this, id, true, 100, style_line);
+    BandwidthChart.call(this, id, true, 100, style_line, "kB/s");
 }
 
 

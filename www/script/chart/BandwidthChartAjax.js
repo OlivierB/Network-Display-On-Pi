@@ -7,7 +7,7 @@
 function BandwidthChartAjax(id, style_line) {
 
     // inheritance from BandwidthChart
-    BandwidthChart.call(this, id, false, -1, style_line);
+    BandwidthChart.call(this, id, false, -1, style_line, "kB");
 
     // inheritance from AjaxManager
     AjaxManager.call(this, id + '-alert');
