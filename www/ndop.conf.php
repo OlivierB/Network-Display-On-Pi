@@ -4,5 +4,5 @@ require_once "app/NDOP.php";
 
 NDOP::init('ndop.conf.ini');
 
-NDOP::$app['debug'] = true;
+NDOP::$app['debug'] = false;
 
