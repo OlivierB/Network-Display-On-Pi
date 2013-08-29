@@ -3,9 +3,11 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 29, 2013 at 03:22 PM
+-- Generation Time: Aug 29, 2013 at 04:44 PM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
+
+
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -158,15 +160,16 @@ CREATE TABLE IF NOT EXISTS `slide_configuration` (
   `auto_start` tinyint(1) NOT NULL DEFAULT '1',
   `pause_on_hover` tinyint(1) NOT NULL DEFAULT '0',
   `update_id` int(11) NOT NULL,
-  `update_check_interval` int(11) NOT NULL
+  `update_check_interval` int(11) NOT NULL,
+  `background_color` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `slide_configuration`
 --
 
-INSERT INTO `slide_configuration` (`interval`, `auto_start`, `pause_on_hover`, `update_id`, `update_check_interval`) VALUES
-(15000, 0, 0, 13, 1000);
+INSERT INTO `slide_configuration` (`interval`, `auto_start`, `pause_on_hover`, `update_id`, `update_check_interval`, `background_color`) VALUES
+(15000, 0, 0, 22, 900000, '#dadada');
 
 -- --------------------------------------------------------
 
