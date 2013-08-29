@@ -37,3 +37,10 @@ if(isset($conf['update_check_interval'])){
 }else{
 	$update_check_interval = 900000;
 }
+
+
+if(isset($conf['background_color'])){
+	$background_color = $conf['background_color'];
+}else{
+	$background_color = '#CCCCCC';
+}

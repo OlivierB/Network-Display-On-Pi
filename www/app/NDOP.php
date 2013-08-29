@@ -232,6 +232,17 @@ Class NDOP {
 				$update_check_interval = 900000;
 			}
 
+			if(isset($conf['update_id'])){
+				$update_id = $conf['update_id'];
+			}else{
+				$update_id = 0;
+			}
+			if(isset($conf['background_color'])){
+				$background_color = $conf['background_color'];
+			}else{
+				$background_color = '#CCCCCC';
+			}
+
 
 			$js = '
 			$(function() {
@@ -279,6 +290,12 @@ Class NDOP {
 			$js .= '
 				var refresh_manager = new RefreshManager('.$update_id.');
 				refresh_manager.connect(App.webServerAddress, "app/sql_request.php?request=update_id", '.$update_check_interval.');
+			';
+
+			$js .= '
+				$(function(){
+					$("body").css("background-color", "'.$background_color.'");
+				});
 			';
 
 
