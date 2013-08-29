@@ -3,7 +3,7 @@
  * @author Matrat Erwan
  **/
 
-function BandwidthChart(id, initializes, dataLength, style_line) {
+function BandwidthChart(id, initializes, dataLength, style_line, title_y_axis) {
 
     this.id = id;
 
@@ -68,7 +68,7 @@ function BandwidthChart(id, initializes, dataLength, style_line) {
             markerSize: 0
         }],
         axisY: {
-            title: "kB/s",
+            title: title_y_axis,
             titleFontFamily: "ChampWoff",
             titleFontWeight: "bold"
         }

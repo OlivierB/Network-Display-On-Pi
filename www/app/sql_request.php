@@ -69,7 +69,7 @@ try {
 				}
 				elseif ($_GET['request'] == 'bandwidth') 
 				{
-					echo json_encode(getBandwidth($connection, $date_begin, $date_end) );
+					echo json_encode(getBandwidth($connection, $date_begin, $date_end, $group) );
 				}
 				elseif ($_GET['request'] == 'total_bandwidth') 
 				{

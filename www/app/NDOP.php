@@ -31,20 +31,20 @@ Class NDOP {
 	public static function display_modules(){
 		$module_exist = false;
 
-		// if(isset(NDOP::$app['db']) && NDOP::$app['db']){
+		if(isset(NDOP::$app['db']) && NDOP::$app['db']){
 			
-		// 	$sql = "SELECT `module`.`name`, `module`.`id` FROM `layout` JOIN `module` ON `layout`.`id_module` = `module`.`id` GROUP BY `layout`.`page`";
-		// 	$results = NDOP::$app['db']->query($sql);
-		// 	$pages = $results->fetchAll(PDO::FETCH_ASSOC);
+			$sql = "SELECT `module`.`name`, `module`.`id` FROM `layout` JOIN `module` ON `layout`.`id_module` = `module`.`id` GROUP BY `layout`.`page`";
+			$results = NDOP::$app['db']->query($sql);
+			$pages = $results->fetchAll(PDO::FETCH_ASSOC);
 
-		// 	foreach ($pages as $key => $value) {
-		// 		$module_exist = true;
-		// 		echo "<div>";
-		// 		NDOP::display_module($value['name'], $value['id']);
-		// 		echo "</div>";
-		// 	}
+			foreach ($pages as $key => $value) {
+				$module_exist = true;
+				echo "<div>";
+				NDOP::display_module($value['name'], $value['id']);
+				echo "</div>";
+			}
 
-		// }
+		}
 		if(!$module_exist){
 			echo "<div class='slide-div'>";
 			echo 	"<div class='row-fluid'>";
@@ -232,6 +232,17 @@ Class NDOP {
 				$update_check_interval = 900000;
 			}
 
+			if(isset($conf['update_id'])){
+				$update_id = $conf['update_id'];
+			}else{
+				$update_id = 0;
+			}
+			if(isset($conf['background_color'])){
+				$background_color = $conf['background_color'];
+			}else{
+				$background_color = '#CCCCCC';
+			}
+
 
 			$js = '
 			$(function() {
@@ -279,6 +290,12 @@ Class NDOP {
 			$js .= '
 				var refresh_manager = new RefreshManager('.$update_id.');
 				refresh_manager.connect(App.webServerAddress, "app/sql_request.php?request=update_id", '.$update_check_interval.');
+			';
+
+			$js .= '
+				$(function(){
+					$("body").css("background-color", "'.$background_color.'");
+				});
 			';
 
 
