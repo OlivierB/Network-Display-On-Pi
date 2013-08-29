@@ -3,11 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 28, 2013 at 03:46 PM
+-- Generation Time: Aug 29, 2013 at 03:22 PM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u2
-
-
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -40,9 +38,11 @@ INSERT INTO `layout` (`page`, `id_module`) VALUES
 (0, 371),
 (1, 372),
 (2, 373),
+(3, 374),
+(5, 376),
 (4, 377),
-(5, 378),
-(3, 381);
+(7, 381),
+(6, 382);
 
 -- --------------------------------------------------------
 
@@ -74,7 +74,7 @@ INSERT INTO `module` (`id`, `name`, `description`) VALUES
 (379, 'NDOP Server statistics', 'Dysplay the state of the machine hosting the NDOP program.'),
 (380, 'SNORT IDS', 'Display alerts from the SNORT IDS. You need to install SNORT on your system to use this module.'),
 (381, 'Summary', 'Display the total bandwidth used by the network.'),
-(382, 'test', 'ptocols\n');
+(382, 'Ports use', 'Display the 10 most used ports.\n');
 
 -- --------------------------------------------------------
 
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `module_composition_widget` (
   KEY `id_widget` (`id_widget`),
   KEY `id_widget_parameter_set` (`id_widget_parameter_set`),
   KEY `id_module` (`id_module`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=427 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=447 ;
 
 --
 -- Dumping data for table `module_composition_widget`
@@ -114,19 +114,19 @@ INSERT INTO `module_composition_widget` (`id`, `id_module`, `id_widget`, `x`, `y
 (398, 379, 863, 3, 0, 6, 1, 819),
 (399, 380, 857, 0, 0, 12, 2, 813),
 (400, 381, 861, 2, 0, 8, 2, 817),
-(406, 382, 884, 0, 0, 12, 2, 852),
-(411, 372, 859, 0, 0, 8, 1, 1079),
-(412, 372, 864, 8, 0, 4, 1, 838),
-(413, 372, 867, 0, 1, 6, 1, 832),
-(414, 372, 871, 6, 1, 6, 1, 835),
-(419, 374, 859, 0, 0, 8, 1, 1081),
-(420, 374, 864, 8, 0, 4, 1, 840),
-(421, 374, 867, 0, 1, 6, 1, 834),
-(422, 374, 871, 6, 1, 6, 1, 837),
-(423, 373, 864, 8, 0, 4, 1, 839),
-(424, 373, 867, 0, 1, 6, 1, 833),
-(425, 373, 871, 6, 1, 6, 1, 836),
-(426, 373, 859, 0, 0, 8, 1, 1080);
+(433, 372, 864, 8, 0, 4, 1, 838),
+(434, 372, 867, 0, 1, 6, 1, 832),
+(435, 372, 871, 6, 1, 6, 1, 835),
+(436, 372, 859, 0, 0, 8, 1, 1484),
+(437, 373, 864, 8, 0, 4, 1, 839),
+(438, 373, 867, 0, 1, 6, 1, 833),
+(439, 373, 871, 6, 1, 6, 1, 836),
+(440, 373, 859, 0, 0, 8, 1, 1485),
+(441, 374, 864, 8, 0, 4, 1, 840),
+(442, 374, 867, 0, 1, 6, 1, 834),
+(443, 374, 871, 6, 1, 6, 1, 837),
+(444, 374, 859, 0, 0, 8, 1, 1486),
+(446, 382, 884, 0, 0, 12, 2, 852);
 
 -- --------------------------------------------------------
 
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `widget` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `folder_name` (`folder_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1462 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1513 ;
 
 --
 -- Dumping data for table `widget`
@@ -222,7 +222,7 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_design` (
   `updated` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_widget` (`id_widget`,`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2429 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2544 ;
 
 --
 -- Dumping data for table `widget_parameter_design`
@@ -266,7 +266,8 @@ INSERT INTO `widget_parameter_design` (`id_widget`, `type`, `description`, `name
 (859, 'string', 'Style of the line in the chart. Can be ''line''&#44; ''spline''&#44; ''area''&#44; ''stackedColumn''&#44; ''stackedArea''&#44; ''stackedColumn100''&#44; ''stackedArea100'' (The last two options will display value as percentage!).', 'style_line', 1622, 1),
 (870, 'string', 'Style of the line in the chart. Can be ''line''&#44; ''spline''&#44; ''area''&#44; ''stackedColumn''&#44; ''stackedArea''&#44; ''stackedColumn100''&#44; ''stackedArea100'' (The last two options will display value as percentage!).', 'style_line', 1674, 1),
 (862, 'string', 'IP or hostname of your freegoip server. You can use the online website (freegeoip.net) but you will be limited to 10&#44;000 queries per hour. The best solution is to create your own server by using the github (https://github.com/fiorix/freegeoip).', 'freegeoip_address', 2370, 1),
-(872, 'string', 'IP or hostname of your freegoip server. You can use the online website (freegeoip.net) but you will be limited to 10&#44;000 queries per hour. The best solution is to create your own server by using the github (https://github.com/fiorix/freegeoip).', 'freegeoip_address', 2390, 1);
+(872, 'string', 'IP or hostname of your freegoip server. You can use the online website (freegeoip.net) but you will be limited to 10&#44;000 queries per hour. The best solution is to create your own server by using the github (https://github.com/fiorix/freegeoip).', 'freegeoip_address', 2390, 1),
+(859, 'str', 'You can group results by packet to get an easier to read chart. You can choose&#44; HOUR&#44; DAY&#44; WEEK&#44; MONTH. If you don''t want to group your data&#44; choose NONE.', 'group_by', 2518, 1);
 
 -- --------------------------------------------------------
 
@@ -281,14 +282,14 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_set` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`id_widget`),
   KEY `id_widget` (`id_widget`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1433 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1488 ;
 
 --
 -- Dumping data for table `widget_parameter_set`
 --
 
 INSERT INTO `widget_parameter_set` (`id`, `name`, `id_widget`) VALUES
-(1079, 'Daily', 859),
+(1484, 'daily', 859),
 (838, 'daily', 864),
 (832, 'daily', 867),
 (835, 'daily', 871),
@@ -309,11 +310,11 @@ INSERT INTO `widget_parameter_set` (`id`, `name`, `id_widget`) VALUES
 (827, 'default', 871),
 (828, 'default', 872),
 (852, 'default', 884),
-(1081, 'Monthly', 859),
+(1486, 'monthly', 859),
 (840, 'monthly', 864),
 (834, 'monthly', 867),
 (837, 'monthly', 871),
-(1080, 'Weekly', 859),
+(1485, 'weekly', 859),
 (839, 'weekly', 864),
 (833, 'weekly', 867),
 (836, 'weekly', 871);
@@ -339,7 +340,7 @@ CREATE TABLE IF NOT EXISTS `widget_parameter_value` (
 
 INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (813, 1129, '30000'),
-(813, 1157, '192.168.1.144'),
+(813, 1157, 'localhost'),
 (813, 1158, '3306'),
 (813, 1159, 'snort'),
 (813, 1160, 'snort'),
@@ -352,7 +353,7 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (817, 1135, '65000'),
 (818, 1136, '10'),
 (818, 1137, '0.25'),
-(818, 2370, '192.168.1.144:8080'),
+(818, 2370, 'freegeoip.net'),
 (819, 1138, '100'),
 (820, 1139, '600000'),
 (820, 1140, '1'),
@@ -406,18 +407,22 @@ INSERT INTO `widget_parameter_value` (`id_set`, `id_param`, `value`) VALUES
 (840, 1139, '4500000'),
 (840, 1140, '30'),
 (840, 1141, '45'),
-(1079, 1132, '600000'),
-(1079, 1133, '1'),
-(1079, 1622, 'line'),
-(1080, 1132, '2100000'),
-(1080, 1133, '7'),
-(1080, 1622, 'line'),
-(1081, 1132, '4500000'),
-(1081, 1133, '30'),
-(1081, 1622, 'line'),
 (1418, 1132, '10000'),
 (1418, 1133, '1'),
-(1418, 1622, 'line');
+(1418, 1622, 'line'),
+(1418, 2518, 'NONE'),
+(1484, 1132, '600000'),
+(1484, 1133, '1'),
+(1484, 1622, 'line'),
+(1484, 2518, 'NONE'),
+(1485, 1132, '2100000'),
+(1485, 1133, '7'),
+(1485, 1622, 'line'),
+(1485, 2518, 'HOUR'),
+(1486, 1132, '4500000'),
+(1486, 1133, '30'),
+(1486, 1622, 'line'),
+(1486, 2518, 'DAY');
 
 --
 -- Constraints for dumped tables
