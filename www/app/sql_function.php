@@ -95,9 +95,36 @@ function getSubProtocolIpv4($connection, $date_begin, $date_end, $group){
 	return getProtocol($connection, $date_begin, $date_end, 'protocols_ip', $group);
 }
 
+function buildGroupStatement($group){
 
+	// handle the group by statement. To make sure every protocols stay in the same group, we add 
+	// an id_date wich corresponds to the group statement
+	if($group == "HOUR"){
+		$group_by = "HOUR(`date`), DAYOFYEAR(`date`), YEAR(`date`)";
 
-function getBandwidth($connection, $date_begin, $date_end){
+	}elseif($group == "DAY"){
+		$group_by = "DAYOFYEAR(`date`), YEAR(`date`)";
+
+	}elseif ($group == "WEEK") {
+		$group_by = "WEEKOFYEAR(`date`), YEAR(`date`)";
+
+	}elseif ($group == "MONTH") {
+		$group_by = "MONTH(`date`), YEAR(`date`)";
+
+	}else{
+		$group_by = "";
+	}
+
+	if($group_by != ''){
+		$group_statement = 'GROUP BY '.$group_by.' ';
+	}else{
+		$group_statement = 'GROUP BY `date` ';
+	}
+
+	return $group_statement;
+}
+
+function getBandwidth($connection, $date_begin, $date_end, $group){
 
 	if($date_begin != '' && $date_end != ''){
 		$where_statement = 'WHERE date BETWEEN ('.$date_begin.') AND ( '.$date_end.')';
@@ -105,8 +132,12 @@ function getBandwidth($connection, $date_begin, $date_end){
 		$where_statement = '';
 	}
 
+	$group = buildGroupStatement($group);
+
+	$order = "ORDER BY `date`";
+
 	// request average flow for each entry in teh table between the two date
-	$sql = 'SELECT `global`/`dtime_s` as global, `local`/`dtime_s` as local,`incoming`/`dtime_s` as incoming,`outcoming`/`dtime_s` as outcoming, date  FROM bandwidth  '.$where_statement;
+	$sql = 'SELECT `global`/`dtime_s` as global, `local`/`dtime_s` as local,`incoming`/`dtime_s` as incoming,`outcoming`/`dtime_s` as outcoming, date  FROM bandwidth  '.$where_statement.' '.$group.' '.$order;
 
 	$req = $connection->prepare($sql);
 	$req->execute();
