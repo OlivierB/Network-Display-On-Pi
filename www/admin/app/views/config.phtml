@@ -8,7 +8,7 @@
 		<?php if($database_connection): ?>
 		Your database is correctly configured, you can continue.
 		<?php elseif($database_info): ?>
-		Some Information you provided to access the database are not correct, please retry. Check the IP of the machine which hosts your database program and check that the user you provided has enough priviliges to create a database, and select, insert, update in it.
+		Some Information you provided to access the database are not correct, please retry. Check the IP of the machine which hosts your database program and check that the user you provided has enough priviliges to create tables and select, insert, update in it.
 		<?php else: ?>
 		Please fill in the form.
 		<?php endif; ?>
@@ -28,7 +28,7 @@
 							<label>Port</label>
 							<input name="database_port" type="number" placeholder="Port of your database" value='<?= $database_port ?>'>
 							<span class="help-block">Ex: 3306 by default</span>
-							<label>Datbase name</label>
+							<label>Database name</label>
 							<input name="database_name" type="text" placeholder="Name of your database" value='<?= $database_name ?>'>
 							<span class="help-block">Ex: NDOP_GUI by default</span>
 							<label>Login</label>
