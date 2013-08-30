@@ -56,6 +56,13 @@ class NetModChild(NetModule):
 
         self.bdd_max_port = 10
         self.add_conf_override("bdd_max_port")
+
+        self.ignore_ipprotocol = list()
+        self.add_conf_override("ignore_ipprotocol")
+
+        self.ignore_port = list()
+        self.add_conf_override("ignore_port")
+
         
 
     def update(self):
@@ -100,6 +107,10 @@ class NetModChild(NetModule):
         if pkt.Ether.is_type(netdata.ETHERTYPE_IPv4):
             # List of IP protocols
             typ = pkt.Ether.payload.type
+
+            if type(self.ignore_ipprotocol) is list and typ in self.ignore_ipprotocol:
+                typ = -1
+
             if typ in netdata.IPTYPE.keys():
                 if typ in self.lIPProtocol:
                     self.lIPProtocol[typ] += 1
@@ -110,6 +121,10 @@ class NetModChild(NetModule):
             if pkt.Ether.payload.is_type(netdata.IPTYPE_TCP) or pkt.Ether.payload.is_type(netdata.IPTYPE_UDP):
                 # List of IP protocols
                 port = pkt.Ether.payload.payload.type
+
+                if type(self.ignore_port) is list and port in self.ignore_port:
+                    port = -1
+
                 try:
                     netdata.PORTSLIST[port]
                     try:
@@ -121,6 +136,10 @@ class NetModChild(NetModule):
 
     def flow_handler(self, flow):
         protocol = flow.prot
+
+        if type(self.ignore_ipprotocol) is list and protocol in self.ignore_ipprotocol:
+            protocol = -1
+
         try:
             netdata.IPTYPE[protocol]
             if protocol in self.lIPProtocol:
@@ -157,6 +176,9 @@ class NetModChild(NetModule):
             #             pass
 
             # List of IP protocols
+            if type(self.ignore_port) is list and port in self.ignore_port:
+                port = -1
+
             if port > 0:
                 try:
                     netdata.PORTSLIST[port]

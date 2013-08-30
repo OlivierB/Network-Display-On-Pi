@@ -95,7 +95,9 @@
         "netmod_protocols": {
             "updatetime": 60,
             "max_live_port": 10,
-            "display_port_number" : true
+            "display_port_number" : true,
+            "ignore_port": [9005, 9006],
+            "ignore_ipprotocol": [47]
         },
         "netmod_loccomm": {
             "updatetime": 5

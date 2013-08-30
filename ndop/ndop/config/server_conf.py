@@ -9,7 +9,7 @@ Server configuration
 ########################################
 # Program information
 __program__ = "NDOP"
-__version__ = "0.0.5"
+__version__ = "1.0.0"
 __description__ = "Network Sniffer with web display"
 
 

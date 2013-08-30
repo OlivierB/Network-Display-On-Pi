@@ -173,7 +173,7 @@ This system is embed in NDOP server. You just need to configure listening networ
 But :
 * you have a better network live
 * you can analyse packet content
-* it is possible to work with IPv6 packet
+* it is possible to work with IPv6 packets
 
 #### Netflow system
 netflow system works in two parts :
