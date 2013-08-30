@@ -332,7 +332,7 @@ otherwise, configure address correctly with ```--addr``` option
 python client --addr ADDRESS:PORT
 ```
 
-# Integrated web client
+# Web client
 
 ## Requirements
 
@@ -365,7 +365,7 @@ Go to the URL corresponding to the location you chose in your browser. You shoul
 
 ## Uninstall
 
-If you want to erase the NDOP GUI from your system you can erase the folder you created during the installation (/var/www/ndop/ in the example). You should also erase the database, its name is NDOP_GUI.
+If you want to erase the NDOP GUI from your system, you can erase the folder you created during the installation (/var/www/ndop/ in the example). You should also erase the database, its name is NDOP_GUI.
 
 ## Configure an optimized displaying computer
 
@@ -417,7 +417,7 @@ To make openbox your default window manager, run this command line and follow th
 update-alternatives --config x-session-manager
 ```
 
-On Raspberry PI, you can set your configuration to start the GUI on boot by running the following command and following the instructions:
+On the Raspberry PI, you can set your configuration to start the GUI on boot by running the following command and following the instructions:
 ```
 raspi-config
 ```
